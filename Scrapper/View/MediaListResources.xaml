@@ -1,0 +1,132 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converter="clr-namespace:Scrapper.Converter"
+                    xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win"
+                    xmlns:local="clr-namespace:Scrapper.View">
+    <converter:FileToImageConverter x:Key="PathToImageConverter"/>
+    <ControlTemplate x:Key="ImageItem">
+         <Grid Width="240" Height="200" Tag="{Binding RelativeSource=
+             {RelativeSource FindAncestor, AncestorType={x:Type local:MediaListView}},
+             Path=DataContext}">
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Exclude" 
+                          Command="{Binding PlacementTarget.Tag.CmdExclude,
+                                RelativeSource={RelativeSource FindAncestor,
+                                    AncestorType=ContextMenu}}" 
+                          CommandParameter="{Binding}"/>
+                    <MenuItem Header="Download" 
+                          Command="{Binding PlacementTarget.Tag.CmdDownload,
+                                RelativeSource={RelativeSource FindAncestor,
+                                    AncestorType=ContextMenu}}" 
+                          CommandParameter="{Binding}"/>
+                </ContextMenu>
+            </Grid.ContextMenu>
+            <!--Bind Image Path in Image Control-->
+            <Image HorizontalAlignment="Center" ToolTipService.ShowDuration="20000"
+                   Source="{Binding MediaPath, Converter=
+                      {StaticResource PathToImageConverter}, ConverterParameter=240}">
+                <!--View Large Image on Image Control Tooltip-->
+                <Image.ToolTip>
+                    <ToolTip>
+                    <!--
+                        Source="{Binding RelativeSource= {RelativeSource AncestorType=ToolTip}, Path=PlacementTarget.Source}"
+                    -->
+                        <Image Source="{Binding MediaPath, Converter=
+                            {StaticResource PathToImageConverter}}"/>
+                    </ToolTip>
+                </Image.ToolTip>
+            </Image>
+            <StackPanel VerticalAlignment="Bottom" Background="Black"
+                        Opacity="0.70" Width="200">
+                <TextBlock Text="{Binding MediaName}" Foreground="White"
+                           Height="60" Margin="15,0,15,0" FontWeight="SemiBold"/>
+            </StackPanel>
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="VideoItem">
+        <Grid Width="240" Height="200">
+            <local:MediaElementView MediaSource="{Binding Path=MediaPath}"
+                                    ThumbnailPath="{Binding Path=Thumbnail}"/>
+            <StackPanel VerticalAlignment="Bottom" Background="Black"
+                        Opacity="0.70">
+                <TextBlock Text="{Binding MediaName}" Foreground="White"
+                           Height="40" Margin="15,0,15,0" FontWeight="SemiBold"/>
+            </StackPanel>
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="VideoView">
+        <Grid>
+            <local:MediaElementView MediaSource="{Binding Path=MediaPath}" />
+        </Grid>
+    </ControlTemplate>
+
+    <DataTemplate x:Key="ImageListTemplate">
+        <ContentControl>
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <!--<Setter Property="Template" Value="{StaticResource ImageItem}"/>-->
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsImage}" Value="True">
+                            <Setter Property="Template" Value="{StaticResource ImageItem}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsImage}" Value="False">
+                            <Setter Property="Template" Value="{StaticResource VideoItem}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style> 
+        </ContentControl>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ScreenshotTemplate">
+        <Grid Width="200" Height="150" >
+            <Image HorizontalAlignment="Center"
+                   ToolTipService.ShowDuration="20000"
+                   Source="{Binding Converter={StaticResource PathToImageConverter}}">
+                <!--View Large Image on Image Control Tooltip-->
+                <Image.ToolTip>
+                    <ToolTip>
+                        <Image Source="{Binding RelativeSource=
+                            {RelativeSource AncestorType=ToolTip},
+                            Path=PlacementTarget.Source}"/>
+                    </ToolTip>
+                </Image.ToolTip>
+            </Image>
+        </Grid>
+    </DataTemplate>
+
+    <ItemsPanelTemplate x:Key="ImagePanelTemplate">
+        <WrapPanel />
+    </ItemsPanelTemplate>
+
+    <ControlTemplate x:Key="ImageListControl">
+        <DockPanel Grid.Column="3">
+
+            <ListBox ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                     ItemTemplate="{DynamicResource ScreenshotTemplate}"
+                     ItemsPanel="{DynamicResource ImagePanelTemplate}"
+                     ItemsSource="{Binding Screenshots}"
+                     Height="150" DockPanel.Dock="Bottom">
+                <ListBox.Background>
+                    <Brush>Black</Brush>
+                </ListBox.Background>
+            </ListBox>
+
+            <ListBox x:Name="ImageListBox"
+                    VirtualizingPanel.IsVirtualizing="True"
+                     ItemsSource="{Binding MediaList}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ItemTemplate="{DynamicResource ImageListTemplate}"
+                     ItemsPanel="{DynamicResource ImagePanelTemplate}"
+                     SelectedItem="{Binding SelectedMedia, Mode=TwoWay}">
+                <ListBox.Background>
+                    <Brush>Black</Brush>
+                </ListBox.Background>
+            </ListBox>
+
+        </DockPanel>
+    </ControlTemplate> 
+</ResourceDictionary>

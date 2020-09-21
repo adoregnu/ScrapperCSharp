@@ -1,0 +1,304 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="..\packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.props" Condition="Exists('..\packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.props')" />
+  <Import Project="..\packages\CefSharp.Common.84.4.10\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.84.4.10\build\CefSharp.Common.props')" />
+  <Import Project="..\packages\cef.redist.x86.84.4.1\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.84.4.1\build\cef.redist.x86.props')" />
+  <Import Project="..\packages\cef.redist.x64.84.4.1\build\cef.redist.x64.props" Condition="Exists('..\packages\cef.redist.x64.84.4.1\build\cef.redist.x64.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8CD54857-0EA4-457F-A416-74F6BA923E92}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Scrapper</RootNamespace>
+    <AssemblyName>Scrapper</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AvalonDock, Version=4.40.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dirkster.AvalonDock.4.40.0\lib\net40\AvalonDock.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AvalonDock.Themes.VS2013, Version=4.40.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dirkster.AvalonDock.Themes.VS2013.4.40.0\lib\net40\AvalonDock.Themes.VS2013.dll</HintPath>
+    </Reference>
+    <Reference Include="CommonServiceLocator, Version=2.0.5.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.5\lib\net47\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="ffme.win, Version=4.2.330.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FFME.Windows.4.2.330\lib\net472\ffme.win.dll</HintPath>
+    </Reference>
+    <Reference Include="FFmpeg.AutoGen, Version=4.2.0.0, Culture=neutral, PublicKeyToken=9b7632533a381715, processorArchitecture=MSIL">
+      <HintPath>..\packages\FFmpeg.AutoGen.4.2.0\lib\net45\FFmpeg.AutoGen.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.4.1.0, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=6.0.1.278, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.6.0.1\lib\net45\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
+    <Reference Include="Itenso.Windows.Controls.ListViewLayout, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPF.ListViewLayoutManager.2.0.0\lib\net40\Itenso.Windows.Controls.ListViewLayout.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.9.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.9\lib\net45\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MvvmDialogs, Version=7.0.0.0, Culture=neutral, PublicKeyToken=3d3b9708589bc73e, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmDialogs.7.0.0\lib\net472\MvvmDialogs.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmDialogServiceExtensions, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmDialogServiceExtensions.1.0.1\lib\net472\MvvmDialogServiceExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Scriban, Version=2.1.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Scriban.2.1.4\lib\net45\Scriban.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite.CodeFirst, Version=1.6.0.30, Culture=neutral, PublicKeyToken=eb96ba0a78d831a7, processorArchitecture=MSIL">
+      <HintPath>..\packages\SQLite.CodeFirst.1.6.0.30\lib\net45\SQLite.CodeFirst.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.113.1\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.113.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.113.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="BrowserHandler\DownloadHandler.cs" />
+    <Compile Include="BrowserHandler\PopupHandler.cs" />
+    <Compile Include="BrowserHandler\ProcessHandler.cs" />
+    <Compile Include="BrowserHandler\MenuHandler.cs" />
+    <Compile Include="Converter\BoardTypeVisibilityConverter.cs" />
+    <Compile Include="Converter\FileToImageConverter.cs" />
+    <Compile Include="Converter\HasViedoFileInPathConverter.cs" />
+    <Compile Include="Event\ViewEvent.cs" />
+    <Compile Include="Extension\Extensions.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Model\AvItem.cs" />
+    <Compile Include="ScrapItems\ItemSehuatang.cs" />
+    <Compile Include="Spider\IScrapItem.cs" />
+    <Compile Include="Spider\SpiderBase.cs" />
+    <Compile Include="Spider\SpiderJavlibrary.cs" />
+    <Compile Include="Spider\SpiderSehuatang.cs" />
+    <Compile Include="UiServices.cs" />
+    <Compile Include="Utils\ThumbnailGenerator.cs" />
+    <Compile Include="ViewModel\Base\Pane.cs" />
+    <Compile Include="ViewModel\BrowserViewModel.cs" />
+    <Compile Include="ViewModel\BrowserViewModelSehuatang.cs" />
+    <Compile Include="ViewModel\DebugLogViewModel.cs" />
+    <Compile Include="ViewModel\FileToFolderViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\MediaElementViewModel.cs" />
+    <Compile Include="Model\MediaItem.cs" />
+    <Compile Include="ViewModel\MediaListViewModel.cs" />
+    <Compile Include="ViewModel\TextViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\Behavior\AvalonEditBehavior.cs" />
+    <Compile Include="View\Behavior\GridLengthAnimation.cs" />
+    <Compile Include="View\Behavior\TextboxBehavior.cs" />
+    <Compile Include="View\BrowserView.xaml.cs">
+      <DependentUpon>BrowserView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\FileToFolderDialog.xaml.cs">
+      <DependentUpon>FileToFolderDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MediaElementView.xaml.cs">
+      <DependentUpon>MediaElementView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MediaListView.xaml.cs">
+      <DependentUpon>MediaListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pane\LayoutUpdateStrategy.cs" />
+    <Compile Include="View\Pane\PanesStyleSelector.cs" />
+    <Compile Include="View\Pane\PanesTemplateSelector.cs" />
+    <Compile Include="View\TextView.xaml.cs">
+      <DependentUpon>TextView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="View\BrowserView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DockView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\FileToFolderDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="View\DockView.xaml.cs">
+      <DependentUpon>DockView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="View\MediaElementView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MediaListResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MediaListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TextView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\XPathMulti.sbn.js" />
+    <EmbeddedResource Include="Resources\XPathSingle.sbn.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\XPathClick.sbn.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TreeViewFileExplor\TreeViewFileExplorer.csproj">
+      <Project>{55a860b9-fa12-495f-b1e3-9086fba2eb70}</Project>
+      <Name>TreeViewFileExplorer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\cef.redist.x64.84.4.1\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.84.4.1\build\cef.redist.x64.props'))" />
+    <Error Condition="!Exists('..\packages\cef.redist.x86.84.4.1\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.84.4.1\build\cef.redist.x86.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.84.4.10\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.84.4.10\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.targets'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.113.1\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.113.1\build\net46\System.Data.SQLite.Core.targets'))" />
+  </Target>
+  <Import Project="..\packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets')" />
+  <Import Project="..\packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.targets" Condition="Exists('..\packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.targets')" />
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.113.1\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.113.1\build\net46\System.Data.SQLite.Core.targets')" />
+</Project>
