@@ -60,6 +60,8 @@ namespace Scrapper.ViewModel
                 RaisePropertyChanged("Screenshots");
             }
         }
+        public MediaItem MediaItem { get; set; }
+
         public ObservableCollection<MediaItem> MediaList { get; set; } =
             new ObservableCollection<MediaItem>();
         public List<string> Screenshots { get; set; } = null;
@@ -127,12 +129,16 @@ namespace Scrapper.ViewModel
                 var fsEntries = Directory.GetDirectories(MediaPath);
                 if (fsEntries.Length > 0)
                 {
+                    MediaItem = null;
                     Task.Run(() => IterateDirectories(fsEntries));
                 }
                 else
                 {
-                    //var dirName = Path.GetFileName(MediaPath);
-                    MessengerInstance.Send(new NotificationMessage<string>(MediaPath, "MediaPath"));
+                    MediaItem = GetMedia(MediaPath);
+                    RaisePropertyChanged("MediaItem");
+                    if (string.IsNullOrEmpty(MediaItem.BgImagePath))
+                        MessengerInstance.Send(new NotificationMessage<string>(
+                            MediaPath, "MediaPath"));
                 }
             }
         }
@@ -148,7 +154,8 @@ namespace Scrapper.ViewModel
                 {
                     if (!IterateDirectories(Directory.GetDirectories(dir)))
                     {
-                        GetMedia(dir);
+                        InsertMedia(dir);
+                        Thread.Sleep(10);
                     }
                 }
             }
@@ -159,19 +166,26 @@ namespace Scrapper.ViewModel
             return true;
         }
 
-
-        void GetMedia(string path)
-        {
+        MediaItem GetMedia(string path)
+        { 
             var item = new MediaItem();
             foreach (var file in Directory.GetFileSystemEntries(path))
             {
                 item.SetField(file);
                 if (item.IsExcluded || item.IsDownload)
-                    return;
+                    return null;
             }
 
             if (!item.IsMediaDir)
-                return;
+                return null;
+
+            return item;
+        }
+
+        void InsertMedia(string path)
+        {
+            var item = GetMedia(path);
+            if (item == null) return;
 
             var idx = MediaList.FindItem(item, i => i.DownloadDt);
             UiServices.Invoke(delegate
@@ -179,7 +193,6 @@ namespace Scrapper.ViewModel
                 //MediaList.InsertInPlace(item, i => i.DownloadDt);
                 MediaList.Insert(idx, item);
             }, true);
-            Thread.Sleep(40);
         }
 
         void AddNewMedia(string path)

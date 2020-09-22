@@ -34,6 +34,12 @@ namespace Scrapper.View
             set { SetValue(BgImagePathProperty, value); }
         }
 
+        public string MediaWidth
+        {
+            get { return (string)GetValue(MediaWidthProperty); }
+            set { SetValue(MediaWidthProperty, value); }
+        }
+
         public static DependencyProperty MediaSourceProperty =
            DependencyProperty.Register("MediaSource", typeof(string),
                typeof(MediaElementView),
@@ -43,6 +49,13 @@ namespace Scrapper.View
 
         public static DependencyProperty BgImagePathProperty =
            DependencyProperty.Register("BgImagePath", typeof(string),
+               typeof(MediaElementView),
+               new FrameworkPropertyMetadata(null,
+                   FrameworkPropertyMetadataOptions.None,
+                   OnMediaSourceChanged));
+
+        public static DependencyProperty MediaWidthProperty =
+           DependencyProperty.Register("MediaWidth", typeof(string),
                typeof(MediaElementView),
                new FrameworkPropertyMetadata(null,
                    FrameworkPropertyMetadataOptions.None,
@@ -76,7 +89,9 @@ namespace Scrapper.View
                 using (var tmp = new Bitmap(BgImagePath))
                 {
                     //BgImage.Source = FileToImageConverter.ConvertBitmap(tmp);
-                    BgImage.Source = FileToImageConverter.ConvertBitmap(tmp, 240);
+                    int width = string.IsNullOrEmpty(MediaWidth) ?
+                        0 : int.Parse(MediaWidth);
+                    BgImage.Source = FileToImageConverter.ConvertBitmap(tmp, width);
                     _hasTakenThumbnail = true;
                 }
             }

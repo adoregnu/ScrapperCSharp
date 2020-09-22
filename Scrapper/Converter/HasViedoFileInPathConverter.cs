@@ -15,6 +15,7 @@ namespace Scrapper.Converter
         public object Convert(object value_, Type targetType_,
             object parameter_, CultureInfo culture_)
         {
+#if false
             string path = value_ as string;
             var attr = File.GetAttributes(path);
             if (!attr.HasFlag(FileAttributes.Directory))
@@ -23,7 +24,11 @@ namespace Scrapper.Converter
                     StringComparison.CurrentCultureIgnoreCase)))
                     return true;
             }
-            return false;
+#endif
+            if (value_ == null)
+                return false;
+            else
+                return true;
         }
 
         public object ConvertBack(object value, Type targetType,

@@ -95,6 +95,7 @@ namespace Scrapper.Spider
 
         public override void Navigate()
         {
+#if false
             if (state == -1)
             {
                 if (!string.IsNullOrEmpty(Browser.Pid))
@@ -104,6 +105,7 @@ namespace Scrapper.Spider
                 }
                 return;
             }
+#endif
             switch (state)
             {
             case 0:

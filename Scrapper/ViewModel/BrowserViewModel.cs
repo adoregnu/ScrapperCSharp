@@ -205,7 +205,11 @@ namespace Scrapper.ViewModel
             MediaPath = msg.Content;
             Pid = Path.GetFileName(MediaPath);
             RaisePropertyChanged("Pid");
-            Address = _selectedSpider.GetAddress(Pid);
+            if (!(_selectedSpider is SpiderSehuatang))
+            {
+                _bStarted = true;
+                Address = _selectedSpider.GetAddress(Pid);
+            }
         }
     }
 }

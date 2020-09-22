@@ -67,12 +67,12 @@
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding MediaPath,
+                        <DataTrigger Binding="{Binding MediaItem,
                             Converter={StaticResource HasVideoFileConverter}}"
                                      Value="True">
                             <Setter Property="Template" Value="{StaticResource VideoView}"/>
                         </DataTrigger>
-                         <DataTrigger Binding="{Binding MediaPath,
+                         <DataTrigger Binding="{Binding MediaItem,
                              Converter={StaticResource HasVideoFileConverter}}"
                                      Value="False">
                             <Setter Property="Template" Value="{StaticResource ImageListControl}"/>
