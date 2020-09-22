@@ -17,13 +17,13 @@ namespace Scrapper.ScrapItems
         public string Pid;
         public DateTime DateTime;
 
-        readonly SpiderSehuatang _spider;
+        readonly SpiderBase _spider;
         string _outPath = null;
         int _downloadCount = 0;
         bool _bStop = false;
         Dictionary<string, int> _images = null;
 
-        public ItemSehuatang(SpiderSehuatang spider)
+        public ItemSehuatang(SpiderBase spider)
         {
             _spider = spider;
             var dh = _spider.Browser.DownloadHandler;
@@ -84,7 +84,7 @@ namespace Scrapper.ScrapItems
                 if (_downloadCount == 0)
                 {
                     Clear();
-                    _spider.MoveArticle(null);
+                    _spider.OnScrapCompleted();
                 }
             }
         }
@@ -101,7 +101,7 @@ namespace Scrapper.ScrapItems
                 var m = Regex.Match(title, @"[\d\w\-_]+",
                     RegexOptions.CultureInvariant);
 
-                _outPath = _spider.BasePath;
+                _outPath = (_spider as SpiderSehuatang).BasePath;
                 if (m.Success)
                 {
                     Pid = m.Groups[0].Value;

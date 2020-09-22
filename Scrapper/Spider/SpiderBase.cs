@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 using Scriban;
 
-using Scrapper.ViewModel;
 using CefSharp;
+
+using Scrapper.ViewModel;
+using Scrapper.ScrapItems;
 
 namespace Scrapper.Spider
 {
@@ -16,8 +18,10 @@ namespace Scrapper.Spider
     abstract class SpiderBase
     {
         public BrowserViewModel Browser { get; private set; }
-        public string URL = null;//"http://www.javlibrary.com/en/vl_searchbyid.php";
+        public string URL = null;
         public string Name { get; protected set; } = "";
+
+        protected Dictionary<string, string> _xpathDic;
 
         public SpiderBase(BrowserViewModel br)
         {
@@ -46,17 +50,13 @@ namespace Scrapper.Spider
             return URL;// $"{URL}?keyword={param}";
         }
 
-        public virtual void SetCookies()
-        { 
-        }
+        public virtual void SetCookies() { }
 
-        public virtual void OnBeforeDownload(object sender, DownloadItem e)
-        { 
-        }
+        public virtual void OnBeforeDownload(object sender, DownloadItem e) { }
 
-        public virtual void OnDownloadUpdated(object sender, DownloadItem e)
-        { 
-        }
+        public virtual void OnDownloadUpdated(object sender, DownloadItem e) { }
+
+        public virtual void OnScrapCompleted() { }
 
         protected virtual void PrintResult(List<object> items)
         {
@@ -67,7 +67,13 @@ namespace Scrapper.Spider
             }
         }
 
+        protected void ExecJavaScript(IScrapItem item, string name)
+        { 
+            Browser.ExecJavaScript(_xpathDic[name], item, name);
+        }
+
         public abstract void Navigate();
+
         public override string ToString()
         {
             return URL;

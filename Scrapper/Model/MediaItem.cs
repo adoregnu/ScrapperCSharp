@@ -59,8 +59,7 @@ namespace Scrapper.Model
                 DownloadDt = File.GetLastWriteTime(path);
                 MediaName = $"{dir} / " + DownloadDt.ToString("%M-%d %h:%m:%s");
             }
-            else if (VideoExts.Any(s => fname.EndsWith(s,
-                StringComparison.CurrentCultureIgnoreCase)))
+            else if (VideoExts.Any(s => fname.EndsWith(s, StringComparison.CurrentCultureIgnoreCase)))
             {
                 var dir = Path.GetDirectoryName(path).Split('\\').Last();
                 MediaPath = path;

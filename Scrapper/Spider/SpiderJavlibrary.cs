@@ -7,30 +7,29 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Markup.Localizer;
 using CefSharp;
-
+using Scrapper.ScrapItems;
 using Scrapper.ViewModel;
 namespace Scrapper.Spider
 {
     class SpiderJavlibrary : SpiderBase
     {
-        int state = 0;
-        readonly Dictionary<string, string> _xpathDic;
+        int state = -1;
         public SpiderJavlibrary(BrowserViewModel browser) : base(browser)
         {
             Name = "javlibrary";
-            URL = "http://www.javlibrary.com/en/";// vl_searchbyid.php";
+            URL = "http://www.javlibrary.com/en/";
             _xpathDic = new Dictionary<string, string>
             {
-                { "videos", "//div[@class='videos']/div/a" },
-                { "title",  "//*[@id='video_title']/h3/a/text()" },
-                { "id",     "//*[@id='video_id']//td[2]/text()" },
-                { "date",   "//*[@id='video_date']//td[2]/text()" },
-                { "director", "//*[@id='video_director']//*[@class='director']/a/text()" },
-                { "studio", "//*[@id='video_maker']//*[@class='maker']/a/text()" },
-                { "thumb",  "//*[@id='video_jacket_img']/@src" },
-                { "rating", "//*[@id='video_review']//*[@class='score']/text()" },
-                { "genre",  "//*[@id='video_genres']//*[@class='genre']//text()" },
-                { "actor",  "//*[@id='video_cast']//*[@class='star']//text()" },
+                { "videos", XPath("//div[@class='videos']/div/a") },
+                { "title",  XPath("//*[@id='video_title']/h3/a/text()") },
+                { "id",     XPath("//*[@id='video_id']//td[2]/text()") },
+                { "date",   XPath("//*[@id='video_date']//td[2]/text()") },
+                { "director", XPath("//*[@id='video_director']//*[@class='director']/a/text()") },
+                { "studio", XPath("//*[@id='video_maker']//*[@class='maker']/a/text()") },
+                { "cover",  XPath("//*[@id='video_jacket_img']/@src") },
+                { "rating", XPath("//*[@id='video_review']//*[@class='score']/text()") },
+                { "genre",  XPath("//*[@id='video_genres']//*[@class='genre']//text()") },
+                { "actor",  XPath("//*[@id='video_cast']//*[@class='star']//text()") },
             };
         }
 
@@ -47,17 +46,8 @@ namespace Scrapper.Spider
                 Domain = "www.javlibrary.com",
                 Path = "/"
             };
-            cookieManager.SetCookieAsync(GetAddress(null), cookie);
+            cookieManager.SetCookieAsync(URL, cookie);
             _isCookieSet = true;
-        }
-
-        string _searchId = null;
-        public override string GetAddress(string param)
-        {
-            _searchId = param;
-            if (string.IsNullOrEmpty(param))
-                _searchId = "MIDE-023";
-            return $"{URL}vl_searchbyid.php?keyword={_searchId}";
         }
 
         void OnMultiResult(List<object> list)
@@ -74,7 +64,7 @@ namespace Scrapper.Spider
             foreach (string a in list)
             {
                 m = regex.Match(a);
-                if (m.Success && m.Groups["id"].Value == _searchId)
+                if (m.Success && m.Groups["id"].Value == Browser.Pid)
                     break;
             }
             if (!m.Success) return;
@@ -84,23 +74,29 @@ namespace Scrapper.Spider
 
         void ParsePage()
         {
-            Browser.ExecJavaScript(XPath(_xpathDic["id"]), PrintResult);
-            Browser.ExecJavaScript(XPath(_xpathDic["date"]), PrintResult);
-            Browser.ExecJavaScript(XPath(_xpathDic["actor"]), PrintResult);
-            Browser.ExecJavaScript(XPath(_xpathDic["title"]), PrintResult);
-            Browser.ExecJavaScript(XPath(_xpathDic["genre"]), PrintResult);
-            Browser.ExecJavaScript(XPath(_xpathDic["thumb"]), PrintResult);
-            Browser.ExecJavaScript(XPath(_xpathDic["studio"]), PrintResult);
-            Browser.ExecJavaScript(XPath(_xpathDic["rating"]), PrintResult);
-            Browser.ExecJavaScript(XPath(_xpathDic["director"]), PrintResult);
+            var item = new ItemJavlibrary(this);
+            foreach (var xpath in _xpathDic)
+            {
+                ExecJavaScript(item, xpath.Key);
+            }
+            state = -1;
         }
 
         public override void Navigate()
         {
+            if (state == -1)
+            {
+                if (!string.IsNullOrEmpty(Browser.Pid))
+                {
+                    Browser.Address = $"{URL}vl_searchbyid.php?keyword={Browser.Pid}";
+                    state = 0;
+                }
+                return;
+            }
             switch (state)
             {
             case 0:
-                Browser.ExecJavaScript(XPath(_xpathDic["videos"]), OnMultiResult);
+                Browser.ExecJavaScript(_xpathDic["videos"], OnMultiResult);
                 break;
             default:
                 ParsePage();

@@ -16,8 +16,6 @@ namespace Scrapper.Spider
     class SpiderSehuatang : SpiderBase
     {
         int _state = -1;
-        readonly Dictionary<string, string> _xpathDic;
-
         public int NumPage = 1;
         public string BasePath
         {
@@ -57,10 +55,10 @@ namespace Scrapper.Spider
         void ParsePage()
         {
             var item = new ItemSehuatang(this);
-            Browser.ExecJavaScript(_xpathDic["pid"], item, "pid");
-            Browser.ExecJavaScript(_xpathDic["date"], item, "date");
-            Browser.ExecJavaScript(_xpathDic["images"], item, "images");
-            Browser.ExecJavaScript(_xpathDic["files"], item, "files");
+            ExecJavaScript(item, "pid");
+            ExecJavaScript(item, "date");
+            ExecJavaScript(item, "images");
+            ExecJavaScript(item, "files");
         }
 
         int _pageNum = 1;
@@ -122,6 +120,11 @@ namespace Scrapper.Spider
             {
                 MovePage(null);
             }
+        }
+
+        public override void OnScrapCompleted()
+        {
+            MoveArticle(null);
         }
 
         public override void Navigate()

@@ -15,8 +15,10 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 
 using Scrapper.Spider;
+using Scrapper.ScrapItems;
 using Scrapper.BrowserHandler;
 using Scrapper.ViewModel.Base;
+
 namespace Scrapper.ViewModel
 {
     partial class BrowserViewModel : Pane
@@ -74,6 +76,9 @@ namespace Scrapper.ViewModel
             Title = Address = _selectedSpider.URL;
 
             PropertyChanged += OnPropertyChanged;
+
+            MessengerInstance.Register<NotificationMessage<string>>(
+                this, OnMediaPathChanged);
         }
 
         public void OnStart()
@@ -199,6 +204,11 @@ namespace Scrapper.ViewModel
         {
             MessengerInstance.Send(
                 new NotificationMessage<string>(msg, "UpdateStatus"));
+        }
+
+        public void OnMediaPathChanged(NotificationMessage<string> msg)
+        {
+            Log.Print(msg.Content);
         }
     }
 }

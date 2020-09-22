@@ -19,6 +19,7 @@ using Scrapper.Extension;
 using Scrapper.Model;
 using Scrapper.ViewModel.Base;
 using CefSharp.Enums;
+using System.Windows.Interop;
 
 namespace Scrapper.ViewModel
 {
@@ -127,6 +128,11 @@ namespace Scrapper.ViewModel
                 if (fsEntries.Length > 0)
                 {
                     Task.Run(() => IterateDirectories(fsEntries));
+                }
+                else
+                {
+                    var dirName = Path.GetFileName(MediaPath);
+                    MessengerInstance.Send(new NotificationMessage<string>(dirName, "MediaDir"));
                 }
             }
         }
