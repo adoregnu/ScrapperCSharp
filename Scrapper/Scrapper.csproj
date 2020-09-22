@@ -182,6 +182,7 @@
     <Compile Include="ViewModel\Base\Pane.cs" />
     <Compile Include="ViewModel\BrowserViewModel.cs" />
     <Compile Include="ViewModel\BrowserViewModelSehuatang.cs" />
+    <Compile Include="ViewModel\ConsoleLogViewModel.cs" />
     <Compile Include="ViewModel\DebugLogViewModel.cs" />
     <Compile Include="ViewModel\FileToFolderViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

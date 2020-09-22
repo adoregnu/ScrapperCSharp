@@ -131,8 +131,8 @@ namespace Scrapper.ViewModel
                 }
                 else
                 {
-                    var dirName = Path.GetFileName(MediaPath);
-                    MessengerInstance.Send(new NotificationMessage<string>(dirName, "MediaDir"));
+                    //var dirName = Path.GetFileName(MediaPath);
+                    MessengerInstance.Send(new NotificationMessage<string>(MediaPath, "MediaPath"));
                 }
             }
         }

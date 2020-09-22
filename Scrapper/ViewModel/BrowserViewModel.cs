@@ -18,6 +18,7 @@ using Scrapper.Spider;
 using Scrapper.ScrapItems;
 using Scrapper.BrowserHandler;
 using Scrapper.ViewModel.Base;
+using System.IO;
 
 namespace Scrapper.ViewModel
 {
@@ -25,14 +26,15 @@ namespace Scrapper.ViewModel
     {
         bool _isLoading = true;
         bool _bStarted = false;
-        private string address;
+
+        string address;
         public string Address
         {
             get { return address; }
             set { Set(ref address, value); }
         }
 
-        private IWpfWebBrowser webBrowser;
+        IWpfWebBrowser webBrowser;
         public IWpfWebBrowser WebBrowser
         {
             get { return webBrowser; }
@@ -61,6 +63,7 @@ namespace Scrapper.ViewModel
                 RaisePropertyChanged("SelectedSpider");
             }
         }
+        public string MediaPath { get; set; }
 
         public BrowserViewModel()
         {
@@ -92,9 +95,9 @@ namespace Scrapper.ViewModel
             }
         }
 
-        void StopAll()
+        public void StopAll()
         {
-            StopLoading();
+            webBrowser.Stop();
             _bStarted = false;
         }
 
@@ -107,15 +110,13 @@ namespace Scrapper.ViewModel
             WebBrowser.DownloadHandler = DownloadHandler;
             WebBrowser.LifeSpanHandler = new PopupHandler();
 
-            WebBrowser.ConsoleMessage += OnConsoleMessage;
+            WebBrowser.ConsoleMessage += (s, e) =>
+            {
+                MessengerInstance.Send(new NotificationMessage<ConsoleMessageEventArgs>(e, "log"));
+            };
             WebBrowser.StatusMessage += OnStatusMessage;
             WebBrowser.LoadingStateChanged += OnStateChanged;
             _selectedSpider.SetCookies();
-        }
-
-        public void StopLoading()
-        {
-            webBrowser.Stop();
         }
 
         void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -133,12 +134,6 @@ namespace Scrapper.ViewModel
                     Log.Print("Address changed: " + Address);
                     break;
             }
-        }
-
-        void OnConsoleMessage(object sender, ConsoleMessageEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.Message))
-                Log.Print("console: " + e.Message);
         }
 
         void OnStatusMessage(object sender, StatusMessageEventArgs e)
@@ -202,13 +197,15 @@ namespace Scrapper.ViewModel
 
         public void SetStausMessage(string msg)
         {
-            MessengerInstance.Send(
-                new NotificationMessage<string>(msg, "UpdateStatus"));
+            MessengerInstance.Send(new NotificationMessage<string>(msg, "UpdateStatus"));
         }
 
-        public void OnMediaPathChanged(NotificationMessage<string> msg)
+        void OnMediaPathChanged(NotificationMessage<string> msg)
         {
-            Log.Print(msg.Content);
+            MediaPath = msg.Content;
+            Pid = Path.GetFileName(MediaPath);
+            RaisePropertyChanged("Pid");
+            Address = _selectedSpider.GetAddress(Pid);
         }
     }
 }

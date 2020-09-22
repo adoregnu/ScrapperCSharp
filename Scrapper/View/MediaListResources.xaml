@@ -48,7 +48,7 @@
     <ControlTemplate x:Key="VideoItem">
         <Grid Width="240" Height="200">
             <local:MediaElementView MediaSource="{Binding Path=MediaPath}"
-                                    ThumbnailPath="{Binding Path=Thumbnail}"/>
+                                    BgImagePath="{Binding Path=BgImagePath}"/>
             <StackPanel VerticalAlignment="Bottom" Background="Black"
                         Opacity="0.70">
                 <TextBlock Text="{Binding MediaName}" Foreground="White"

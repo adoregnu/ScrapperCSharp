@@ -32,8 +32,8 @@
             <StackPanel Orientation="Horizontal" Visibility="{Binding SelectedSpider,
                     Converter={StaticResource BoardVisibilityConverter},
                     ConverterParameter=others}">
-                <TextBlock Margin="5,0,0,0" Text="Product ID:"/>
-                <TextBox Text="{Binding Pid}" Width="50" Margin="5,0,0,0"/>
+                <TextBlock Margin="5,0,0,0" Text="Product ID:" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding Pid}" Width="80" Margin="5,0,0,0"/>
             </StackPanel>
             <Button Content="Start" Command="{Binding CmdStart}" Margin="5,0,0,0"/>
             <Button Content="Stop" Command="{Binding CmdStop}" Margin="5,0,0,0"/>

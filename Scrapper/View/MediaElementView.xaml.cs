@@ -28,10 +28,10 @@ namespace Scrapper.View
             set { SetValue(MediaSourceProperty, value); }
         }
 
-        public string ThumbnailPath
+        public string BgImagePath
         {
-            get { return (string)GetValue(ThumbnailPathProperty); }
-            set { SetValue(ThumbnailPathProperty, value); }
+            get { return (string)GetValue(BgImagePathProperty); }
+            set { SetValue(BgImagePathProperty, value); }
         }
 
         public static DependencyProperty MediaSourceProperty =
@@ -41,8 +41,8 @@ namespace Scrapper.View
                    FrameworkPropertyMetadataOptions.None,
                    OnMediaSourceChanged));
 
-        public static DependencyProperty ThumbnailPathProperty =
-           DependencyProperty.Register("ThumbnailPath", typeof(string),
+        public static DependencyProperty BgImagePathProperty =
+           DependencyProperty.Register("BgImagePath", typeof(string),
                typeof(MediaElementView),
                new FrameworkPropertyMetadata(null,
                    FrameworkPropertyMetadataOptions.None,
@@ -56,7 +56,7 @@ namespace Scrapper.View
             //model.MediaSource = e.NewValue as string;
             //if (!media.CheckThumbnail())
             //    media.OpenMedia();
-            if (e.Property.Name == "ThumbnailPath")
+            if (e.Property.Name == "BgImagePath")
             {
                 //Log.Print($"Property changed ThumbnailPath {e.NewValue}");
                 media.UpdateBgimage();
@@ -73,7 +73,7 @@ namespace Scrapper.View
         {
             try
             {
-                using (var tmp = new Bitmap(ThumbnailPath))
+                using (var tmp = new Bitmap(BgImagePath))
                 {
                     //BgImage.Source = FileToImageConverter.ConvertBitmap(tmp);
                     BgImage.Source = FileToImageConverter.ConvertBitmap(tmp, 240);
@@ -114,8 +114,8 @@ namespace Scrapper.View
             using (var tmp = bitmap.CreateDrawingBitmap())
             {
                 var fileName = ThumbnailGenerator.SnapThumbnail(tmp, path);
-                ThumbnailPath = $"{path}\\{fileName}";
-                Log.Print("SnapThumbnail : " + ThumbnailPath);
+                BgImagePath = $"{path}\\{fileName}";
+                Log.Print("SnapThumbnail : " + BgImagePath);
                 UpdateBgimage();
             }
         }

@@ -14,8 +14,8 @@ namespace Scrapper.Model
 
         public string MediaName { get; private set; }
         public string MediaPath { get; private set; }
-        public string Thumbnail { get; private set; }
         public string Torrent { get; private set; }
+        public string BgImagePath { get; private set; }
         public bool IsDownload { get; private set; } = false;
         public bool IsExcluded { get; private set; } = false;
         public bool IsImage { get; private set; } = true;
@@ -40,9 +40,14 @@ namespace Scrapper.Model
             {
                 Screenshots.Add(path);
             }
-            else if (fname.Contains("_thumbnail"))
+            else if (fname.Contains("_poster"))
             {
-                Thumbnail = path;
+                BgImagePath = path;
+            }
+            else if (string.IsNullOrEmpty(BgImagePath) &&
+                fname.Contains("_thumbnail"))
+            { 
+                BgImagePath = path;
             }
             else if (fname.EndsWith(".downloaded"))
             {

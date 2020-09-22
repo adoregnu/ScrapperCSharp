@@ -50,6 +50,16 @@ namespace Scrapper.Spider
             _isCookieSet = true;
         }
 
+        public override string GetAddress(string param)
+        {
+            return $"{URL}vl_searchbyid.php?keyword={param}";
+        }
+
+        public override void OnScrapCompleted()
+        {
+            Browser.StopAll();
+        }
+
         void OnMultiResult(List<object> list)
         {
             if (list == null || list.Count == 0)
@@ -77,6 +87,7 @@ namespace Scrapper.Spider
             var item = new ItemJavlibrary(this);
             foreach (var xpath in _xpathDic)
             {
+                if (xpath.Key == "videos") continue;
                 ExecJavaScript(item, xpath.Key);
             }
             state = -1;
@@ -88,7 +99,7 @@ namespace Scrapper.Spider
             {
                 if (!string.IsNullOrEmpty(Browser.Pid))
                 {
-                    Browser.Address = $"{URL}vl_searchbyid.php?keyword={Browser.Pid}";
+                    Browser.Address = GetAddress(Browser.Pid);
                     state = 0;
                 }
                 return;
