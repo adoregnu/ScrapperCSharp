@@ -34,9 +34,9 @@ namespace Scrapper.View
             set { SetValue(BgImagePathProperty, value); }
         }
 
-        public string MediaWidth
+        public int MediaWidth
         {
-            get { return (string)GetValue(MediaWidthProperty); }
+            get { return (int)GetValue(MediaWidthProperty); }
             set { SetValue(MediaWidthProperty, value); }
         }
 
@@ -55,23 +55,15 @@ namespace Scrapper.View
                    OnMediaSourceChanged));
 
         public static DependencyProperty MediaWidthProperty =
-           DependencyProperty.Register("MediaWidth", typeof(string),
-               typeof(MediaElementView),
-               new FrameworkPropertyMetadata(null,
-                   FrameworkPropertyMetadataOptions.None,
-                   OnMediaSourceChanged));
+           DependencyProperty.Register("MediaWidth", typeof(int),
+               typeof(MediaElementView), new UIPropertyMetadata(0));
 
         static void OnMediaSourceChanged(DependencyObject src,
             DependencyPropertyChangedEventArgs e)
         {
             var media = src as MediaElementView;
-            //var model = media.DataContext as MediaElementViewModel;
-            //model.MediaSource = e.NewValue as string;
-            //if (!media.CheckThumbnail())
-            //    media.OpenMedia();
             if (e.Property.Name == "BgImagePath")
             {
-                //Log.Print($"Property changed ThumbnailPath {e.NewValue}");
                 media.UpdateBgimage();
             }
         }
@@ -88,10 +80,7 @@ namespace Scrapper.View
             {
                 using (var tmp = new Bitmap(BgImagePath))
                 {
-                    //BgImage.Source = FileToImageConverter.ConvertBitmap(tmp);
-                    int width = string.IsNullOrEmpty(MediaWidth) ?
-                        0 : int.Parse(MediaWidth);
-                    BgImage.Source = FileToImageConverter.ConvertBitmap(tmp, width);
+                    BgImage.Source = FileToImageConverter.ConvertBitmap(tmp, MediaWidth);
                     _hasTakenThumbnail = true;
                 }
             }

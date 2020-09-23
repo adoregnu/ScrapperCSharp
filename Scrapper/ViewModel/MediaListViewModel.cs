@@ -18,8 +18,6 @@ using Unosquare.FFME.Common;
 using Scrapper.Extension;
 using Scrapper.Model;
 using Scrapper.ViewModel.Base;
-using CefSharp.Enums;
-using System.Windows.Interop;
 
 namespace Scrapper.ViewModel
 {
@@ -30,6 +28,8 @@ namespace Scrapper.ViewModel
     class MediaListViewModel : Pane
     {
         readonly FileSystemWatcher _fsWatcher;
+        Dictionary<string, MediaItem> _mediaCache
+            = new Dictionary<string, MediaItem>();
 
         string _mediaPath;
         public string MediaPath
@@ -60,7 +60,16 @@ namespace Scrapper.ViewModel
                 RaisePropertyChanged("Screenshots");
             }
         }
-        public MediaItem MediaItem { get; set; }
+        MediaItem _mediaItem = null;
+        public MediaItem MediaItem
+        {
+            get => _mediaItem;
+            set
+            {
+                _mediaItem = value;
+                RaisePropertyChanged("MediaItem");
+            }
+        }
 
         public ObservableCollection<MediaItem> MediaList { get; set; } =
             new ObservableCollection<MediaItem>();
@@ -121,11 +130,25 @@ namespace Scrapper.ViewModel
         void UpdateMedia()
         {
             MediaList.Clear();
+            if (!File.GetAttributes(MediaPath).HasFlag(FileAttributes.Directory))
+            {
+                return;
+            }
+
+            var fsEntries = Directory.GetDirectories(MediaPath);
+            Task.Run(() => {
+                if (IterateDirectories(fsEntries, 0))
+                    return;
+
+                UiServices.Invoke(delegate {
+                    MediaItem = GetMedia(MediaPath);
+                }, true);
+            });
+#if false
             //MediaList = new ObservableCollection<MediaItem>();
             var attr = File.GetAttributes(MediaPath);
             if (attr.HasFlag(FileAttributes.Directory))
             {
-                //Task.Run(() => Parallel.ForEach(fsEntries, GetMedia));
                 var fsEntries = Directory.GetDirectories(MediaPath);
                 if (fsEntries.Length > 0)
                 {
@@ -141,9 +164,10 @@ namespace Scrapper.ViewModel
                             MediaPath, "MediaPath"));
                 }
             }
+#endif
         }
 
-        bool IterateDirectories(string[] directories)
+        bool IterateDirectories(string[] directories, int level)
         {
             if (directories.Length == 0)
                 return false;
@@ -152,10 +176,10 @@ namespace Scrapper.ViewModel
             {
                 foreach (var dir in directories)
                 {
-                    if (!IterateDirectories(Directory.GetDirectories(dir)))
+                    var dirs = Directory.GetDirectories(dir);
+                    if (!IterateDirectories(dirs, level + 1))
                     {
                         InsertMedia(dir);
-                        Thread.Sleep(10);
                     }
                 }
             }
@@ -167,9 +191,15 @@ namespace Scrapper.ViewModel
         }
 
         MediaItem GetMedia(string path)
-        { 
+        {
+            if (_mediaCache.ContainsKey(path))
+            {
+                return _mediaCache[path];
+            }
+
             var item = new MediaItem();
-            foreach (var file in Directory.GetFileSystemEntries(path))
+            var files = Directory.GetFileSystemEntries(path);
+            foreach (var file in files)
             {
                 item.SetField(file);
                 if (item.IsExcluded || item.IsDownload)
@@ -177,8 +207,11 @@ namespace Scrapper.ViewModel
             }
 
             if (!item.IsMediaDir)
+            {
                 return null;
+            }
 
+            _mediaCache.Add(item.MediaPath, item);
             return item;
         }
 
@@ -193,6 +226,7 @@ namespace Scrapper.ViewModel
                 //MediaList.InsertInPlace(item, i => i.DownloadDt);
                 MediaList.Insert(idx, item);
             }, true);
+            Thread.Sleep(50);
         }
 
         void AddNewMedia(string path)
