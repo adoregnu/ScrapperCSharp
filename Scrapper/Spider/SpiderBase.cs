@@ -10,18 +10,22 @@ using CefSharp;
 
 using Scrapper.ViewModel;
 using Scrapper.ScrapItems;
+using GalaSoft.MvvmLight;
 
 namespace Scrapper.Spider
 {
     delegate void OnJsResult(List<object> items);
 
-    abstract class SpiderBase
+    abstract class SpiderBase : ViewModelBase
     {
         public BrowserViewModel Browser { get; private set; }
         public string URL = null;
         public string Name { get; protected set; } = "";
+        public string Pid { get; set; }
+        public string MediaPath { get; set; }
 
         protected Dictionary<string, string> _xpathDic;
+        protected int _state = -1;
 
         public SpiderBase(BrowserViewModel br)
         {
@@ -45,18 +49,10 @@ namespace Scrapper.Spider
             return XPath(xpath, @"XPathClick.sbn.js");
         }
 
-        public virtual string GetAddress(string param = null)
-        {
-            return URL;// $"{URL}?keyword={param}";
-        }
-
         public virtual void SetCookies() { }
-
-        public virtual void OnBeforeDownload(object sender, DownloadItem e) { }
-
         public virtual void OnDownloadUpdated(object sender, DownloadItem e) { }
-
-        public virtual void OnScrapCompleted() { }
+        public virtual void OnScrapCompleted(string path = null) { }
+        public virtual void Navigate() { }
 
         protected virtual void PrintResult(List<object> items)
         {
@@ -72,7 +68,7 @@ namespace Scrapper.Spider
             Browser.ExecJavaScript(_xpathDic[name], item, name);
         }
 
-        public abstract void Navigate();
+        public abstract void Scrap();
 
         public override string ToString()
         {

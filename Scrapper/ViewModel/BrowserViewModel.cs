@@ -24,7 +24,6 @@ namespace Scrapper.ViewModel
 {
     partial class BrowserViewModel : Pane
     {
-        bool _isLoading = true;
         bool _bStarted = false;
 
         string address;
@@ -41,7 +40,6 @@ namespace Scrapper.ViewModel
             set { Set(ref webBrowser, value); }
         }
 
-        public string Pid { get; set; }
         public List<SpiderBase> Spiders { get; set; }
 
         SpiderBase _selectedSpider;
@@ -63,7 +61,6 @@ namespace Scrapper.ViewModel
                 RaisePropertyChanged("SelectedSpider");
             }
         }
-        public string MediaPath { get; set; }
 
         public BrowserViewModel()
         {
@@ -79,20 +76,12 @@ namespace Scrapper.ViewModel
             Title = Address = _selectedSpider.URL;
 
             PropertyChanged += OnPropertyChanged;
-
-            MessengerInstance.Register<NotificationMessage<string>>(
-                this, OnMediaPathChanged);
         }
 
         public void OnStart()
         {
-            if (_isLoading)
-                Log.MessageBox(Log.Tag.Warn, "Loading... ");
-            else
-            {
-                _bStarted = true;
-                SelectedSpider.Navigate();
-            }
+            _bStarted = true;
+            SelectedSpider.Navigate();
         }
 
         public void StopAll()
@@ -144,10 +133,9 @@ namespace Scrapper.ViewModel
 
         void OnStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
-            _isLoading = e.IsLoading;
             if (!e.IsLoading && _bStarted)
             {
-                SelectedSpider.Navigate();
+                SelectedSpider.Scrap();
             }
         }
 
@@ -198,18 +186,6 @@ namespace Scrapper.ViewModel
         public void SetStausMessage(string msg)
         {
             MessengerInstance.Send(new NotificationMessage<string>(msg, "UpdateStatus"));
-        }
-
-        void OnMediaPathChanged(NotificationMessage<string> msg)
-        {
-            MediaPath = msg.Content;
-            Pid = Path.GetFileName(MediaPath);
-            RaisePropertyChanged("Pid");
-            if (!(_selectedSpider is SpiderSehuatang))
-            {
-                _bStarted = true;
-                Address = _selectedSpider.GetAddress(Pid);
-            }
         }
     }
 }

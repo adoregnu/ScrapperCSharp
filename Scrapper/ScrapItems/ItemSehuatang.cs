@@ -84,7 +84,7 @@ namespace Scrapper.ScrapItems
                 if (_downloadCount == 0)
                 {
                     Clear();
-                    _spider.OnScrapCompleted();
+                    _spider.OnScrapCompleted(Path.GetDirectoryName(e.FullPath));
                 }
             }
         }
@@ -101,7 +101,7 @@ namespace Scrapper.ScrapItems
                 var m = Regex.Match(title, @"[\d\w\-_]+",
                     RegexOptions.CultureInvariant);
 
-                _outPath = (_spider as SpiderSehuatang).BasePath;
+                _outPath = _spider.MediaPath;
                 if (m.Success)
                 {
                     Pid = m.Groups[0].Value;

@@ -76,6 +76,8 @@ namespace Scrapper.View
 
         void UpdateBgimage()
         {
+            if (string.IsNullOrEmpty(BgImagePath))
+                return;
             try
             {
                 using (var tmp = new Bitmap(BgImagePath))

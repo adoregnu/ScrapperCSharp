@@ -108,9 +108,11 @@ namespace Scrapper.ViewModel
             }
             MessengerInstance.Register<NotificationMessageAction<string>>(
                 this, OnQueryMediaPath);
+            
+            MessengerInstance.Register<NotificationMessage<string>>(
+                this, OnMediaUpdated);
 
-            MediaElement.FFmpegMessageLogged +=
-                OnMediaFFmpegMessageLogged;
+            MediaElement.FFmpegMessageLogged += OnMediaFFmpegMessageLogged;
         }
 
         void OnMediaFFmpegMessageLogged(object sender, MediaLogMessageEventArgs e)
@@ -129,6 +131,7 @@ namespace Scrapper.ViewModel
 
         void UpdateMedia()
         {
+            MediaItem = null;
             MediaList.Clear();
             if (!File.GetAttributes(MediaPath).HasFlag(FileAttributes.Directory))
             {
@@ -144,27 +147,6 @@ namespace Scrapper.ViewModel
                     MediaItem = GetMedia(MediaPath);
                 }, true);
             });
-#if false
-            //MediaList = new ObservableCollection<MediaItem>();
-            var attr = File.GetAttributes(MediaPath);
-            if (attr.HasFlag(FileAttributes.Directory))
-            {
-                var fsEntries = Directory.GetDirectories(MediaPath);
-                if (fsEntries.Length > 0)
-                {
-                    MediaItem = null;
-                    Task.Run(() => IterateDirectories(fsEntries));
-                }
-                else
-                {
-                    MediaItem = GetMedia(MediaPath);
-                    RaisePropertyChanged("MediaItem");
-                    if (string.IsNullOrEmpty(MediaItem.BgImagePath))
-                        MessengerInstance.Send(new NotificationMessage<string>(
-                            MediaPath, "MediaPath"));
-                }
-            }
-#endif
         }
 
         bool IterateDirectories(string[] directories, int level)
@@ -190,6 +172,16 @@ namespace Scrapper.ViewModel
             return true;
         }
 
+        void UpdateCache()
+        {
+            var files = Directory.GetFileSystemEntries(MediaPath);
+            foreach (var file in files)
+            {
+                MediaItem.SetField(file);
+            }
+            RaisePropertyChanged("MediaItem");
+        }
+
         MediaItem GetMedia(string path)
         {
             if (_mediaCache.ContainsKey(path))
@@ -211,7 +203,7 @@ namespace Scrapper.ViewModel
                 return null;
             }
 
-            _mediaCache.Add(item.MediaPath, item);
+            _mediaCache.Add(path, item);
             return item;
         }
 
@@ -276,11 +268,24 @@ namespace Scrapper.ViewModel
                 File.Create($"{dir}\\.{type}").Dispose();
                 MediaList.Remove(item);
             }
+            _mediaCache.Remove(dir);
         }
 
-        public void OnQueryMediaPath(NotificationMessageAction<string> msgAction)
+        void OnQueryMediaPath(NotificationMessageAction<string> msgAction)
         {
             msgAction.Execute(MediaPath);
+        }
+
+        void OnMediaUpdated(NotificationMessage<string> msg)
+        {
+            if (msg.Notification == "mediaUpdated")
+            {
+                if (MediaItem != null) UpdateCache();
+                else
+                {
+                    InsertMedia(msg.Content);
+                }
+            }
         }
     }
 }

@@ -105,6 +105,7 @@ namespace TreeViewFileExplorer
             foreach (var drive in drives)
             {
                 if (drive.DriveType != DriveType.Fixed) continue;
+#if false
                 FileSystemWatcher fsWatcher = new FileSystemWatcher
                 {
                     Path = drive.RootDirectory.FullName,
@@ -117,6 +118,7 @@ namespace TreeViewFileExplorer
                 fsWatcher.Deleted += new FileSystemEventHandler(OnChanged);
                 fsWatcher.EnableRaisingEvents = true;
                 _fsWatchers.Add(fsWatcher);
+#endif
             }
         }
 

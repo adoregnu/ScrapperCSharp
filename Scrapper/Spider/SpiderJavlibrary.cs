@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Markup.Localizer;
 using CefSharp;
+using GalaSoft.MvvmLight.Messaging;
 using Scrapper.ScrapItems;
 using Scrapper.ViewModel;
 namespace Scrapper.Spider
 {
     class SpiderJavlibrary : SpiderBase
     {
-        int state = -1;
         public SpiderJavlibrary(BrowserViewModel browser) : base(browser)
         {
             Name = "javlibrary";
@@ -50,14 +51,11 @@ namespace Scrapper.Spider
             _isCookieSet = true;
         }
 
-        public override string GetAddress(string param)
-        {
-            return $"{URL}vl_searchbyid.php?keyword={param}";
-        }
-
-        public override void OnScrapCompleted()
+        public override void OnScrapCompleted(string path)
         {
             Browser.StopAll();
+            MessengerInstance.Send(
+                new NotificationMessage<string>(MediaPath, "mediaUpdated"));
         }
 
         void OnMultiResult(List<object> list)
@@ -74,11 +72,11 @@ namespace Scrapper.Spider
             foreach (string a in list)
             {
                 m = regex.Match(a);
-                if (m.Success && m.Groups["id"].Value == Browser.Pid)
+                if (m.Success && m.Groups["id"].Value == Pid)
                     break;
             }
             if (!m.Success) return;
-            state = 1;
+            _state = 1;
             Browser.Address = $"{URL}{m.Groups["href"].Value}";
         }
 
@@ -90,23 +88,28 @@ namespace Scrapper.Spider
                 if (xpath.Key == "videos") continue;
                 ExecJavaScript(item, xpath.Key);
             }
-            state = -1;
+            _state = -1;
         }
 
         public override void Navigate()
         {
-#if false
-            if (state == -1)
+            MessengerInstance.Send(new NotificationMessageAction<string>(
+                "queryPath", p => { MediaPath = p; }));
+
+            if (!File.GetAttributes(MediaPath).HasFlag(FileAttributes.Directory))
             {
-                if (!string.IsNullOrEmpty(Browser.Pid))
-                {
-                    Browser.Address = GetAddress(Browser.Pid);
-                    state = 0;
-                }
+                Log.Print($"SpiderJavlibrary: {MediaPath} is not a directory!");
                 return;
             }
-#endif
-            switch (state)
+            Pid = Path.GetFileName(MediaPath);
+
+            _state = 0;
+            Browser.Address = $"{URL}vl_searchbyid.php?keyword={Pid}";
+        }
+
+        public override void Scrap()
+        {
+            switch (_state)
             {
             case 0:
                 Browser.ExecJavaScript(_xpathDic["videos"], OnMultiResult);

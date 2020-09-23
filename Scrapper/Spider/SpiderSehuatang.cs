@@ -10,23 +10,16 @@ using System.Windows.Interop;
 using CefSharp;
 using Scrapper.ViewModel;
 using Scrapper.ScrapItems;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Scrapper.Spider
 {
     class SpiderSehuatang : SpiderBase
     {
-        int _state = -1;
         public int NumPage = 1;
-        public string BasePath
-        {
-            get
-            {
-                return $"{App.CurrentPath}sehuatang\\{SelectedBoard}\\";
-            }
-        }
         public bool IsCensored { get; set; } = true;
-        public List<string> Boards;
         public string SelectedBoard = "censored";
+        public List<string> Boards;
 
         public SpiderSehuatang(BrowserViewModel browser) : base(browser)
         {
@@ -50,6 +43,7 @@ namespace Scrapper.Spider
             {
                 "censored", "uncensored", "subtitle"
             };
+            MediaPath = $"{App.CurrentPath}sehuatang\\{SelectedBoard}\\";
         }
 
         void ParsePage()
@@ -122,23 +116,21 @@ namespace Scrapper.Spider
             }
         }
 
-        public override void OnScrapCompleted()
+        public override void OnScrapCompleted(string path)
         {
             MoveArticle(null);
+            MessengerInstance.Send(
+                new NotificationMessage<string>(path, "mediaUpdated"));
         }
 
         public override void Navigate()
         {
-            var tmp = Browser.Address.Split('/');
-            if (_state == -1)
-            {
-                _state = 0;
-                if (!tmp[3].StartsWith("index"))
-                {
-                    Browser.Address = URL;
-                    return;
-                }
-            }
+            _state = 0;
+            Browser.Address = URL;
+        }
+
+        public override void Scrap()
+        {
             switch (_state)
             {
             case 0:
