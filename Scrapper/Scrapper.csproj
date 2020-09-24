@@ -189,6 +189,7 @@
     <Compile Include="Spider\SpiderBase.cs" />
     <Compile Include="Spider\SpiderJavlibrary.cs" />
     <Compile Include="Spider\SpiderSehuatang.cs" />
+    <Compile Include="Tasks\OneTaskLimitedScheduler.cs" />
     <Compile Include="UiServices.cs" />
     <Compile Include="Utils\ThumbnailGenerator.cs" />
     <Compile Include="ViewModel\Base\Pane.cs" />
@@ -198,6 +199,7 @@
     <Compile Include="ViewModel\DebugLogViewModel.cs" />
     <Compile Include="ViewModel\FileListViewModel.cs" />
     <Compile Include="ViewModel\FileToFolderViewModel.cs" />
+    <Compile Include="ViewModel\IFileListNotifier.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="Model\MediaItem.cs" />
     <Compile Include="ViewModel\MediaListViewModel.cs" />

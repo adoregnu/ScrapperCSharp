@@ -8,12 +8,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <DataTemplate x:Key="MediaListTamplate">
+        <ControlTemplate x:Key="MediaListTamplate">
             <local:MediaListView DataContext="{Binding MediaList}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="MediaPlayerTemplate">
+        </ControlTemplate>
+        <ControlTemplate x:Key="MediaPlayerTemplate">
             <local:MediaPlayerView DataContext="{Binding MediaPlayer}"/>
-        </DataTemplate>
+        </ControlTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -21,19 +21,22 @@
             <ColumnDefinition Width="2" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <local:FileListView Grid.Column="0"/>
+        <local:FileListView Grid.Column="0" DataContext="{Binding FileList}"/>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+<!--
+        <local:MediaListView DataContext="{Binding MediaList}" Grid.Column="2"/>
+-->
         <ContentControl Grid.Column="2">
             <ContentControl.Style>
                 <Style TargetType="ContentControl">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding ViewType}" Value="1">
-                            <Setter Property="ContentTemplate"
-                                    Value="{StaticResource MediaListTamplate}"/>
+                        <DataTrigger Binding="{Binding ViewType, Mode=TwoWay}" Value="1">
+                            <Setter Property="Template"
+                                    Value="{DynamicResource MediaListTamplate}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding ViewType}" Value="2">
-                            <Setter Property="ContentTemplate"
-                                    Value="{StaticResource MediaPlayerTemplate}"/>
+                        <DataTrigger Binding="{Binding ViewType, Mode=TwoWay}" Value="2">
+                            <Setter Property="Template"
+                                    Value="{DynamicResource MediaPlayerTemplate}"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

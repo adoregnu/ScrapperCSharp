@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -14,6 +15,7 @@ using GalaSoft.MvvmLight.Messaging;
 
 using Scrapper.Extension;
 using Scrapper.Model;
+using Scrapper.Tasks;
 
 namespace Scrapper.ViewModel
 {
@@ -23,6 +25,10 @@ namespace Scrapper.ViewModel
     }
     class MediaListViewModel : ViewModelBase
     {
+		private readonly SemaphoreSlim _SlowStuffSemaphore;
+		private readonly CancellationTokenSource _CancelTokenSource;
+		private readonly OneTaskLimitedScheduler _OneTaskScheduler;
+
         //readonly FileSystemWatcher _fsWatcher;
         Dictionary<string, MediaItem> _mediaCache
             = new Dictionary<string, MediaItem>();
@@ -57,8 +63,9 @@ namespace Scrapper.ViewModel
             }
         }
 
-        public ObservableCollection<MediaItem> MediaList { get; set; } =
-            new ObservableCollection<MediaItem>();
+        //public ObservableCollection<MediaItem> MediaList { get; set; } =
+        //    new ObservableCollection<MediaItem>();
+        public List<MediaItem> MediaList { get; set; }// = new List<MediaItem>();
         public List<string> Screenshots { get; set; } = null;
 
         public ICommand CmdExclude { get; set; }
@@ -66,16 +73,20 @@ namespace Scrapper.ViewModel
 
         public MediaListViewModel()
         {
+			_SlowStuffSemaphore = new SemaphoreSlim(1, 1);
+			_CancelTokenSource = new CancellationTokenSource();
+			_OneTaskScheduler = new OneTaskLimitedScheduler();
+
             CmdExclude = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.excluded));
             CmdDownload = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.downloaded));
 
+#if false
             _mediaPath = App.CurrentPath;
             try
             {
                 UpdateMedia();
-#if false
                 _fsWatcher = new FileSystemWatcher
                 {
                     Path = MediaPath,
@@ -86,12 +97,12 @@ namespace Scrapper.ViewModel
                 _fsWatcher.Created += new FileSystemEventHandler(OnChanged);
                 _fsWatcher.Deleted += new FileSystemEventHandler(OnChanged);
                 _fsWatcher.EnableRaisingEvents = true;
-#endif
             }
             catch (Exception ex)
             {
                 Log.Print(ex.Message, ex);
             }
+#endif
             MessengerInstance.Register<NotificationMessageAction<string>>(
                 this, OnQueryMediaPath);
             
@@ -99,16 +110,24 @@ namespace Scrapper.ViewModel
                 this, OnMediaUpdated);
         }
 
+        List<MediaItem> _tempList;
         void UpdateMedia()
         {
-            MediaList.Clear();
+            //MediaList.Clear();
+            _tempList = new List<MediaItem>();
             if (!File.GetAttributes(MediaPath).HasFlag(FileAttributes.Directory))
             {
                 return;
             }
 
             var fsEntries = Directory.GetDirectories(MediaPath);
-            Task.Run(() => { IterateDirectories(fsEntries, 0); });
+            Task.Run(() => {
+                IterateDirectories(fsEntries, 0);
+                UiServices.Invoke(delegate {
+                    MediaList = _tempList;
+                    RaisePropertyChanged("MediaList");
+                }, true);
+            });
         }
 
         bool IterateDirectories(string[] directories, int level)
@@ -133,7 +152,6 @@ namespace Scrapper.ViewModel
             }
             return true;
         }
-
 #if false
         void UpdateCache()
         {
@@ -176,13 +194,15 @@ namespace Scrapper.ViewModel
             var item = GetMedia(path);
             if (item == null) return;
 
-            var idx = MediaList.FindItem(item, i => i.DownloadDt);
-            UiServices.Invoke(delegate
+            //var idx = MediaList.FindItem(item, i => i.DownloadDt);
+            //UiServices.Invoke(delegate
             {
                 //MediaList.InsertInPlace(item, i => i.DownloadDt);
-                MediaList.Insert(idx, item);
-            }, true);
-            Thread.Sleep(50);
+                //MediaList.Insert(idx, item);
+                _tempList.Add(item);
+                Log.Print(item.MediaPath);
+            }//, true);
+            //Thread.Sleep(50);
         }
 #if false
         void AddNewMedia(string path)
