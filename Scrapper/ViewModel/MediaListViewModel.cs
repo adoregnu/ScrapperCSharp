@@ -8,16 +8,12 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 
-using Unosquare.FFME;
-using Unosquare.FFME.Common;
-
 using Scrapper.Extension;
 using Scrapper.Model;
-using Scrapper.ViewModel.Base;
 
 namespace Scrapper.ViewModel
 {
@@ -25,9 +21,9 @@ namespace Scrapper.ViewModel
     { 
         excluded, downloaded
     }
-    class MediaListViewModel : Pane
+    class MediaListViewModel : ViewModelBase
     {
-        readonly FileSystemWatcher _fsWatcher;
+        //readonly FileSystemWatcher _fsWatcher;
         Dictionary<string, MediaItem> _mediaCache
             = new Dictionary<string, MediaItem>();
 
@@ -60,16 +56,6 @@ namespace Scrapper.ViewModel
                 RaisePropertyChanged("Screenshots");
             }
         }
-        MediaItem _mediaItem = null;
-        public MediaItem MediaItem
-        {
-            get => _mediaItem;
-            set
-            {
-                _mediaItem = value;
-                RaisePropertyChanged("MediaItem");
-            }
-        }
 
         public ObservableCollection<MediaItem> MediaList { get; set; } =
             new ObservableCollection<MediaItem>();
@@ -80,8 +66,6 @@ namespace Scrapper.ViewModel
 
         public MediaListViewModel()
         {
-            Title = "Media List";
-
             CmdExclude = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.excluded));
             CmdDownload = new RelayCommand<MediaItem>(
@@ -91,6 +75,7 @@ namespace Scrapper.ViewModel
             try
             {
                 UpdateMedia();
+#if false
                 _fsWatcher = new FileSystemWatcher
                 {
                     Path = MediaPath,
@@ -101,6 +86,7 @@ namespace Scrapper.ViewModel
                 _fsWatcher.Created += new FileSystemEventHandler(OnChanged);
                 _fsWatcher.Deleted += new FileSystemEventHandler(OnChanged);
                 _fsWatcher.EnableRaisingEvents = true;
+#endif
             }
             catch (Exception ex)
             {
@@ -111,27 +97,10 @@ namespace Scrapper.ViewModel
             
             MessengerInstance.Register<NotificationMessage<string>>(
                 this, OnMediaUpdated);
-
-            MediaElement.FFmpegMessageLogged += OnMediaFFmpegMessageLogged;
-        }
-
-        void OnMediaFFmpegMessageLogged(object sender, MediaLogMessageEventArgs e)
-        {
-            if (e.MessageType != MediaLogMessageType.Warning &&
-                e.MessageType != MediaLogMessageType.Error)
-                return;
-
-            if (string.IsNullOrWhiteSpace(e.Message) == false &&
-                e.Message.ContainsOrdinal("Using non-standard frame rate"))
-                return;
-
-            //Debug.WriteLine(e);
-            Log.Print(e.Message);
         }
 
         void UpdateMedia()
         {
-            MediaItem = null;
             MediaList.Clear();
             if (!File.GetAttributes(MediaPath).HasFlag(FileAttributes.Directory))
             {
@@ -139,14 +108,7 @@ namespace Scrapper.ViewModel
             }
 
             var fsEntries = Directory.GetDirectories(MediaPath);
-            Task.Run(() => {
-                if (IterateDirectories(fsEntries, 0))
-                    return;
-
-                UiServices.Invoke(delegate {
-                    MediaItem = GetMedia(MediaPath);
-                }, true);
-            });
+            Task.Run(() => { IterateDirectories(fsEntries, 0); });
         }
 
         bool IterateDirectories(string[] directories, int level)
@@ -172,6 +134,7 @@ namespace Scrapper.ViewModel
             return true;
         }
 
+#if false
         void UpdateCache()
         {
             var files = Directory.GetFileSystemEntries(MediaPath);
@@ -181,6 +144,7 @@ namespace Scrapper.ViewModel
             }
             RaisePropertyChanged("MediaItem");
         }
+#endif
 
         MediaItem GetMedia(string path)
         {
@@ -220,7 +184,7 @@ namespace Scrapper.ViewModel
             }, true);
             Thread.Sleep(50);
         }
-
+#if false
         void AddNewMedia(string path)
         {
             Log.Print($"AddNewMedia: {path}");
@@ -230,7 +194,6 @@ namespace Scrapper.ViewModel
         {
             Log.Print($"RemoveMedia : {path}");
         }
-
         void OnChanged(object sender, FileSystemEventArgs e)
         {
             switch (e.ChangeType)
@@ -243,6 +206,7 @@ namespace Scrapper.ViewModel
                     break;
             }
         }
+#endif
 
         void OnContextMenu(MediaItem item, MediaListMenuType type)
         {
@@ -280,11 +244,8 @@ namespace Scrapper.ViewModel
         {
             if (msg.Notification == "mediaUpdated")
             {
-                if (MediaItem != null) UpdateCache();
-                else
-                {
-                    InsertMedia(msg.Content);
-                }
+                //if (MediaItem != null) UpdateCache();
+                //else InsertMedia(msg.Content);
             }
         }
     }

@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="Scrapper.View.MediaView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:Scrapper.ViewModel"
+             xmlns:local="clr-namespace:Scrapper.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <DataTemplate x:Key="MediaListTamplate">
+            <local:MediaListView DataContext="{Binding MediaList}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="MediaPlayerTemplate">
+            <local:MediaPlayerView DataContext="{Binding MediaPlayer}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="2" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <local:FileListView Grid.Column="0"/>
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+        <ContentControl Grid.Column="2">
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewType}" Value="1">
+                            <Setter Property="ContentTemplate"
+                                    Value="{StaticResource MediaListTamplate}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ViewType}" Value="2">
+                            <Setter Property="ContentTemplate"
+                                    Value="{StaticResource MediaPlayerTemplate}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+    </Grid>
+</UserControl>

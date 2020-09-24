@@ -103,32 +103,4 @@
     <ItemsPanelTemplate x:Key="ImagePanelTemplate">
         <WrapPanel />
     </ItemsPanelTemplate>
-
-    <ControlTemplate x:Key="ImageListControl">
-        <DockPanel Grid.Column="3">
-
-            <ListBox ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                     ItemTemplate="{DynamicResource ScreenshotTemplate}"
-                     ItemsPanel="{DynamicResource ImagePanelTemplate}"
-                     ItemsSource="{Binding Screenshots}"
-                     Height="150" DockPanel.Dock="Bottom">
-                <ListBox.Background>
-                    <Brush>Black</Brush>
-                </ListBox.Background>
-            </ListBox>
-
-            <ListBox x:Name="ImageListBox"
-                    VirtualizingPanel.IsVirtualizing="True"
-                     ItemsSource="{Binding MediaList}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ItemTemplate="{DynamicResource ImageListTemplate}"
-                     ItemsPanel="{DynamicResource ImagePanelTemplate}"
-                     SelectedItem="{Binding SelectedMedia, Mode=TwoWay}">
-                <ListBox.Background>
-                    <Brush>Black</Brush>
-                </ListBox.Background>
-            </ListBox>
-
-        </DockPanel>
-    </ControlTemplate> 
 </ResourceDictionary>

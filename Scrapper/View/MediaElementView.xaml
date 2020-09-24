@@ -14,13 +14,5 @@
                                IsDesignPreviewEnabled="True" 
                                IsMuted="True"/>
         <Image Name="BgImage"/>
-        <!--
-            <ContentControl Name="MediaContent" Content="{Binding Media}"/>
-            <MediaElement Name="Media" Source="{Binding MediaPath}"
-                          LoadedBehavior="Manual"
-                          MouseEnter="MediaPlayerOnMouseEnter"
-                          MouseLeave="MediaPlayerOnMouseLeave"
-                          Loaded="MediaPlayerOnLoaded"/>
-            -->
     </Grid>
 </UserControl>

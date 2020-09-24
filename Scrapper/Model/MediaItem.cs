@@ -37,11 +37,11 @@ namespace Scrapper.Model
             {
                 Screenshots.Add(path);
             }
-            else if (fname.Contains("_poster"))
+            else if (fname.Contains("_poster."))
             {
                 BgImagePath = path;
             }
-            else if (string.IsNullOrEmpty(BgImagePath) && fname.Contains("_thumbnail"))
+            else if (string.IsNullOrEmpty(BgImagePath) && fname.Contains("_thumbnail."))
             { 
                 BgImagePath = path;
             }
@@ -53,7 +53,7 @@ namespace Scrapper.Model
             {
                 IsExcluded = true;
             }
-            else if (fname.Contains("cover"))
+            else if (fname.Contains("_cover."))
             {
                 var dir = Path.GetDirectoryName(path).Split('\\').Last();
                 MediaPath = path;

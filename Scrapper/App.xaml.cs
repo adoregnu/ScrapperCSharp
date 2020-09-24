@@ -29,7 +29,7 @@ namespace Scrapper
         {
             log4net.Config.XmlConfigurator.Configure();
             //CurrentPath = Directory.GetCurrentDirectory() + "\\web\\";
-            CurrentPath = @"d:\tmp\";
+            CurrentPath = @"c:\tmp\";
             var di = new DirectoryInfo(CurrentPath);
             if (!di.Exists)
             {
@@ -127,6 +127,7 @@ namespace Scrapper
             // Pre-load FFmpeg libraries in the background. This is optional.
             // FFmpeg will be automatically loaded if not already loaded when you try to open
             // a new stream or file. See issue #242
+#if false
             Task.Run(async () =>
             {
                 try
@@ -156,6 +157,7 @@ namespace Scrapper
                     }
                 }
             });
+#endif
         }
 
         private void SetupExceptionHandling()

@@ -35,7 +35,7 @@ namespace Scrapper.ViewModel
             Anchors.Add(new DebugLogViewModel());
             Anchors.Add(new ConsoleLogViewModel());
 
-            Docs.Add(new MediaListViewModel());
+            Docs.Add(new MediaViewModel());
             Docs.Add(new BrowserViewModel());
 
             CmdFileToFolder = new RelayCommand(() => OnFileToFolder());

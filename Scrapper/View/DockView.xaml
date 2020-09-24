@@ -40,11 +40,11 @@
                     </DataTemplate>
                 </pane:PanesTemplateSelector.BrowserViewTemplate>
 
-                <pane:PanesTemplateSelector.MediaListViewTemplate>
+                <pane:PanesTemplateSelector.MediaViewTemplate>
                     <DataTemplate>
-                        <view:MediaListView></view:MediaListView>
+                        <view:MediaView></view:MediaView>
                     </DataTemplate>
-                </pane:PanesTemplateSelector.MediaListViewTemplate>
+                </pane:PanesTemplateSelector.MediaViewTemplate>
 
             </pane:PanesTemplateSelector>
         </ad:DockingManager.LayoutItemTemplateSelector>

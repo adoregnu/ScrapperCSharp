@@ -6,9 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Markup.Localizer;
+
 using CefSharp;
 using GalaSoft.MvvmLight.Messaging;
+
 using Scrapper.ScrapItems;
 using Scrapper.ViewModel;
 namespace Scrapper.Spider
