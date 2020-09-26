@@ -26,7 +26,16 @@ namespace Scrapper.ViewModel
         public ObservableCollection<Pane> Anchors { get; }
             = new ObservableCollection<Pane>();
 
-        public string Status { get; set; }
+        string _status;
+        public string Status
+        {
+            get => _status;
+            set
+            {
+                _status = value;
+                RaisePropertyChanged("Status");
+            }
+        }
 
         readonly IDialogService _dialogService;
 
@@ -34,6 +43,7 @@ namespace Scrapper.ViewModel
         {
             Anchors.Add(new DebugLogViewModel());
             Anchors.Add(new ConsoleLogViewModel());
+            Anchors.Add(new StatusLogViewModel());
 
             Docs.Add(new MediaViewModel());
             Docs.Add(new BrowserViewModel());
@@ -53,6 +63,7 @@ namespace Scrapper.ViewModel
 
         void OnStatusMessage(NotificationMessage<string> msg)
         {
+            if (!msg.Notification.EndsWith("Status")) return;
             if (msg.Notification == "UpdateStatus")
             {
                 Status = msg.Content;
@@ -61,7 +72,6 @@ namespace Scrapper.ViewModel
             { 
                 Status = "";
             }
-            RaisePropertyChanged(Status);
         }
     }
 }

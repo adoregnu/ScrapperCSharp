@@ -44,8 +44,9 @@ namespace Scrapper.ViewModel
         public FileToFolderViewModel()
         {
             Files = new ObservableCollection<FileItem>();
+            /// query current path to MediaViewModel
             MessengerInstance.Send(new NotificationMessageAction<string>(
-                "queryPath", p => { MediaPath = p; }));
+                "queryCurrentPath", p => { MediaPath = p; }));
 
             CmdPreview = new RelayCommand(() => OnPreview());
             CmdRename = new RelayCommand(() => OnRename());

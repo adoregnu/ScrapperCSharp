@@ -12,31 +12,17 @@ using Scrapper.Spider;
 
 namespace Scrapper.ScrapItems
 {
-    class ItemSehuatang : IScrapItem
+    class ItemSehuatang : ItemBase, IScrapItem
     {
-        public string Pid;
         public DateTime DateTime;
 
-        readonly SpiderBase _spider;
         string _outPath = null;
         int _downloadCount = 0;
         bool _bStop = false;
         Dictionary<string, int> _images = null;
 
-        public ItemSehuatang(SpiderBase spider)
+        public ItemSehuatang(SpiderBase spider) : base(spider)
         {
-            _spider = spider;
-            var dh = _spider.Browser.DownloadHandler;
-            dh.OnBeforeDownloadFired += OnBeforeDownload;
-            dh.OnDownloadUpdatedFired += OnDownloadUpdated;
-        }
-
-        void Clear()
-        { 
-            var dh = _spider.Browser.DownloadHandler;
-            dh.OnBeforeDownloadFired -= OnBeforeDownload;
-            dh.OnDownloadUpdatedFired -= OnDownloadUpdated;
-            Log.Print("ItemSehuatang::Clear()");
         }
 
         void PrepareDirectory()
@@ -46,15 +32,24 @@ namespace Scrapper.ScrapItems
             {
                 Directory.CreateDirectory(_outPath);
             }
-            else if (_spider.Browser.StopOnExistingId)
+            else 
             {
                 _bStop = true;
                 Log.Print($"Already downloaded! {_outPath}");
+                if (_spider.Browser.StopOnExistingId)
+                {
+                    Log.Print("Stop Scrapping!");
+                }
+                else
+                {
+                    Log.Print(" Continue next Item!");
+                    _spider.OnScrapCompleted(null);
+                }
                 Clear();
             }
         }
 
-        void OnBeforeDownload(object sender, DownloadItem e)
+        protected override void OnBeforeDownload(object sender, DownloadItem e)
         {
             if (e.SuggestedFileName.EndsWith("torrent"))
             {
@@ -74,7 +69,7 @@ namespace Scrapper.ScrapItems
             Log.Print($"{Pid} file to store: {e.SuggestedFileName}");
         }
 
-        void OnDownloadUpdated(object sender, DownloadItem e)
+        protected override void OnDownloadUpdated(object sender, DownloadItem e)
         {
             if (e.IsComplete)
             {

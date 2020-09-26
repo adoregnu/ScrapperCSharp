@@ -56,6 +56,9 @@ namespace Scrapper.ViewModel
 
 		public ICommand UpCommand { get; set; }
 		public ICommand RefreshCommand { get; set; }
+		public ICommand SelectionChanged { get; set; }
+		public ICommand EscPressed { get; set; }
+		public ICommand CheckboxChanged { get; set; }
 
 		public FileListViewModel(IFileListNotifier notifier)
 		{
@@ -67,6 +70,9 @@ namespace Scrapper.ViewModel
 			FolderItemsView = FileListView.Factory.CreateFileListViewModel();
 			UpCommand = new RelayCommand<object>(p => OnUpCommand(), p => CanUpCommand());
 			RefreshCommand = new RelayCommand<object>((p) => OnRefreshCommand());
+			SelectionChanged = new RelayCommand<object>(p => OnSelectionChanged(p));
+			EscPressed = new RelayCommand<object>(p => OnEscPressed());
+			CheckboxChanged = new RelayCommand<object>(p => OnCheckboxChanged(p));
 
 			// This is fired when the current folder in the listview changes to another existing folder
 			WeakEventManager<ICanNavigate, BrowsingEventArgs>
@@ -103,6 +109,27 @@ namespace Scrapper.ViewModel
 		{
 			NavigateToFolder(PathFactory.Create(_selectedFoder));
 		}
+
+		void OnSelectionChanged(object param)
+		{
+			//Log.Print(param.ToString());
+			if (param != null)
+			{
+				_fileListNotifier.OnFileSelected(param.ToString());
+			}
+		}
+
+		void OnEscPressed()
+		{
+			_fileListNotifier.OnFileSelected(null);
+		}
+
+		void OnCheckboxChanged(object param)
+		{
+			ILVItemViewModel item = param as ILVItemViewModel;
+			_fileListNotifier.OnCheckboxChanged(item);
+		}
+
 
 		/// <summary>
 		/// Master controller interface method to navigate all views
@@ -168,7 +195,6 @@ namespace Scrapper.ViewModel
 					cancel.ThrowIfCancellationRequested();
 
 				FolderItemsView.SetExternalBrowsingState(true);
-				//FolderTextPath.SetExternalBrowsingState(true);
 				FinalBrowseResult browseResult = null;
                 // Navigate Folder/File ListView to this folder
                 browseResult = await FolderItemsView.NavigateToAsync(request);
@@ -178,7 +204,6 @@ namespace Scrapper.ViewModel
 				if (browseResult.Result == BrowseResult.Complete)
 				{
 					SelectedFolder = newPath.Path;
-					//NaviHistory.Forward(newPath);  // Log location into history of recent locations
 				}
 				return browseResult;
 			}
@@ -191,7 +216,6 @@ namespace Scrapper.ViewModel
 			finally
 			{
 				FolderItemsView.SetExternalBrowsingState(false);
-				//FolderTextPath.SetExternalBrowsingState(false);
 
 				_SlowStuffSemaphore.Release();
 			}

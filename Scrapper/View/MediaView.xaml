@@ -17,15 +17,12 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="200" />
             <ColumnDefinition Width="2" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <local:FileListView Grid.Column="0" DataContext="{Binding FileList}"/>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
-<!--
-        <local:MediaListView DataContext="{Binding MediaList}" Grid.Column="2"/>
--->
         <ContentControl Grid.Column="2">
             <ContentControl.Style>
                 <Style TargetType="ContentControl">

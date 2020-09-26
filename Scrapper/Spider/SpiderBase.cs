@@ -11,6 +11,8 @@ using CefSharp;
 using Scrapper.ViewModel;
 using Scrapper.ScrapItems;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
+using System.IO;
 
 namespace Scrapper.Spider
 {
@@ -49,10 +51,40 @@ namespace Scrapper.Spider
             return XPath(xpath, @"XPathClick.sbn.js");
         }
 
-        public virtual void SetCookies() { }
+        public virtual void Navigate()
+        {
+            MessengerInstance.Send(new NotificationMessageAction<string>(
+                "querySelectedPath", p => { MediaPath = p; }));
+
+            if (!File.GetAttributes(MediaPath).HasFlag(FileAttributes.Directory))
+            {
+                Log.Print($"SpiderJavlibrary: {MediaPath} is not a directory!");
+                return;
+            }
+            Pid = Path.GetFileName(MediaPath);
+        }
+
+        public virtual Cookie CreateCookie() { return null; }
         public virtual void OnDownloadUpdated(object sender, DownloadItem e) { }
-        public virtual void OnScrapCompleted(string path = null) { }
-        public virtual void Navigate() { }
+
+        bool _isCookieSet = false;
+        public void SetCookies()
+        {
+            if (_isCookieSet) return;
+            var cookie = CreateCookie();
+            if (cookie == null) return;
+
+            var cookieManager = Cef.GetGlobalCookieManager();
+            cookieManager.SetCookieAsync(URL, cookie);
+            _isCookieSet = true;
+        }
+
+        public virtual void OnScrapCompleted(string path = null)
+        {
+            Browser.StopAll();
+            MessengerInstance.Send(
+                new NotificationMessage<string>(MediaPath, "mediaUpdated"));
+        }
 
         protected virtual void PrintResult(List<object> items)
         {

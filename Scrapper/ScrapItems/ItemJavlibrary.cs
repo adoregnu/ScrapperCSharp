@@ -11,52 +11,17 @@ using CefSharp;
 using Scrapper.Spider;
 namespace Scrapper.ScrapItems
 {
-    class ItemJavlibrary : IScrapItem
+    class ItemJavlibrary : ItemBase, IScrapItem
     {
-        readonly SpiderBase _spider;
-        int _numScrapedItem = 0;
-
-        public string Pid;
-        public ItemJavlibrary(SpiderBase spider)
+        public ItemJavlibrary(SpiderBase spider) :base(spider)
         {
-            _spider = spider;
-            var dh = _spider.Browser.DownloadHandler;
-            dh.OnBeforeDownloadFired += OnBeforeDownload;
-            dh.OnDownloadUpdatedFired += OnDownloadUpdated;
+            _numItemsToScrap = 9;
         }
 
-        void Clear()
-        {
-            var dh = _spider.Browser.DownloadHandler;
-            dh.OnBeforeDownloadFired -= OnBeforeDownload;
-            dh.OnDownloadUpdatedFired -= OnDownloadUpdated;
-            Log.Print("ItemJavlibrary::Clear()");
-        }
-
-        int _numItemsToScrap = 9;
-        void CheckCompleted()
-        {
-            Interlocked.Increment(ref _numScrapedItem);
-            if (_numScrapedItem == _numItemsToScrap)
-            {
-                Clear();
-                _spider.OnScrapCompleted();
-            }
-        }
-
-        void OnBeforeDownload(object sender, DownloadItem e)
+        protected override void OnBeforeDownload(object sender, DownloadItem e)
         {
             var ext = Path.GetExtension(e.SuggestedFileName);
             e.SuggestedFileName = $"{_spider.MediaPath}\\{Pid}_poster{ext}";
-        }
-
-        void OnDownloadUpdated(object sender, DownloadItem e)
-        {
-            if (e.IsComplete)
-            { 
-                Log.Print($"{Pid} download completed: {e.FullPath}");
-                CheckCompleted();
-            }
         }
 
         void IScrapItem.OnJsResult(string name, List<object> items)

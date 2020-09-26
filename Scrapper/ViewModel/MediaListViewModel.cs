@@ -9,13 +9,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
+
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 
+using FileListView.Interfaces;
+using FileSystemModels.Models.FSItems.Base;
+
 using Scrapper.Extension;
 using Scrapper.Model;
 using Scrapper.Tasks;
+using FFmpeg.AutoGen;
 
 namespace Scrapper.ViewModel
 {
@@ -25,25 +30,11 @@ namespace Scrapper.ViewModel
     }
     class MediaListViewModel : ViewModelBase
     {
-		private readonly SemaphoreSlim _SlowStuffSemaphore;
-		private readonly CancellationTokenSource _CancelTokenSource;
-		private readonly OneTaskLimitedScheduler _OneTaskScheduler;
-
         //readonly FileSystemWatcher _fsWatcher;
         Dictionary<string, MediaItem> _mediaCache
             = new Dictionary<string, MediaItem>();
+        IEnumerable<ILVItemViewModel> _currentFiles;
 
-        string _mediaPath;
-        public string MediaPath
-        {
-            get => _mediaPath;
-            set
-            {
-                _mediaPath = value;
-                UpdateMedia();
-                RaisePropertyChanged("MediaPath");
-            }
-        }
         MediaItem _selectedMedia = null;
         public MediaItem SelectedMedia
         {
@@ -63,33 +54,28 @@ namespace Scrapper.ViewModel
             }
         }
 
-        //public ObservableCollection<MediaItem> MediaList { get; set; } =
-        //    new ObservableCollection<MediaItem>();
-        public List<MediaItem> MediaList { get; set; }// = new List<MediaItem>();
+        public ObservableCollection<MediaItem> MediaList { get; set; } =
+            new ObservableCollection<MediaItem>();
         public List<string> Screenshots { get; set; } = null;
+        public string CurrentFolder { get; set; }
 
         public ICommand CmdExclude { get; set; }
         public ICommand CmdDownload { get; set; }
 
         public MediaListViewModel()
         {
-			_SlowStuffSemaphore = new SemaphoreSlim(1, 1);
-			_CancelTokenSource = new CancellationTokenSource();
-			_OneTaskScheduler = new OneTaskLimitedScheduler();
-
             CmdExclude = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.excluded));
             CmdDownload = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.downloaded));
 
 #if false
-            _mediaPath = App.CurrentPath;
             try
             {
                 UpdateMedia();
                 _fsWatcher = new FileSystemWatcher
                 {
-                    Path = MediaPath,
+                    Path = CurrentFolder,
                     Filter = "*.*",
                     NotifyFilter = NotifyFilters.FileName,
                     IncludeSubdirectories = true
@@ -103,75 +89,80 @@ namespace Scrapper.ViewModel
                 Log.Print(ex.Message, ex);
             }
 #endif
-            MessengerInstance.Register<NotificationMessageAction<string>>(
-                this, OnQueryMediaPath);
-            
-            MessengerInstance.Register<NotificationMessage<string>>(
-                this, OnMediaUpdated);
         }
 
-        List<MediaItem> _tempList;
-        void UpdateMedia()
+        readonly List<MediaItem> _deselectedItems = new List<MediaItem>();
+        public void UpdateMediaList(ILVItemViewModel item)
         {
-            //MediaList.Clear();
-            _tempList = new List<MediaItem>();
-            if (!File.GetAttributes(MediaPath).HasFlag(FileAttributes.Directory))
+            if (item.IsChecked)
             {
-                return;
+                var medias = _deselectedItems.FindAll(
+                                i => i.MediaPath.StartsWith(item.ItemPath));
+                foreach (var media in medias)
+                {
+                    MediaList.InsertInPlace(media, i => i.DownloadDt);
+                    _deselectedItems.Remove(media);
+                }
             }
+            else
+            {
+                var medias = MediaList.Cast<MediaItem>().Where(
+                    i => i.MediaPath.StartsWith(item.ItemPath,
+                        StringComparison.CurrentCultureIgnoreCase)).ToList();
+                medias.ForEach(x => MediaList.Remove(x));
+                _deselectedItems.AddRange(medias);
+            }
+        }
 
-            var fsEntries = Directory.GetDirectories(MediaPath);
+        public void RefreshMediaList(IEnumerable<ILVItemViewModel> currentFiles)
+        {
+            MediaList.Clear();
+            _currentFiles = currentFiles;
+
             Task.Run(() => {
-                IterateDirectories(fsEntries, 0);
-                UiServices.Invoke(delegate {
-                    MediaList = _tempList;
-                    RaisePropertyChanged("MediaList");
-                }, true);
+                if (_deselectedItems.Count > 0)
+                    _deselectedItems.Clear();
+
+                foreach (var file in _currentFiles)
+                {
+                    if (!file.IsChecked) continue;
+                    if (file.ItemType == FSItemType.Folder ||
+                        file.ItemName == "sehuatang")
+                    {
+                        UpdateMediaListInternal(file.ItemPath);
+                    }
+                }
             });
         }
 
-        bool IterateDirectories(string[] directories, int level)
+        void UpdateMediaListInternal(string path)
         {
-            if (directories.Length == 0)
-                return false;
-
-            try
+            var fsEntries = Directory.GetDirectories(path);
+            if (fsEntries.Length == 0)
             {
-                foreach (var dir in directories)
+                InsertMedia(path);
+            }
+            else
+            {
+                foreach (var fsEntry in fsEntries)
                 {
-                    var dirs = Directory.GetDirectories(dir);
-                    if (!IterateDirectories(dirs, level + 1))
-                    {
-                        InsertMedia(dir);
-                    }
+                    UpdateMediaListInternal(fsEntry);
                 }
             }
-            catch (Exception ex)
-            {
-                Log.Print(ex.Message);
-            }
-            return true;
         }
-#if false
-        void UpdateCache()
-        {
-            var files = Directory.GetFileSystemEntries(MediaPath);
-            foreach (var file in files)
-            {
-                MediaItem.SetField(file);
-            }
-            RaisePropertyChanged("MediaItem");
-        }
-#endif
 
-        MediaItem GetMedia(string path)
+        public MediaItem GetMedia(string path, bool updateCache = false)
         {
+            MediaItem item = null;
+            bool isCached = false;
             if (_mediaCache.ContainsKey(path))
             {
-                return _mediaCache[path];
+                if (!updateCache) return _mediaCache[path];
+                item = _mediaCache[path];
+                isCached = true;
             }
 
-            var item = new MediaItem();
+            if (!isCached) item = new MediaItem();
             var files = Directory.GetFileSystemEntries(path);
             foreach (var file in files)
             {
@@ -184,25 +175,22 @@ namespace Scrapper.ViewModel
             {
                 return null;
             }
-
-            _mediaCache.Add(path, item);
+            if (!isCached) _mediaCache.Add(path, item);
             return item;
         }
 
-        void InsertMedia(string path)
+        public void InsertMedia(string path)
         {
             var item = GetMedia(path);
             if (item == null) return;
 
-            //var idx = MediaList.FindItem(item, i => i.DownloadDt);
-            //UiServices.Invoke(delegate
+            var idx = MediaList.FindItem(item, i => i.DownloadDt);
+            UiServices.Invoke(delegate
             {
                 //MediaList.InsertInPlace(item, i => i.DownloadDt);
-                //MediaList.Insert(idx, item);
-                _tempList.Add(item);
-                Log.Print(item.MediaPath);
-            }//, true);
-            //Thread.Sleep(50);
+                MediaList.Insert(idx, item);
+            }, true);
+            Thread.Sleep(50);
         }
 #if false
         void AddNewMedia(string path)
@@ -231,7 +219,6 @@ namespace Scrapper.ViewModel
         void OnContextMenu(MediaItem item, MediaListMenuType type)
         {
             if (item == null) return;
-            Log.Print(item.MediaPath);
             var dir = Path.GetDirectoryName(item.MediaPath);
             if (type == MediaListMenuType.downloaded)
             {
@@ -241,6 +228,7 @@ namespace Scrapper.ViewModel
                     File.Copy(item.Torrent, @"z:\Downloads\" + torrent);
                     File.Create($"{dir}\\.{type}").Dispose();
                     MediaList.Remove(item);
+                    Log.Print($"Makrk downloaded {item.Torrent}");
                 }
                 catch (Exception ex)
                 {
@@ -251,22 +239,9 @@ namespace Scrapper.ViewModel
             { 
                 File.Create($"{dir}\\.{type}").Dispose();
                 MediaList.Remove(item);
+                Log.Print($"Mark excluded {item.Torrent}");
             }
             _mediaCache.Remove(dir);
-        }
-
-        void OnQueryMediaPath(NotificationMessageAction<string> msgAction)
-        {
-            msgAction.Execute(MediaPath);
-        }
-
-        void OnMediaUpdated(NotificationMessage<string> msg)
-        {
-            if (msg.Notification == "mediaUpdated")
-            {
-                //if (MediaItem != null) UpdateCache();
-                //else InsertMedia(msg.Content);
-            }
         }
     }
 }

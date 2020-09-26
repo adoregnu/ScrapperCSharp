@@ -87,12 +87,6 @@
     <Reference Include="FFmpeg.AutoGen, Version=4.3.0.2, Culture=neutral, PublicKeyToken=9b7632533a381715, processorArchitecture=MSIL">
       <HintPath>..\packages\FFmpeg.AutoGen.4.3.0.2\lib\net472\FFmpeg.AutoGen.dll</HintPath>
     </Reference>
-    <Reference Include="FileListView, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dirkster.FileListView.3.1.2\lib\net452\FileListView.dll</HintPath>
-    </Reference>
-    <Reference Include="FileSystemModels, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dirkster.FileSystemModels.3.1.1\lib\net452\FileSystemModels.dll</HintPath>
-    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
@@ -113,6 +107,9 @@
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.11\lib\net45\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Expression.Interaction.3.0.40218.0\lib\net46\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
     <Reference Include="MvvmDialogs, Version=7.1.1.0, Culture=neutral, PublicKeyToken=3d3b9708589bc73e, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmDialogs.7.1.1\lib\net472\MvvmDialogs.dll</HintPath>
@@ -149,7 +146,7 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Expression.Interaction.3.0.40218.0\lib\net46\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -183,11 +180,14 @@
     <Compile Include="Extension\Extensions.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Model\AvItem.cs" />
+    <Compile Include="ScrapItems\ItemBase.cs" />
     <Compile Include="ScrapItems\ItemJavlibrary.cs" />
+    <Compile Include="ScrapItems\ItemMgstage.cs" />
     <Compile Include="ScrapItems\ItemSehuatang.cs" />
     <Compile Include="ScrapItems\IScrapItem.cs" />
     <Compile Include="Spider\SpiderBase.cs" />
     <Compile Include="Spider\SpiderJavlibrary.cs" />
+    <Compile Include="Spider\SpiderMgstage.cs" />
     <Compile Include="Spider\SpiderSehuatang.cs" />
     <Compile Include="Tasks\OneTaskLimitedScheduler.cs" />
     <Compile Include="UiServices.cs" />
@@ -205,6 +205,7 @@
     <Compile Include="ViewModel\MediaListViewModel.cs" />
     <Compile Include="ViewModel\MediaPlayerViewModel.cs" />
     <Compile Include="ViewModel\MediaViewModel.cs" />
+    <Compile Include="ViewModel\StatusLogViewModel.cs" />
     <Compile Include="ViewModel\TextViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\Behavior\AvalonEditBehavior.cs" />
@@ -328,9 +329,13 @@
     <EmbeddedResource Include="Resources\XPathClick.sbn.js" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TreeViewFileExplor\TreeViewFileExplorer.csproj">
-      <Project>{55a860b9-fa12-495f-b1e3-9086fba2eb70}</Project>
-      <Name>TreeViewFileExplorer</Name>
+    <ProjectReference Include="..\FileListView\FileListView.csproj">
+      <Project>{735cf8ec-a4ef-49a2-bc72-ec360a0185a4}</Project>
+      <Name>FileListView</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileSystemModels\FileSystemModels.csproj">
+      <Project>{391639c4-5c43-4391-9465-27686e82c33f}</Project>
+      <Name>FileSystemModels</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

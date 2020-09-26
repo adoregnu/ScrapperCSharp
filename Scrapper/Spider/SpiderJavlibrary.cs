@@ -35,28 +35,15 @@ namespace Scrapper.Spider
             };
         }
 
-        bool _isCookieSet = false;
-        public override void SetCookies()
+        public override Cookie CreateCookie()
         {
-            if (_isCookieSet) return;
-
-            var cookieManager = Cef.GetGlobalCookieManager();
-            var cookie = new Cookie
+            return new Cookie
             {
                 Name = "over18",
                 Value = "18",
                 Domain = "www.javlibrary.com",
                 Path = "/"
             };
-            cookieManager.SetCookieAsync(URL, cookie);
-            _isCookieSet = true;
-        }
-
-        public override void OnScrapCompleted(string path)
-        {
-            Browser.StopAll();
-            MessengerInstance.Send(
-                new NotificationMessage<string>(MediaPath, "mediaUpdated"));
         }
 
         void OnMultiResult(List<object> list)
@@ -94,15 +81,7 @@ namespace Scrapper.Spider
 
         public override void Navigate()
         {
-            MessengerInstance.Send(new NotificationMessageAction<string>(
-                "queryPath", p => { MediaPath = p; }));
-
-            if (!File.GetAttributes(MediaPath).HasFlag(FileAttributes.Directory))
-            {
-                Log.Print($"SpiderJavlibrary: {MediaPath} is not a directory!");
-                return;
-            }
-            Pid = Path.GetFileName(MediaPath);
+            base.Navigate();
 
             _state = 0;
             Browser.Address = $"{URL}vl_searchbyid.php?keyword={Pid}";

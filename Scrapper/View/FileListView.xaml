@@ -9,6 +9,8 @@
              xmlns:fvbehav="clr-namespace:FileListView.Views.Behavior;assembly=FileListView"
              xmlns:fvloc="clr-namespace:FileSystemModels.Local;assembly=FileSystemModels"
              xmlns:conv="clr-namespace:FileListView.Converters;assembly=FileListView"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:iex="http://schemas.microsoft.com/expression/2010/interactions"
              xmlns:local="clr-namespace:Scrapper.View"
              mc:Ignorable="d" 
              d:DesignHeight="350" d:DesignWidth="300">
@@ -47,6 +49,19 @@
 				ScrollViewer.HorizontalScrollBarVisibility="Auto"
 				ScrollViewer.VerticalScrollBarVisibility="Auto"
 				SelectedItem="{Binding SelectedItem}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseLeftButtonUp">
+                        <i:InvokeCommandAction Command="{Binding DataContext.SelectionChanged,
+                            RelativeSource={RelativeSource FindAncestor,
+                            AncestorType={x:Type UserControl}}}"
+                                               CommandParameter="{Binding SelectedItem}"/>
+                    </i:EventTrigger>
+                    <iex:KeyTrigger Key="Esc">
+                        <i:InvokeCommandAction Command="{Binding DataContext.EscPressed,
+                            RelativeSource={RelativeSource FindAncestor,
+                            AncestorType={x:Type UserControl}}}" />
+                    </iex:KeyTrigger>
+                </i:Interaction.Triggers>
                 <ListBox.ItemsSource>
                     <MultiBinding Converter="{StaticResource UpdateBindingConverter}">
                         <!--  First & Second argument control update of binding on 3rd argument  -->
@@ -105,14 +120,30 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Column="0" IsChecked="{Binding IsChecked}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Unchecked">
+                                        <i:InvokeCommandAction
+                                            Command="{Binding DataContext.CheckboxChanged,
+                                                RelativeSource={RelativeSource FindAncestor,
+                                                AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}"/>
+                                    </i:EventTrigger>
+                                    <i:EventTrigger EventName="Checked">
+                                        <i:InvokeCommandAction
+                                            Command="{Binding DataContext.CheckboxChanged,
+                                                RelativeSource={RelativeSource FindAncestor,
+                                                AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </CheckBox>
 
-                            <Image
-								Grid.Column="0"
-								Width="16"
-								Height="16"
-								Margin="3,0"
+                            <Image Grid.Column="1"
+								Width="16" Height="16" Margin="3,0"
 								SnapsToDevicePixels="True"
 								Source="{Binding Path=., Converter={StaticResource FolderBrowseItemTypeToShellImageConverter}}"
 								Visibility="{Binding Path=Data.ShowIcons, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Source={StaticResource DataContextProxy}, Converter={StaticResource boolToVis}}">
@@ -124,8 +155,7 @@
                                 </Image.InputBindings>
                             </Image>
 
-                            <EditInPlace:EditBox
-								Grid.Column="1"
+                            <EditInPlace:EditBox Grid.Column="2"
 								DisplayText="{Binding ItemDisplayString}"
 								InvalidInputCharacters="{x:Static fvloc:Strings.ForbiddenRenameKeys}"
 								InvalidInputCharactersErrorMessage="{x:Static fvloc:Strings.ForbiddenRenameKeysMessage}"

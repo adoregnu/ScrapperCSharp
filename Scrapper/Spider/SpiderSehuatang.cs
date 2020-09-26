@@ -101,14 +101,17 @@ namespace Scrapper.Spider
                 _articlesInPage = items;
                 _isPageChanged = false;
             }
-            Browser.SetStausMessage($"{_index}/{_articlesInPage.Count} {_pageNum}/{NumPage}");
+            MessengerInstance.Send(new NotificationMessage<string>(
+                $"{_index}/{_articlesInPage.Count} {_pageNum}/{NumPage}",
+                "UpdateStatus"));
+
             if (_articlesInPage.Count > _index)
             {
                 _state = 2;
                 string article = _articlesInPage[_index++].ToString();
                 Browser.Address = URL + article;
-                Log.Print($"Browse Article {_index}/{_articlesInPage.Count} "
-                    + Browser.Address);
+                //Log.Print($"Browse Article {_index}/{_articlesInPage.Count} "
+                //    + Browser.Address);
             }
             else
             {
@@ -119,8 +122,8 @@ namespace Scrapper.Spider
         public override void OnScrapCompleted(string path)
         {
             MoveArticle(null);
-            MessengerInstance.Send(
-                new NotificationMessage<string>(path, "mediaUpdated"));
+            if (!string.IsNullOrEmpty(path))
+                MessengerInstance.Send(new NotificationMessage<string>(path, "mediaAdded"));
         }
 
         public override void Navigate()

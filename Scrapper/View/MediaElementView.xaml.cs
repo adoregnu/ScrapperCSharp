@@ -92,20 +92,21 @@ namespace Scrapper.View
             }
         }
 
+        const int DELAY_ON_PLAY_MS = 500;
         readonly DispatcherTimer _stopTimer = new DispatcherTimer();
         readonly DispatcherTimer _startTimer = new DispatcherTimer();
         void InitEventHandler()
         { 
             Media.MediaReady += OnMediaReady;
             Media.RenderingVideo += OnRenderingVideo;
-            _stopTimer.Interval = TimeSpan.FromSeconds(1);
+            _stopTimer.Interval = TimeSpan.FromMilliseconds(DELAY_ON_PLAY_MS);
             _stopTimer.Tick += new EventHandler(OnStopTimer);
 
-            _startTimer.Interval = TimeSpan.FromSeconds(1);
+            _startTimer.Interval = TimeSpan.FromMilliseconds(DELAY_ON_PLAY_MS);
             _startTimer.Tick += new EventHandler(OnStartTimer);
         }
 
-        TimeSpan _lastPosition = TimeSpan.FromSeconds(300);
+        TimeSpan _lastPosition = TimeSpan.FromSeconds(10);
         async void OnMediaReady(object sender, EventArgs e)
         {
             //Log.Print($"OnMediaReady {_lastPosition}");
@@ -149,8 +150,8 @@ namespace Scrapper.View
             try
             {
                 Log.Print($"Opening {MediaSource}");
-                await Media.Open(new Uri(MediaSource));
                 _isOpened = true;
+                await Media.Open(new Uri(MediaSource));
                 BgImage.Visibility = Visibility.Hidden;
             }
             catch (Exception ex)
@@ -162,18 +163,19 @@ namespace Scrapper.View
         async void CloseMedia()
         {
             if (!_isOpened) return;
-            Log.Print($"Cloing {MediaSource}");
+            Log.Print($"closing {MediaSource}");
             _lastPosition = Media.FramePosition;
+            _isOpened = false;
             if (Media.IsOpen)
                 await Media.Stop();
 
             await Media.Close();
-            _isOpened = false;
             BgImage.Visibility = Visibility.Visible;
         }
 
         void MediaPlayerOnMouseEnter(object sender, MouseEventArgs e)
         {
+            Log.Print("MouseEnter");
             if (!_isOpened)
             {
                 _startTimer.Start();
@@ -186,6 +188,7 @@ namespace Scrapper.View
 
         void MediaPlayerOnMouseLeave(object sender, MouseEventArgs e)
         {
+            Log.Print($"MouseLeave start timer enabled:{_startTimer.IsEnabled}");
             if (_startTimer.IsEnabled)
             {
                 _startTimer.Stop();

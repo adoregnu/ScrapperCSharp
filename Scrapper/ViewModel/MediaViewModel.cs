@@ -8,14 +8,30 @@ using System.Threading.Tasks;
 using Unosquare.FFME;
 using Unosquare.FFME.Common;
 
-using Scrapper.ViewModel.Base;
 using FileSystemModels;
+using FileSystemModels.Models.FSItems.Base;
+using FileListView.Interfaces;
 
+using GalaSoft.MvvmLight.Messaging;
+
+using Scrapper.ViewModel.Base;
 namespace Scrapper.ViewModel
 {
     class MediaViewModel : Pane, IFileListNotifier
     {
-        public int ViewType { get; set; } = 1;
+        int _viewType = 1;
+        public int ViewType
+        {
+            get => _viewType;
+            set
+            {
+                if (_viewType != value)
+                {
+                    _viewType = value;
+                    RaisePropertyChanged("ViewType");
+                }
+            }
+        }
 
         public MediaListViewModel MediaList { get; private set; }
         public MediaPlayerViewModel MediaPlayer { get; private set; }
@@ -30,15 +46,56 @@ namespace Scrapper.ViewModel
             MediaList = new MediaListViewModel();
             MediaPlayer = new MediaPlayerViewModel();
 
-            var path = PathFactory.Create(@"d:\tmp\sehuatang");
+            MessengerInstance.Register<NotificationMessage<string>>(
+                this, OnMediaUpdated);
+
+            MessengerInstance.Register<NotificationMessageAction<string>>(
+                this, OnQueryMediaPath);
+
+            var path = PathFactory.Create(@"d:\tmp");
             FileList.NavigateToFolder(path);
+        }
+
+        void UpdateViewType(string path)
+        {
+            var media = MediaList.GetMedia(path);
+            if (media == null)
+            {
+                ViewType = 1;
+            }
+            else
+            {
+                MediaPlayer.SetMediaItem(media);
+                ViewType = 2;
+            }
         }
 
         void IFileListNotifier.OnDirectoryChanged(string path)
         {
             UiServices.Invoke(delegate {
-                MediaList.MediaPath = path;
+                UpdateViewType(path);
+                MediaList.CurrentFolder = path;
+                MediaList.RefreshMediaList(FileList.FolderItemsView.CurrentItems);
             }, true);
+        }
+
+        string _selectedFile;
+        void IFileListNotifier.OnFileSelected(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                ViewType = 1;
+                return;
+            }
+            _selectedFile = path;
+            UpdateViewType(path);
+        }
+
+        void IFileListNotifier.OnCheckboxChanged(ILVItemViewModel item)
+        {
+			Log.Print($"path :{item.ItemPath}, IsChecked: {item.IsChecked}");
+            if (item.ItemType == FSItemType.Folder)
+                MediaList.UpdateMediaList(item);
         }
 
         void OnMediaFFmpegMessageLogged(object sender, MediaLogMessageEventArgs e)
@@ -51,8 +108,38 @@ namespace Scrapper.ViewModel
                 e.Message.ContainsOrdinal("Using non-standard frame rate"))
                 return;
 
-            //Debug.WriteLine(e);
             Log.Print(e.Message);
+        }
+
+        /// <summary>
+        /// Callend when it receives message from Spider class' OnScrapCompleted
+        /// </summary>
+        /// <param name="msg"></param>
+        void OnMediaUpdated(NotificationMessage<string> msg)
+        {
+            if (msg.Notification == "mediaAdded")
+            {
+                if (ViewType == 1)
+                {
+                    MediaList.InsertMedia(msg.Content);
+                }
+            }
+            else if (msg.Notification == "mediaUpdated")
+            {
+                if (ViewType == 2)
+                {
+                    var media = MediaList.GetMedia(msg.Content, true);
+                    MediaPlayer.SetMediaItem(media);
+                }
+            }
+        }
+
+        void OnQueryMediaPath(NotificationMessageAction<string> msgAction)
+        {
+            if (msgAction.Notification == "queryCurrentPath")
+                msgAction.Execute(FileList.SelectedFolder);
+            else if (msgAction.Notification == "querySelectedPath")
+                msgAction.Execute(_selectedFile);
         }
     }
 }

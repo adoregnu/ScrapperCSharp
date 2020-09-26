@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Input;
 using CefSharp;
 using CefSharp.Wpf;
 
@@ -70,7 +65,8 @@ namespace Scrapper.ViewModel
             Spiders = new List<SpiderBase>
             {
                 new SpiderSehuatang(this),
-                new SpiderJavlibrary(this)
+                new SpiderJavlibrary(this),
+                new SpiderMgstage(this)
             };
             _selectedSpider = Spiders[0];
             Title = Address = _selectedSpider.URL;
@@ -103,7 +99,11 @@ namespace Scrapper.ViewModel
             {
                 MessengerInstance.Send(new NotificationMessage<ConsoleMessageEventArgs>(e, "log"));
             };
-            WebBrowser.StatusMessage += OnStatusMessage;
+            WebBrowser.StatusMessage += (s, e) =>
+            { 
+                MessengerInstance.Send(new NotificationMessage<StatusMessageEventArgs>(e, "log"));
+            };
+
             WebBrowser.LoadingStateChanged += OnStateChanged;
             _selectedSpider.SetCookies();
         }
@@ -123,12 +123,6 @@ namespace Scrapper.ViewModel
                     Log.Print("Address changed: " + Address);
                     break;
             }
-        }
-
-        void OnStatusMessage(object sender, StatusMessageEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.Value))
-                Log.Print("status: " + e.Value);
         }
 
         void OnStateChanged(object sender, LoadingStateChangedEventArgs e)
@@ -181,11 +175,6 @@ namespace Scrapper.ViewModel
                 }
                 item.OnJsResult(name, x.Result.Result as List<object>);
             });
-        }
-
-        public void SetStausMessage(string msg)
-        {
-            MessengerInstance.Send(new NotificationMessage<string>(msg, "UpdateStatus"));
         }
     }
 }
