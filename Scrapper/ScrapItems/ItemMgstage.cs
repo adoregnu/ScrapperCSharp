@@ -25,6 +25,7 @@ namespace Scrapper.ScrapItems
                 e.SuggestedFileName = $"{_spider.MediaPath}\\{Pid}_poster{ext}";
             else
                 e.SuggestedFileName = $"{_spider.MediaPath}\\{Pid}_screenshot{_numDownloadCnt}{ext}";
+            _numDownloadCnt++;
         }
 
         void ParseItem(string name, List<object> items)

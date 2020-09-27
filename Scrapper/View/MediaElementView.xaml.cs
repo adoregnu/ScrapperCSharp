@@ -175,7 +175,6 @@ namespace Scrapper.View
 
         void MediaPlayerOnMouseEnter(object sender, MouseEventArgs e)
         {
-            Log.Print("MouseEnter");
             if (!_isOpened)
             {
                 _startTimer.Start();
@@ -188,7 +187,6 @@ namespace Scrapper.View
 
         void MediaPlayerOnMouseLeave(object sender, MouseEventArgs e)
         {
-            Log.Print($"MouseLeave start timer enabled:{_startTimer.IsEnabled}");
             if (_startTimer.IsEnabled)
             {
                 _startTimer.Stop();

@@ -34,6 +34,7 @@ namespace Scrapper.ViewModel
         Dictionary<string, MediaItem> _mediaCache
             = new Dictionary<string, MediaItem>();
         IEnumerable<ILVItemViewModel> _currentFiles;
+        bool _isBrowsing = false;
 
         MediaItem _selectedMedia = null;
         public MediaItem SelectedMedia
@@ -58,6 +59,18 @@ namespace Scrapper.ViewModel
             new ObservableCollection<MediaItem>();
         public List<string> Screenshots { get; set; } = null;
         public string CurrentFolder { get; set; }
+        public bool IsBrowsing
+        {
+            get => _isBrowsing;
+            set
+            {
+                if (_isBrowsing != value)
+                {
+                    _isBrowsing = value;
+                    RaisePropertyChanged("IsBrowsing");
+                }
+            }
+        }
 
         public ICommand CmdExclude { get; set; }
         public ICommand CmdDownload { get; set; }
@@ -119,6 +132,8 @@ namespace Scrapper.ViewModel
             MediaList.Clear();
             _currentFiles = currentFiles;
 
+            IsBrowsing = true;
+
             Task.Run(() => {
                 if (_deselectedItems.Count > 0)
                     _deselectedItems.Clear();
@@ -126,12 +141,14 @@ namespace Scrapper.ViewModel
                 foreach (var file in _currentFiles)
                 {
                     if (!file.IsChecked) continue;
-                    if (file.ItemType == FSItemType.Folder ||
-                        file.ItemName == "sehuatang")
+                    if (file.ItemType == FSItemType.Folder)
                     {
                         UpdateMediaListInternal(file.ItemPath);
                     }
                 }
+                UiServices.Invoke(delegate {
+                    IsBrowsing = false;
+                });
             });
         }
 
@@ -191,6 +208,13 @@ namespace Scrapper.ViewModel
                 MediaList.Insert(idx, item);
             }, true);
             Thread.Sleep(50);
+        }
+
+        public void RemoveMedia(string path)
+        {
+            var medias = MediaList.Where(i => i.MediaPath.StartsWith(path,
+                    StringComparison.CurrentCultureIgnoreCase)).ToList();
+            medias.ForEach(x => MediaList.Remove(x));
         }
 #if false
         void AddNewMedia(string path)

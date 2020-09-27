@@ -15,7 +15,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="350" d:DesignWidth="300">
     <UserControl.Resources>
-        <conv:UpdateBindingConverter x:Key="UpdateBindingConverter" />
         <fsconv:BrowseItemTypeToShellImageConverter x:Key="FolderBrowseItemTypeToShellImageConverter" />
     </UserControl.Resources>
     <Grid>
@@ -50,11 +49,12 @@
 				ScrollViewer.VerticalScrollBarVisibility="Auto"
 				SelectedItem="{Binding SelectedItem}">
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseLeftButtonUp">
-                        <i:InvokeCommandAction Command="{Binding DataContext.SelectionChanged,
-                            RelativeSource={RelativeSource FindAncestor,
-                            AncestorType={x:Type UserControl}}}"
-                                               CommandParameter="{Binding SelectedItem}"/>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction
+                            Command="{Binding DataContext.SelectionChanged,
+                                RelativeSource={RelativeSource FindAncestor,
+                                AncestorType={x:Type UserControl}}}"
+                            CommandParameter="{Binding SelectedItem}"/>
                     </i:EventTrigger>
                     <iex:KeyTrigger Key="Esc">
                         <i:InvokeCommandAction Command="{Binding DataContext.EscPressed,
@@ -78,8 +78,11 @@
                 </ListBox.ItemsSource>
 
                 <ListBox.Resources>
-                    <BooleanToVisibilityConverter x:Key="boolToVis" />
                     <bindLocal:BindingProxy x:Key="DataContextProxy" Data="{Binding}" />
+                    <bindLocal:BindingProxy
+                        x:Key="ParentDataContextProxy"
+                        Data="{Binding RelativeSource= {RelativeSource FindAncestor,
+                            AncestorType={x:Type UserControl}}, Path=DataContext}" />
                 </ListBox.Resources>
                 <ListBox.ContextMenu>
                     <ContextMenu>
@@ -88,7 +91,14 @@
 							CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu}, Path=PlacementTarget.SelectedItem}"
 							Header="{x:Static fvloc:Strings.CMD_Open_in_Application_Label}"
 							ToolTip="{x:Static fvloc:Strings.CMD_Open_in_Application_Label_TT}" />
-<!--
+                        <MenuItem
+                            Command="{Binding Data.DeleteCommand, Source=
+                                {StaticResource ParentDataContextProxy}}"
+                            CommandParameter="{Binding RelativeSource=
+                                {RelativeSource AncestorType=ContextMenu},
+                                Path=PlacementTarget.SelectedItem}"
+                            Header="Delete" />
+                        <!--
                         <MenuItem
 							Command="{Binding OpenContainingFolderCommand}"
 							CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu}, Path=PlacementTarget.SelectedItem}"

@@ -12,5 +12,6 @@ namespace Scrapper.ViewModel
         void OnDirectoryChanged(string path);
         void OnFileSelected(string path);
         void OnCheckboxChanged(ILVItemViewModel fsItem);
+        void OnFileDeleted(ILVItemViewModel fsItem);
     }
 }

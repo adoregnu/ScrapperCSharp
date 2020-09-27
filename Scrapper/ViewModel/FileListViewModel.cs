@@ -59,6 +59,7 @@ namespace Scrapper.ViewModel
 		public ICommand SelectionChanged { get; set; }
 		public ICommand EscPressed { get; set; }
 		public ICommand CheckboxChanged { get; set; }
+		public ICommand DeleteCommand { get; set; }
 
 		public FileListViewModel(IFileListNotifier notifier)
 		{
@@ -69,10 +70,19 @@ namespace Scrapper.ViewModel
 
 			FolderItemsView = FileListView.Factory.CreateFileListViewModel();
 			UpCommand = new RelayCommand<object>(p => OnUpCommand(), p => CanUpCommand());
-			RefreshCommand = new RelayCommand<object>((p) => OnRefreshCommand());
-			SelectionChanged = new RelayCommand<object>(p => OnSelectionChanged(p));
-			EscPressed = new RelayCommand<object>(p => OnEscPressed());
-			CheckboxChanged = new RelayCommand<object>(p => OnCheckboxChanged(p));
+			RefreshCommand = new RelayCommand<object>(
+				p => NavigateToFolder(PathFactory.Create(_selectedFoder)));
+			SelectionChanged = new RelayCommand<object>( p => {
+                if (p is ILVItemViewModel item && item.IsChecked)
+                {
+                    _fileListNotifier.OnFileSelected(p.ToString());
+                }
+			});
+			EscPressed = new RelayCommand<object>(
+				p => _fileListNotifier.OnFileSelected(null));
+			CheckboxChanged = new RelayCommand<object>(
+				p => _fileListNotifier.OnCheckboxChanged(p as ILVItemViewModel));
+			DeleteCommand = new RelayCommand<object>(p => OnDeleteFile(p));
 
 			// This is fired when the current folder in the listview changes to another existing folder
 			WeakEventManager<ICanNavigate, BrowsingEventArgs>
@@ -105,31 +115,28 @@ namespace Scrapper.ViewModel
 			return false;
 		}
 
-		void OnRefreshCommand()
+		void DeleteFolder(string FolderName)
 		{
-			NavigateToFolder(PathFactory.Create(_selectedFoder));
-		}
+			DirectoryInfo dir = new DirectoryInfo(FolderName);
 
-		void OnSelectionChanged(object param)
-		{
-			//Log.Print(param.ToString());
-			if (param != null)
+			foreach (FileInfo fi in dir.GetFiles())
 			{
-				_fileListNotifier.OnFileSelected(param.ToString());
+				fi.Delete();
 			}
+
+			foreach (DirectoryInfo di in dir.GetDirectories())
+			{
+				DeleteFolder(di.FullName);
+				di.Delete();
+			}
+			dir.Delete();
 		}
 
-		void OnEscPressed()
+		void OnDeleteFile(object param)
 		{
-			_fileListNotifier.OnFileSelected(null);
+			//Log.Print($"param:{param}");
+			_fileListNotifier.OnFileDeleted(param as ILVItemViewModel);
 		}
-
-		void OnCheckboxChanged(object param)
-		{
-			ILVItemViewModel item = param as ILVItemViewModel;
-			_fileListNotifier.OnCheckboxChanged(item);
-		}
-
 
 		/// <summary>
 		/// Master controller interface method to navigate all views

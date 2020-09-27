@@ -16,17 +16,33 @@
                 <Brush>Black</Brush>
             </ListBox.Background>
         </ListBox>
-
-        <ListBox x:Name="ImageListBox"
-                    VirtualizingPanel.IsVirtualizing="True"
-                     ItemsSource="{Binding MediaList}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ItemTemplate="{DynamicResource ImageListTemplate}"
-                     ItemsPanel="{DynamicResource ImagePanelTemplate}"
-                     SelectedItem="{Binding SelectedMedia, Mode=TwoWay}">
+<!--
+            ItemsSource="{Binding MediaList}"
+-->
+        <ListBox
+            x:Name="ImageListBox"
+            VirtualizingPanel.IsVirtualizing="True"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            ItemTemplate="{DynamicResource ImageListTemplate}"
+            ItemsPanel="{DynamicResource ImagePanelTemplate}"
+            SelectedItem="{Binding SelectedMedia, Mode=TwoWay}">
             <ListBox.Background>
                 <Brush>Black</Brush>
             </ListBox.Background>
+            <ListBox.ItemsSource>
+                <MultiBinding Converter="{StaticResource UpdateBindingConverter}">
+                    <!--  First & Second argument control update of binding on 3rd argument  -->
+                    <Binding Path="IsLoaded" RelativeSource="{RelativeSource Self}" />
+                    <Binding
+                        Mode="OneWay"
+                        Path="IsBrowsing"
+                        UpdateSourceTrigger="PropertyChanged" />
+                    <Binding
+                        Mode="OneWay"
+                        Path="MediaList"
+                        UpdateSourceTrigger="PropertyChanged" />
+                </MultiBinding>
+            </ListBox.ItemsSource>
         </ListBox>
     </DockPanel>
 </UserControl>

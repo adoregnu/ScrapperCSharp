@@ -93,9 +93,16 @@ namespace Scrapper.ViewModel
 
         void IFileListNotifier.OnCheckboxChanged(ILVItemViewModel item)
         {
-			Log.Print($"path :{item.ItemPath}, IsChecked: {item.IsChecked}");
+			//Log.Print($"path :{item.ItemPath}, IsChecked: {item.IsChecked}");
             if (item.ItemType == FSItemType.Folder)
                 MediaList.UpdateMediaList(item);
+        }
+
+        void IFileListNotifier.OnFileDeleted(ILVItemViewModel item)
+        {
+            //working on it...
+            MediaList.RemoveMedia(item.ItemPath);
+            //ViewType = 1;
         }
 
         void OnMediaFFmpegMessageLogged(object sender, MediaLogMessageEventArgs e)

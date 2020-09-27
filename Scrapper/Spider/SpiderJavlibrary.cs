@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using CefSharp;
-using GalaSoft.MvvmLight.Messaging;
 
 using Scrapper.ScrapItems;
 using Scrapper.ViewModel;
