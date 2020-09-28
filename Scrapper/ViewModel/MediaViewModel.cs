@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 using Unosquare.FFME;
 using Unosquare.FFME.Common;
 
@@ -52,7 +46,7 @@ namespace Scrapper.ViewModel
             MessengerInstance.Register<NotificationMessageAction<string>>(
                 this, OnQueryMediaPath);
 
-            var path = PathFactory.Create(@"d:\tmp");
+            var path = PathFactory.Create(App.CurrentPath);
             FileList.NavigateToFolder(path);
         }
 

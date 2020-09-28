@@ -58,7 +58,7 @@ namespace Scrapper.Spider
 
             if (!File.GetAttributes(MediaPath).HasFlag(FileAttributes.Directory))
             {
-                Log.Print($"SpiderJavlibrary: {MediaPath} is not a directory!");
+                Log.Print($"SpiderBase: {MediaPath} is not a directory!");
                 return;
             }
             Pid = Path.GetFileName(MediaPath);

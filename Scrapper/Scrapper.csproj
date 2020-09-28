@@ -183,11 +183,13 @@
     <Compile Include="ScrapItems\ItemBase.cs" />
     <Compile Include="ScrapItems\ItemJavlibrary.cs" />
     <Compile Include="ScrapItems\ItemMgstage.cs" />
+    <Compile Include="ScrapItems\ItemR18.cs" />
     <Compile Include="ScrapItems\ItemSehuatang.cs" />
     <Compile Include="ScrapItems\IScrapItem.cs" />
     <Compile Include="Spider\SpiderBase.cs" />
     <Compile Include="Spider\SpiderJavlibrary.cs" />
     <Compile Include="Spider\SpiderMgstage.cs" />
+    <Compile Include="Spider\SpiderR18.cs" />
     <Compile Include="Spider\SpiderSehuatang.cs" />
     <Compile Include="Tasks\OneTaskLimitedScheduler.cs" />
     <Compile Include="UiServices.cs" />
