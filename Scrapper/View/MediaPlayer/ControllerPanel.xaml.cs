@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Scrapper.View
+namespace Scrapper.View.MediaPlayer
 {
     /// <summary>
-    /// Interaction logic for MediaPlayerView.xaml
+    /// Interaction logic for ControllerPanel.xaml
     /// </summary>
-    public partial class MediaPlayerView : UserControl
+    public partial class ControllerPanel : UserControl
     {
-        public MediaPlayerView()
+        public ControllerPanel()
         {
             InitializeComponent();
         }

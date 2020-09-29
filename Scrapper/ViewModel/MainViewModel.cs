@@ -14,10 +14,12 @@ using GalaSoft.MvvmLight.Messaging;
 using Scrapper.Spider;
 using Scrapper.ViewModel.Base;
 using Scrapper.View;
+using Unosquare.FFME;
+using Unosquare.FFME.Common;
 
 namespace Scrapper.ViewModel
 {
-    class MainViewModel : ViewModelBase
+    class MainViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
         public ICommand CmdFileToFolder { get; private set; }
         
@@ -53,6 +55,8 @@ namespace Scrapper.ViewModel
 
             MessengerInstance.Register<NotificationMessage<string>>(
                 this, OnStatusMessage);
+
+            MediaElement.FFmpegMessageLogged += OnMediaFFmpegMessageLogged;
         }
 
         void OnFileToFolder()
@@ -72,6 +76,19 @@ namespace Scrapper.ViewModel
             { 
                 Status = "";
             }
+        }
+
+        void OnMediaFFmpegMessageLogged(object sender, MediaLogMessageEventArgs e)
+        {
+            if (e.MessageType != MediaLogMessageType.Warning &&
+                e.MessageType != MediaLogMessageType.Error)
+                return;
+
+            if (string.IsNullOrWhiteSpace(e.Message) == false &&
+                e.Message.ContainsOrdinal("Using non-standard frame rate"))
+                return;
+
+            Log.Print(e.Message);
         }
     }
 }

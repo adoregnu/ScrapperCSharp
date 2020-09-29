@@ -1,4 +1,5 @@
 ﻿using CefSharp;
+using Scrapper.ScrapItems;
 using Scrapper.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Scrapper.Spider
         public SpiderR18(BrowserViewModel browser) : base(browser)
         {
             Name = "R18";
-            URL = "http://www.r18.com/";
+            URL = "https://www.r18.com/";
             _xpathDic = new Dictionary<string, string>
             {
                 { "title",    XPath("//meta[@property='og:title']/@content") },
@@ -27,8 +28,8 @@ namespace Scrapper.Spider
                 { "actor",    XPath("//label[contains(.,'Actress(es):')]/following-sibling::div[1]/span/a/span/text()") },
                 { "genre",    XPath("//label[contains(.,'Categories:')]/following-sibling::div[1]/a/text()") },
                 { "plot",     XPath("//h1[contains(., 'Product Description')]/following-sibling::p/text()") },
-                { "thumb",    XPath("div.box01.mb10.detail-view > img::attr(src)") },
-                { "actor_thumb", XPath("ul.cmn-list-product03.clearfix.mr07 > li > a > p > img::attr(src)") },
+                { "cover",    XPath("//div[contains(@class,'box01')]/img/@src") },
+                { "actor_thumb", XPath("//ul[contains(@class,'cmn-list-product03')]//img/@src") },
             };
         }
 
@@ -36,17 +37,21 @@ namespace Scrapper.Spider
         {
             return new Cookie
             { 
-                Name = "lg",
-                Value = "en",
-                Domain = "r18.com",
+                Name = "mack",
+                Value = "1",
+                Domain = "www.r18.com",
                 Path = "/",
             };
         }
 
         void OnMultiResult(List<object> list)
         {
+            Log.Print($"{list.Count} items found!");
             if (list == null || list.Count == 0)
+            {
+                Browser.StopAll();
                 return;
+            }
 
             if (list.Count == 1)
             {
@@ -58,27 +63,25 @@ namespace Scrapper.Spider
             //Regex reg = new Regex(pattern, RegexOptions.Compiled);
         }
 
-        void ParsePage()
-        { 
-        }
-
         public override void Navigate()
         {
             base.Navigate();
-            _state = 0;
-            Browser.Address = $"{URL}common/search/searchword={Pid}";
+            Browser.Address = $"{URL}common/search/searchword={Pid}/";
         }
 
         public override void Scrap()
         {
-            string pids = XPath("ul.cmn-list-product01.type01 > li > a::attr(href)");
+            string pids = XPath("//li[@class='item-list']/a/@href");
             switch (_state)
             {
                 case 0:
                     Browser.ExecJavaScript(pids, OnMultiResult);
                     break;
                 default:
-                    ParsePage();
+                    ParsePage(new ItemR18(this)
+                    {
+                        NumItemsToScrap = _xpathDic.Count
+                    });
                     break;
             }
         }

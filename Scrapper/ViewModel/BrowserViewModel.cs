@@ -36,6 +36,7 @@ namespace Scrapper.ViewModel
         }
 
         public List<SpiderBase> Spiders { get; set; }
+        public string Pid { get; set; }
 
         SpiderBase _selectedSpider;
         public SpiderBase SelectedSpider
@@ -65,6 +66,7 @@ namespace Scrapper.ViewModel
             Spiders = new List<SpiderBase>
             {
                 new SpiderSehuatang(this),
+                new SpiderR18(this),
                 new SpiderJavlibrary(this),
                 new SpiderMgstage(this)
             };

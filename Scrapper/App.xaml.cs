@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Diagnostics;
+using System.ComponentModel;
 
 using CefSharp;
 using CefSharp.Wpf;
@@ -25,11 +26,19 @@ namespace Scrapper
     public partial class App : Application
     {
         public static string CurrentPath { get; set; }
+
+        /// <summary>
+        /// Determines if the Application is in design mode.
+        /// </summary>
+        public static bool IsInDesignMode => !(Current is App) ||
+            (bool)DesignerProperties.IsInDesignModeProperty
+                .GetMetadata(typeof(DependencyObject)).DefaultValue;
+
         public App()
         {
             log4net.Config.XmlConfigurator.Configure();
             //CurrentPath = Directory.GetCurrentDirectory() + "\\web\\";
-            CurrentPath = @"c:\tmp\";
+            CurrentPath = @"d:\tmp\";
             var di = new DirectoryInfo(CurrentPath);
             if (!di.Exists)
             {

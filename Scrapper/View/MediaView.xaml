@@ -4,7 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:Scrapper.ViewModel"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:cmd="http://www.galasoft.ch/mvvmlight"
              xmlns:local="clr-namespace:Scrapper.View"
+             xmlns:player="clr-namespace:Scrapper.View.MediaPlayer"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -12,7 +15,7 @@
             <local:MediaListView DataContext="{Binding MediaList}"/>
         </ControlTemplate>
         <ControlTemplate x:Key="MediaPlayerTemplate">
-            <local:MediaPlayerView DataContext="{Binding MediaPlayer}"/>
+            <player:PlayerView DataContext="{Binding MediaPlayer}"/>
         </ControlTemplate>
     </UserControl.Resources>
     <Grid>

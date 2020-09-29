@@ -20,6 +20,13 @@ namespace Scrapper.ScrapItems
 
         void IScrapItem.OnJsResult(string name, List<object> items)
         { 
+            Log.Print("{0} : scrapped {1}", name, items != null ? items.Count : 0);
+            foreach (string it in items)
+            {
+                Log.Print($"\t{name}: {it.Trim()}");
+            }
+
+            CheckCompleted();
         }
     }
 }

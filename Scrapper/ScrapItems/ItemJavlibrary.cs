@@ -15,7 +15,7 @@ namespace Scrapper.ScrapItems
     {
         public ItemJavlibrary(SpiderBase spider) :base(spider)
         {
-            _numItemsToScrap = 9;
+            NumItemsToScrap = 9;
         }
 
         protected override void OnBeforeDownload(object sender, DownloadItem e)
@@ -49,7 +49,7 @@ namespace Scrapper.ScrapItems
                 {
                     _spider.Browser.Download(url);
                 }
-                _numItemsToScrap++;
+                Interlocked.Increment(ref NumItemsToScrap);
             }
             CheckCompleted();
         }

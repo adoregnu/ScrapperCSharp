@@ -13,9 +13,9 @@ namespace Scrapper.ScrapItems
     abstract class ItemBase
     {
         readonly protected SpiderBase _spider;
-        protected int _numItemsToScrap = 10;
         protected int _numScrapedItem = 0;
         public string Pid;
+        public int NumItemsToScrap;
 
         protected abstract void OnBeforeDownload(object sender, DownloadItem e);
         protected virtual void OnDownloadUpdated(object sender, DownloadItem e)
@@ -47,7 +47,7 @@ namespace Scrapper.ScrapItems
         protected void CheckCompleted()
         {
             Interlocked.Increment(ref _numScrapedItem);
-            if (_numScrapedItem == _numItemsToScrap)
+            if (_numScrapedItem == NumItemsToScrap)
             {
                 Clear();
                 _spider.OnScrapCompleted();

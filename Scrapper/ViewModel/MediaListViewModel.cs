@@ -33,7 +33,6 @@ namespace Scrapper.ViewModel
         //readonly FileSystemWatcher _fsWatcher;
         Dictionary<string, MediaItem> _mediaCache
             = new Dictionary<string, MediaItem>();
-        IEnumerable<ILVItemViewModel> _currentFiles;
         bool _isBrowsing = false;
 
         MediaItem _selectedMedia = null;
@@ -109,36 +108,59 @@ namespace Scrapper.ViewModel
         {
             if (item.IsChecked)
             {
-                var medias = _deselectedItems.FindAll(
+                var dselectedMedias = _deselectedItems.FindAll(
                                 i => i.MediaPath.StartsWith(item.ItemPath));
-                foreach (var media in medias)
+                if (dselectedMedias.Count > 0)
                 {
-                    MediaList.InsertInPlace(media, i => i.DownloadDt);
-                    _deselectedItems.Remove(media);
+                    foreach (var media in dselectedMedias)
+                    {
+                        MediaList.InsertInPlace(media, i => i.DownloadDt);
+                        _deselectedItems.Remove(media);
+                    }
+                }
+                else
+                {
+                    IsBrowsing = true;
+                    Task.Run(() => { 
+                        UpdateMediaListInternal(item.ItemPath);
+                    });
+
+                    UiServices.Invoke(delegate {
+                        IsBrowsing = false;
+                    });
                 }
             }
             else
             {
-                var medias = MediaList.Cast<MediaItem>().Where(
-                    i => i.MediaPath.StartsWith(item.ItemPath,
-                        StringComparison.CurrentCultureIgnoreCase)).ToList();
-                medias.ForEach(x => MediaList.Remove(x));
-                _deselectedItems.AddRange(medias);
+                var medias = MediaList.Where(i => i.MediaPath.StartsWith(
+                        item.ItemPath, StringComparison.CurrentCultureIgnoreCase)).ToList();
+
+                medias.ForEach(x => {
+                    MediaList.Remove(x);
+                    _deselectedItems.Add(x);
+                });
             }
         }
+#if false
+        public void OnFolderChanged(IEnumerable<ILVItemViewModel> flvItems)
+        {
+            //down
+            var excludeList = MediaList.Where(i => i.MediaPath != CurrentFolder).ToList();
+            excludeList.ForEach(i => MediaList.Remove(i));
 
+            //up
+            //...
+        }
+#endif
         public void RefreshMediaList(IEnumerable<ILVItemViewModel> currentFiles)
         {
-            MediaList.Clear();
-            _currentFiles = currentFiles;
-
             IsBrowsing = true;
-
+            MediaList.Clear();
             Task.Run(() => {
                 if (_deselectedItems.Count > 0)
                     _deselectedItems.Clear();
 
-                foreach (var file in _currentFiles)
+                foreach (var file in currentFiles)
                 {
                     if (!file.IsChecked) continue;
                     if (file.ItemType == FSItemType.Folder)

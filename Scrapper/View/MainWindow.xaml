@@ -7,7 +7,7 @@
         xmlns:view="clr-namespace:Scrapper.View"
         mc:Ignorable="d"
         md:DialogServiceViews.IsRegistered="True"
-        Title="Scrapper" Height="800" Width="1100"
+        Title="Scrapper" Height="1000" Width="2000"
         DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}">
     <Grid>
         <Grid.RowDefinitions>

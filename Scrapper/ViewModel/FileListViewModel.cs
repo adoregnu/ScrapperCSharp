@@ -70,10 +70,9 @@ namespace Scrapper.ViewModel
 
 			FolderItemsView = FileListView.Factory.CreateFileListViewModel();
 			UpCommand = new RelayCommand<object>(p => OnUpCommand(), p => CanUpCommand());
-			RefreshCommand = new RelayCommand<object>(
-				p => NavigateToFolder(PathFactory.Create(_selectedFoder)));
+			RefreshCommand = new RelayCommand<object>( p => OnRefreshCommand());
 			SelectionChanged = new RelayCommand<object>( p => {
-                if (p is ILVItemViewModel item && item.IsChecked)
+                if (p is ILVItemViewModel)
                 {
                     _fileListNotifier.OnFileSelected(p.ToString());
                 }
@@ -113,6 +112,11 @@ namespace Scrapper.ViewModel
 			catch
 			{ }
 			return false;
+		}
+
+		void OnRefreshCommand()
+		{
+			NavigateToFolder(PathFactory.Create(_selectedFoder));
 		}
 
 		void DeleteFolder(string FolderName)

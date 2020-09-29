@@ -21,7 +21,6 @@ namespace Scrapper.Spider
             URL = "http://www.javlibrary.com/en/";
             _xpathDic = new Dictionary<string, string>
             {
-                { "videos", XPath("//div[@class='videos']/div/a") },
                 { "title",  XPath("//*[@id='video_title']/h3/a/text()") },
                 { "id",     XPath("//*[@id='video_id']//td[2]/text()") },
                 { "date",   XPath("//*[@id='video_date']//td[2]/text()") },
@@ -49,7 +48,10 @@ namespace Scrapper.Spider
         {
             if (list == null || list.Count == 0)
             {
-                ParsePage();
+                ParsePage(new ItemJavlibrary(this)
+                {
+                    NumItemsToScrap = _xpathDic.Count
+                });
                 return;
             }
 
@@ -67,34 +69,25 @@ namespace Scrapper.Spider
             Browser.Address = $"{URL}{m.Groups["href"].Value}";
         }
 
-        void ParsePage()
-        {
-            var item = new ItemJavlibrary(this);
-            foreach (var xpath in _xpathDic)
-            {
-                if (xpath.Key == "videos") continue;
-                ExecJavaScript(item, xpath.Key);
-            }
-            _state = -1;
-        }
-
         public override void Navigate()
         {
             base.Navigate();
-
-            _state = 0;
             Browser.Address = $"{URL}vl_searchbyid.php?keyword={Pid}";
         }
 
         public override void Scrap()
         {
+            var pids = XPath("//div[@class='videos']/div/a");
             switch (_state)
             {
             case 0:
-                Browser.ExecJavaScript(_xpathDic["videos"], OnMultiResult);
+                Browser.ExecJavaScript(pids, OnMultiResult);
                 break;
             default:
-                ParsePage();
+                ParsePage(new ItemJavlibrary(this)
+                {
+                    NumItemsToScrap = _xpathDic.Count
+                });
                 break;
             }
         }

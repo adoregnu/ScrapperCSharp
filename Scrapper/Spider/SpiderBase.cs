@@ -53,6 +53,7 @@ namespace Scrapper.Spider
 
         public virtual void Navigate()
         {
+            _state = 0;
             MessengerInstance.Send(new NotificationMessageAction<string>(
                 "querySelectedPath", p => { MediaPath = p; }));
 
@@ -65,7 +66,6 @@ namespace Scrapper.Spider
         }
 
         public virtual Cookie CreateCookie() { return null; }
-        public virtual void OnDownloadUpdated(object sender, DownloadItem e) { }
 
         bool _isCookieSet = false;
         public void SetCookies()
@@ -86,18 +86,14 @@ namespace Scrapper.Spider
                 new NotificationMessage<string>(MediaPath, "mediaUpdated"));
         }
 
-        protected virtual void PrintResult(List<object> items)
+        protected void ParsePage(IScrapItem item)
         {
-            Log.Print("{0} items scrapped!", items.Count);
-            foreach (string item in items)
+            foreach (var xpath in _xpathDic)
             {
-                Log.Print(item.TrimEnd(' ', '\r', '\n'));
+                //ExecJavaScript(item, xpath);
+                Browser.ExecJavaScript(xpath.Value, item, xpath.Key);
             }
-        }
-
-        protected void ExecJavaScript(IScrapItem item, string name)
-        { 
-            Browser.ExecJavaScript(_xpathDic[name], item, name);
+            _state = -1;
         }
 
         public abstract void Scrap();

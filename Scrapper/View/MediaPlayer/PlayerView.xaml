@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="Scrapper.View.MediaPlayer.PlayerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:iex="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:local="clr-namespace:Scrapper.View.MediaPlayer"
+             xmlns:cmd="http://www.galasoft.ch/mvvmlight"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Storyboard x:Key="ShowControlOpacity" Storyboard.TargetProperty="(UIElement.Opacity)">
+            <DoubleAnimation To="1" Duration="0:0:0.100" FillBehavior="HoldEnd" />
+        </Storyboard>
+        <Storyboard x:Key="HideControlOpacity" Storyboard.TargetProperty="(UIElement.Opacity)">
+            <DoubleAnimation To="0" Duration="0:0:0.300" FillBehavior="HoldEnd" />
+        </Storyboard>
+        <Storyboard x:Key="ShowNotification" Storyboard.TargetProperty="(UIElement.Opacity)">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                             Duration="0:0:0.25" To="1.0" />
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                             Duration="0:0:2" From="1.0" To="0.0" BeginTime="0:0:2" />
+        </Storyboard>
+    </UserControl.Resources>
+    <Grid>
+        <ContentControl Content="{Binding MediaPlayer}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseEnter">
+                    <cmd:EventToCommand
+                        Command="{Binding MouseEnterCommand}"
+                        PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="MouseLeave">
+                    <cmd:EventToCommand
+                        Command="{Binding MouseLeaveCommand}"
+                        PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="PreviewKeyDown">
+                    <cmd:EventToCommand
+                        Command="{Binding KeyDownCommand}"
+                        PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ContentControl>
+        <DockPanel x:Name="LayoutPanel" LastChildFill="False">
+
+            <local:ControllerPanel
+                x:Name="ControllerPanel"
+                DockPanel.Dock="Bottom"
+                Visibility="{Binding IsPlayerLoaded,
+                    Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <local:PropertiesPanel
+                x:Name="PropertiesPanel"
+                DockPanel.Dock="Right" 
+                Visibility="{Binding IsPropertiesPanelOpen,
+                    Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        </DockPanel>
+        <!--<Image Source="{Binding BackgroundImage}"></Image>-->
+    </Grid>
+</UserControl>

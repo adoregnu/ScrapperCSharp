@@ -13,22 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Scrapper.View
+namespace Scrapper.View.MediaPlayer
 {
     /// <summary>
-    /// Interaction logic for MediaView.xaml
+    /// Interaction logic for PropertiesPanel.xaml
     /// </summary>
-    public partial class MediaView : UserControl
+    public partial class PropertiesPanel : UserControl
     {
-        public MediaView()
+        public PropertiesPanel()
         {
             InitializeComponent();
-#if false
-            PreviewKeyDown += (s, e) =>
-            {
-                Log.Print($"MediaView : {e.Key.ToString()}");
-            };
-#endif
         }
     }
 }

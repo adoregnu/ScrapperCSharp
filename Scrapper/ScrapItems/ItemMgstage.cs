@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using CefSharp;
@@ -15,7 +16,6 @@ namespace Scrapper.ScrapItems
         int _numDownloadCnt = 0;
         public ItemMgstage(SpiderBase spider) : base(spider)
         {
-            _numItemsToScrap = 7;
         }
 
         protected override void OnBeforeDownload(object sender, DownloadItem e)
@@ -25,7 +25,7 @@ namespace Scrapper.ScrapItems
                 e.SuggestedFileName = $"{_spider.MediaPath}\\{Pid}_poster{ext}";
             else
                 e.SuggestedFileName = $"{_spider.MediaPath}\\{Pid}_screenshot{_numDownloadCnt}{ext}";
-            _numDownloadCnt++;
+            Interlocked.Increment(ref _numDownloadCnt);
         }
 
         void ParseItem(string name, List<object> items)
@@ -45,7 +45,7 @@ namespace Scrapper.ScrapItems
                 {
                     _spider.Browser.Download(url);
                 }
-                _numItemsToScrap++;
+                Interlocked.Increment(ref NumItemsToScrap);
             }
         }
 

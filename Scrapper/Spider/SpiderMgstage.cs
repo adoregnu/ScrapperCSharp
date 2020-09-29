@@ -47,11 +47,10 @@ namespace Scrapper.Spider
 
         public override void Scrap()
         {
-            var item = new ItemMgstage(this);
-            foreach (var xpath in _xpathDic)
+            ParsePage(new ItemMgstage(this)
             {
-                ExecJavaScript(item, xpath.Key);
-            }
+                NumItemsToScrap = _xpathDic.Count
+            });
         }
     }
 }

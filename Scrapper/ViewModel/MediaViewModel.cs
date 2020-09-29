@@ -1,4 +1,7 @@
-﻿
+﻿using System;
+using System.Linq;
+using System.Windows.Input;
+
 using Unosquare.FFME;
 using Unosquare.FFME.Common;
 
@@ -7,8 +10,11 @@ using FileSystemModels.Models.FSItems.Base;
 using FileListView.Interfaces;
 
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.CommandWpf;
 
 using Scrapper.ViewModel.Base;
+using Scrapper.ViewModel.MediaPlayer;
+
 namespace Scrapper.ViewModel
 {
     class MediaViewModel : Pane, IFileListNotifier
@@ -28,18 +34,19 @@ namespace Scrapper.ViewModel
         }
 
         public MediaListViewModel MediaList { get; private set; }
-        public MediaPlayerViewModel MediaPlayer { get; private set; }
+        public PlayerViewModel MediaPlayer { get; private set; }
         public FileListViewModel FileList { get; private set; }
 
+        //public ICommand KeyDownCommand { get; private set; }
         public MediaViewModel()
         {
             Title = "Media";
-            MediaElement.FFmpegMessageLogged += OnMediaFFmpegMessageLogged;
 
             FileList = new FileListViewModel(this);
             MediaList = new MediaListViewModel();
-            MediaPlayer = new MediaPlayerViewModel();
+            MediaPlayer = new PlayerViewModel();
 
+            //KeyDownCommand = new RelayCommand<EventArgs>(e => Log.Print(e.ToString()));
             MessengerInstance.Register<NotificationMessage<string>>(
                 this, OnMediaUpdated);
 
@@ -49,11 +56,13 @@ namespace Scrapper.ViewModel
             var path = PathFactory.Create(App.CurrentPath);
             FileList.NavigateToFolder(path);
         }
-
+#if false
         void UpdateViewType(string path)
         {
+            bool folderExist = FileList.FolderItemsView.CurrentItems
+                                .Any(i => i.ItemType == FSItemType.Folder);
             var media = MediaList.GetMedia(path);
-            if (media == null)
+            if (folderExist || media == null)
             {
                 ViewType = 1;
             }
@@ -62,12 +71,21 @@ namespace Scrapper.ViewModel
                 MediaPlayer.SetMediaItem(media);
                 ViewType = 2;
             }
+            MediaList.CurrentFolder = path;
+            MediaList.RefreshMediaList(FileList.FolderItemsView.CurrentItems);
         }
-
+#endif
         void IFileListNotifier.OnDirectoryChanged(string path)
         {
+            bool folderExist = FileList.FolderItemsView.CurrentItems
+                                .Any(i => i.ItemType == FSItemType.Folder);
+            var media = MediaList.GetMedia(path);
+
             UiServices.Invoke(delegate {
-                UpdateViewType(path);
+                if (folderExist || media == null)
+                {
+                    ViewType = 1;
+                }
                 MediaList.CurrentFolder = path;
                 MediaList.RefreshMediaList(FileList.FolderItemsView.CurrentItems);
             }, true);
@@ -82,7 +100,11 @@ namespace Scrapper.ViewModel
                 return;
             }
             _selectedFile = path;
-            UpdateViewType(path);
+            var media = MediaList.GetMedia(path);
+            if (media == null) return;
+            if (_viewType != 2) ViewType = 2;
+
+            MediaPlayer.SetMediaItem(media);
         }
 
         void IFileListNotifier.OnCheckboxChanged(ILVItemViewModel item)
@@ -97,19 +119,6 @@ namespace Scrapper.ViewModel
             //working on it...
             MediaList.RemoveMedia(item.ItemPath);
             //ViewType = 1;
-        }
-
-        void OnMediaFFmpegMessageLogged(object sender, MediaLogMessageEventArgs e)
-        {
-            if (e.MessageType != MediaLogMessageType.Warning &&
-                e.MessageType != MediaLogMessageType.Error)
-                return;
-
-            if (string.IsNullOrWhiteSpace(e.Message) == false &&
-                e.Message.ContainsOrdinal("Using non-standard frame rate"))
-                return;
-
-            Log.Print(e.Message);
         }
 
         /// <summary>

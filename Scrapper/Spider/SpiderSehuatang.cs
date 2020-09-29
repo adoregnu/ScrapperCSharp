@@ -11,15 +11,34 @@ using CefSharp;
 using Scrapper.ViewModel;
 using Scrapper.ScrapItems;
 using GalaSoft.MvvmLight.Messaging;
+using FFmpeg.AutoGen;
 
 namespace Scrapper.Spider
 {
     class SpiderSehuatang : SpiderBase
     {
+        int _pageNum = 1;
+        int _index = 0;
+        bool _isPageChanged = false;
+        string _currentPage = null;
+        string _selectedBoard = "censored";
+        List<object> _articlesInPage = null;
+
         public int NumPage = 1;
-        public bool IsCensored { get; set; } = true;
-        public string SelectedBoard = "censored";
         public List<string> Boards;
+
+        public string SelectedBoard
+        {
+            get => _selectedBoard;
+            set
+            {
+                if (_selectedBoard != value)
+                {
+                    _selectedBoard = value;
+                    MediaPath = $"{App.CurrentPath}sehuatang\\{value}\\";
+                }
+            }
+        }
 
         public SpiderSehuatang(BrowserViewModel browser) : base(browser)
         {
@@ -48,14 +67,16 @@ namespace Scrapper.Spider
 
         void ParsePage()
         {
+            string[] keys = { "pid", "date", "files", "images" };
             var item = new ItemSehuatang(this);
-            ExecJavaScript(item, "pid");
-            ExecJavaScript(item, "date");
-            ExecJavaScript(item, "images");
-            ExecJavaScript(item, "files");
+            var list = _xpathDic.Where(i => keys.Contains(i.Key));
+            foreach (var xpath in list)
+            {
+                //ExecJavaScript(item, xpath);
+                Browser.ExecJavaScript(xpath.Value, item, xpath.Key);
+            }
         }
 
-        int _pageNum = 1;
         string GetNextPage(string str)
         {
             var m = Regex.Match(str, @"-(?<page>\d+)\.html");
@@ -70,9 +91,6 @@ namespace Scrapper.Spider
             return Regex.Replace(str, @"\d+\.html", $"{_pageNum}.html");
         }
 
-        int _index = 0;
-        bool _isPageChanged = false;
-        string _currentPage = null;
         void MovePage(List<object> items)
         {
             _state = 1;
@@ -93,7 +111,6 @@ namespace Scrapper.Spider
             }
         }
 
-        List<object> _articlesInPage = null;
         public void MoveArticle(List<object> items)
         {
             if (_isPageChanged)
