@@ -166,7 +166,19 @@ namespace FileListView.ViewModels
 		/// <summary>
 		/// 
 		/// </summary>
-		public bool IsChecked { get; set; } = false;
+		bool _isChecked = false;
+		public bool IsChecked
+		{
+			get => _isChecked;
+			set
+			{
+				if (_isChecked != value)
+				{
+					_isChecked = value;
+					RaisePropertyChanged(() => IsChecked);
+				}
+			}
+		}
 		#endregion properties
 
 		#region methods

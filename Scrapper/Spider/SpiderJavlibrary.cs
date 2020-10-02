@@ -64,7 +64,11 @@ namespace Scrapper.Spider
                 if (m.Success && m.Groups["id"].Value == Pid)
                     break;
             }
-            if (!m.Success) return;
+            if (!m.Success)
+            {
+                Log.Print("Could not find pid matched!");
+                return;
+            }
             _state = 1;
             Browser.Address = $"{URL}{m.Groups["href"].Value}";
         }
@@ -77,17 +81,18 @@ namespace Scrapper.Spider
 
         public override void Scrap()
         {
-            var pids = XPath("//div[@class='videos']/div/a");
             switch (_state)
             {
             case 0:
-                Browser.ExecJavaScript(pids, OnMultiResult);
+                Browser.ExecJavaScript(XPath("//div[@class='videos']/div/a"),
+                    OnMultiResult);
                 break;
-            default:
+            case 1:
                 ParsePage(new ItemJavlibrary(this)
                 {
                     NumItemsToScrap = _xpathDic.Count
                 });
+                _state = 2;
                 break;
             }
         }

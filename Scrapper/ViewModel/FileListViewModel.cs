@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,11 +25,12 @@ namespace Scrapper.ViewModel
 {
     class FileListViewModel : ViewModelBase
     {
-		private readonly SemaphoreSlim _SlowStuffSemaphore;
-		private readonly CancellationTokenSource _CancelTokenSource;
-		private readonly OneTaskLimitedScheduler _OneTaskScheduler;
-		private bool _disposed = false;
-		private IFileListNotifier _fileListNotifier;
+		readonly SemaphoreSlim _SlowStuffSemaphore;
+		readonly CancellationTokenSource _CancelTokenSource;
+		readonly OneTaskLimitedScheduler _OneTaskScheduler;
+		IFileListNotifier _fileListNotifier;
+		bool _disposed = false;
+		bool _isAllChecked = false;
 
 		/// <summary>
 		/// Expose a viewmodel that can support a listview showing folders and files
@@ -53,6 +55,18 @@ namespace Scrapper.ViewModel
 				}
 			}
 		}
+		public bool IsAllChecked
+		{
+			get => _isAllChecked;
+			set
+			{
+				if (_isAllChecked != value)
+				{
+					_isAllChecked = value;
+					OnCheckAll(value);
+				}
+			}
+		}
 
 		public ICommand UpCommand { get; set; }
 		public ICommand RefreshCommand { get; set; }
@@ -60,6 +74,7 @@ namespace Scrapper.ViewModel
 		public ICommand EscPressed { get; set; }
 		public ICommand CheckboxChanged { get; set; }
 		public ICommand DeleteCommand { get; set; }
+		//public ICommand CheckAllCommand { get; set; }
 
 		public FileListViewModel(IFileListNotifier notifier)
 		{
@@ -82,6 +97,7 @@ namespace Scrapper.ViewModel
 			CheckboxChanged = new RelayCommand<object>(
 				p => _fileListNotifier.OnCheckboxChanged(p as ILVItemViewModel));
 			DeleteCommand = new RelayCommand<object>(p => OnDeleteFile(p));
+			//CheckAllCommand = new RelayCommand<object>(p => OnCheckAll());
 
 			// This is fired when the current folder in the listview changes to another existing folder
 			WeakEventManager<ICanNavigate, BrowsingEventArgs>
@@ -123,11 +139,21 @@ namespace Scrapper.ViewModel
 		{
 			var fsItem = param as ILVItemViewModel;
 			_fileListNotifier.OnFileDeleted(fsItem);
+			var items = FolderItemsView.CurrentItems as ObservableCollection<ILVItemViewModel>;
+			items.Remove(fsItem);
 
 			Task.Run(() => {
-				Thread.Sleep(100);
+				Thread.Sleep(300);
 				Directory.Delete(fsItem.ItemPath, true);
 			});
+		}
+
+		void OnCheckAll(bool check)
+		{ 
+			foreach (var item in FolderItemsView.CurrentItems)
+			{
+				item.IsChecked = check;
+			}
 		}
 
 		/// <summary>

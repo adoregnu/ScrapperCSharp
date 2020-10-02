@@ -109,6 +109,10 @@ namespace Scrapper.Spider
                 Browser.Address = URL + _currentPage;
                 Log.Print("Move Page to " + Browser.Address);
             }
+            else
+            {
+                Browser.StopAll();
+            }
         }
 
         public void MoveArticle(List<object> items)
@@ -127,8 +131,6 @@ namespace Scrapper.Spider
                 _state = 2;
                 string article = _articlesInPage[_index++].ToString();
                 Browser.Address = URL + article;
-                //Log.Print($"Browse Article {_index}/{_articlesInPage.Count} "
-                //    + Browser.Address);
             }
             else
             {

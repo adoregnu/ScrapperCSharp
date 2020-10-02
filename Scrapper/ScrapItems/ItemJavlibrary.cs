@@ -15,7 +15,6 @@ namespace Scrapper.ScrapItems
     {
         public ItemJavlibrary(SpiderBase spider) :base(spider)
         {
-            NumItemsToScrap = 9;
         }
 
         protected override void OnBeforeDownload(object sender, DownloadItem e)
@@ -26,30 +25,26 @@ namespace Scrapper.ScrapItems
 
         void IScrapItem.OnJsResult(string name, List<object> items)
         {
-            Log.Print("{0} : scrapped {1}",
-                name, items != null ? items.Count : 0);
-            if (items == null || items.Count == 0)
+            PrintItem(name, items);
+            if (items != null && items.Count == 0)
             {
-                CheckCompleted();
-                return;
-            }
-
-            if (name == "id")
-            {
-                Pid = items[0] as string;
-            }
-            else if (name == "cover")
-            {
-                var url = items[0] as string;
-                if (!url.StartsWith("http"))
+                if (name == "id")
                 {
-                    _spider.Browser.Download(_spider.URL + url);
+                    Pid = items[0] as string;
                 }
-                else
+                else if (name == "cover")
                 {
-                    _spider.Browser.Download(url);
+                    var url = items[0] as string;
+                    if (!url.StartsWith("http"))
+                    {
+                        _spider.Browser.Download(_spider.URL + url);
+                    }
+                    else
+                    {
+                        _spider.Browser.Download(url);
+                    }
+                    Interlocked.Increment(ref NumItemsToScrap);
                 }
-                Interlocked.Increment(ref NumItemsToScrap);
             }
             CheckCompleted();
         }

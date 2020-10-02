@@ -37,7 +37,7 @@ namespace Scrapper.ScrapItems
         }
 
         protected virtual void Clear()
-        { 
+        {
             var dh = _spider.Browser.DownloadHandler;
             dh.OnBeforeDownloadFired -= OnBeforeDownload;
             dh.OnDownloadUpdatedFired -= OnDownloadUpdated;
@@ -51,6 +51,15 @@ namespace Scrapper.ScrapItems
             {
                 Clear();
                 _spider.OnScrapCompleted();
+            }
+        }
+
+        protected void PrintItem(string name, List<object> items)
+        {
+            Log.Print("{0} : scrapped {1}", name, items != null ? items.Count : 0);
+            foreach (string it in items)
+            {
+                Log.Print($"\t{name}: {it.Trim()}");
             }
         }
     }

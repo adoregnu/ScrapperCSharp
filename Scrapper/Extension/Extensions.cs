@@ -72,5 +72,13 @@ namespace Scrapper.Extension
             return lower;
             //return upper < 0 ? 0 : upper;
         }
+
+        public static bool IsNullOrEmpty<TItem>(this IList<TItem> list)
+        {
+            if (list == null || list.Count == 0)
+                return true;
+            else
+                return false;
+        }
     }
 }

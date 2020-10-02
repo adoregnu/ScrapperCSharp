@@ -195,6 +195,7 @@
     <Compile Include="Spider\SpiderR18.cs" />
     <Compile Include="Spider\SpiderSehuatang.cs" />
     <Compile Include="Tasks\OneTaskLimitedScheduler.cs" />
+    <Compile Include="Tasks\SerialQueue.cs" />
     <Compile Include="UiServices.cs" />
     <Compile Include="Utils\ThumbnailGenerator.cs" />
     <Compile Include="ViewModel\Base\Pane.cs" />

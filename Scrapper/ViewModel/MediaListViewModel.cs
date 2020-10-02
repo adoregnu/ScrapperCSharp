@@ -7,12 +7,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 
 using FileListView.Interfaces;
 using FileSystemModels.Models.FSItems.Base;
@@ -20,10 +18,7 @@ using FileSystemModels.Models.FSItems.Base;
 using Scrapper.Extension;
 using Scrapper.Model;
 using Scrapper.Tasks;
-using FFmpeg.AutoGen;
 using Scrapper.ViewModel.MediaPlayer;
-using Unosquare.FFME;
-using System.Windows.Threading;
 
 namespace Scrapper.ViewModel
 {
@@ -108,6 +103,7 @@ namespace Scrapper.ViewModel
         }
 
         readonly List<MediaItem> _deselectedItems = new List<MediaItem>();
+        readonly SerialQueue _serialQueue = new SerialQueue();
         public void UpdateMediaList(ILVItemViewModel item)
         {
             if (item.IsChecked)
@@ -125,9 +121,8 @@ namespace Scrapper.ViewModel
                 else
                 {
                     IsBrowsing = true;
-                    Task.Run(() => { 
-                        UpdateMediaListInternal(item.ItemPath);
-                    });
+                    //Task.Run(() => { UpdateMediaListInternal(item.ItemPath); });
+                    _serialQueue.Enqueue(() => UpdateMediaListInternal(item.ItemPath));
 
                     UiServices.Invoke(delegate {
                         IsBrowsing = false;
@@ -233,7 +228,7 @@ namespace Scrapper.ViewModel
                 //MediaList.InsertInPlace(item, i => i.DownloadDt);
                 MediaList.Insert(idx, item);
             }, true);
-            Thread.Sleep(50);
+            Thread.Sleep(10);
         }
 
         public void RemoveMedia(string path)

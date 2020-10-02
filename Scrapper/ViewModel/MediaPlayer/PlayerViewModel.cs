@@ -107,17 +107,22 @@ namespace Scrapper.ViewModel.MediaPlayer
 
         async public void SetMediaItem(MediaItem media)
         {
-            if (MediaPlayer.IsOpen)
+            if (media != MediaItem)
             {
-                await MediaPlayer.Close();
+                if (MediaPlayer.IsOpen)
+                {
+                    await MediaPlayer.Close();
+                }
+
+                if (media == null)
+                {
+                    return;
+                }
+
+                MediaItem = media;
+                await MediaPlayer.Open(new Uri(media.MediaPath));
             }
-            if (media == null)
-            {
-                return;
-            }
-            MediaItem = media;
             RaisePropertyChanged("MediaItem");
-            await MediaPlayer.Open(new Uri(media.MediaPath));
         }
 
         void OnMediaOpening(object sender, MediaOpeningEventArgs e)

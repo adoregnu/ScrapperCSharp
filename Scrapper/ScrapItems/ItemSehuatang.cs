@@ -39,6 +39,7 @@ namespace Scrapper.ScrapItems
                 if (_spider.Browser.StopOnExistingId)
                 {
                     Log.Print("Stop Scrapping!");
+                    _spider.Browser.StopAll();
                 }
                 else
                 {

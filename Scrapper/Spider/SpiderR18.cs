@@ -71,18 +71,19 @@ namespace Scrapper.Spider
 
         public override void Scrap()
         {
-            string pids = XPath("//li[@class='item-list']/a/@href");
             switch (_state)
             {
-                case 0:
-                    Browser.ExecJavaScript(pids, OnMultiResult);
-                    break;
-                default:
-                    ParsePage(new ItemR18(this)
-                    {
-                        NumItemsToScrap = _xpathDic.Count
-                    });
-                    break;
+            case 0:
+                Browser.ExecJavaScript(XPath("//li[@class='item-list']/a/@href"),
+                    OnMultiResult);
+                break;
+            case 1:
+                ParsePage(new ItemR18(this)
+                {
+                    NumItemsToScrap = _xpathDic.Count
+                });
+                _state = 2;
+                break;
             }
         }
     }

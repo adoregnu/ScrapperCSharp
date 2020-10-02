@@ -45,9 +45,9 @@ namespace Scrapper.Converter
                         parameter_ != null ? int.Parse(parameter_.ToString()) : 0);
                 }
             }
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
-                Log.Print(e.Message);
+                //Log.Print(e.Message);
             }
             return null;
         }
