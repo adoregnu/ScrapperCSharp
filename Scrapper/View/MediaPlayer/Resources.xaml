@@ -253,6 +253,35 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="DockPanel.Dock" Value="Right" />
     </Style>
+
+    <Style x:Key="ContentControlStyle" TargetType="{x:Type ContentControl}">
+        <Setter Property="Opacity" Value="0"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                    Storyboard.TargetProperty="Opacity"
+                                    To="1" Duration="0:0:0.100"
+                                    FillBehavior="HoldEnd" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                    Storyboard.TargetProperty="Opacity"
+                                    To="0" Duration="0:0:0.300"
+                                    FillBehavior="HoldEnd" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <conv:TimeSpanToSecondsConverter x:Key="TimeSpanToSecondsConverter" />
     <conv:TimeSpanFormatter x:Key="TimeSpanFormatter" />
     <conv:PercentageFormatter x:Key="PercentageFormatter" />
@@ -261,5 +290,4 @@
     <conv:UtcDateToLocalTimeString x:Key="UtcDateToLocalTimeString" />
     <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     <conv:ClosedCaptionsChannelConverter x:Key="ClosedCaptionsChannelConverter" />
-    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 </ResourceDictionary>

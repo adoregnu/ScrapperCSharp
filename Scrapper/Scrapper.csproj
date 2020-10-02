@@ -176,6 +176,7 @@
     <Compile Include="Converter\BoardTypeVisibilityConverter.cs" />
     <Compile Include="Converter\FileToImageConverter.cs" />
     <Compile Include="Converter\HasViedoFileInPathConverter.cs" />
+    <Compile Include="Converter\SetParamConverter.cs" />
     <Compile Include="Converter\ValueConverters.cs" />
     <Compile Include="Event\ViewEvent.cs" />
     <Compile Include="Extension\Extensions.cs" />
@@ -233,6 +234,9 @@
     </Compile>
     <Compile Include="View\MediaPlayer\ControllerPanel.xaml.cs">
       <DependentUpon>ControllerPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MediaPlayer\MiniPlayer.xaml.cs">
+      <DependentUpon>MiniPlayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MediaPlayer\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
@@ -297,6 +301,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\MediaPlayer\Icons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MediaPlayer\MiniPlayer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -119,27 +119,15 @@ namespace Scrapper.ViewModel
 			NavigateToFolder(PathFactory.Create(_selectedFoder));
 		}
 
-		void DeleteFolder(string FolderName)
-		{
-			DirectoryInfo dir = new DirectoryInfo(FolderName);
-
-			foreach (FileInfo fi in dir.GetFiles())
-			{
-				fi.Delete();
-			}
-
-			foreach (DirectoryInfo di in dir.GetDirectories())
-			{
-				DeleteFolder(di.FullName);
-				di.Delete();
-			}
-			dir.Delete();
-		}
-
 		void OnDeleteFile(object param)
 		{
-			//Log.Print($"param:{param}");
-			_fileListNotifier.OnFileDeleted(param as ILVItemViewModel);
+			var fsItem = param as ILVItemViewModel;
+			_fileListNotifier.OnFileDeleted(fsItem);
+
+			Task.Run(() => {
+				Thread.Sleep(100);
+				Directory.Delete(fsItem.ItemPath, true);
+			});
 		}
 
 		/// <summary>

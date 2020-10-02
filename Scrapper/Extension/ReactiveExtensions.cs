@@ -26,7 +26,8 @@
         /// <param name="publisher">The publisher.</param>
         /// <param name="callback">The callback.</param>
         /// <param name="propertyNames">The property names.</param>
-        public static void WhenChanged(this INotifyPropertyChanged publisher, Action callback, params string[] propertyNames)
+        public static void WhenChanged(this INotifyPropertyChanged publisher,
+            Action callback, params string[] propertyNames)
         {
             var bindPropertyChanged = false;
 

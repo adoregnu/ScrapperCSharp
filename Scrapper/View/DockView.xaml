@@ -8,20 +8,11 @@
              xmlns:pane="clr-namespace:Scrapper.View.Pane"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-    </UserControl.Resources>
-    <ad:DockingManager AllowMixedOrientation="True" x:Name="dockManager"
-                         DocumentsSource="{Binding Docs}"
-                         AnchorablesSource="{Binding Anchors}">
-        <!--
-        <xcad:DockingManager.DocumentHeaderTemplate>
-            <DataTemplate>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding Title}" MinWidth="30"/>
-                </StackPanel>
-            </DataTemplate>
-        </xcad:DockingManager.DocumentHeaderTemplate>
--->
+    <ad:DockingManager
+        AllowMixedOrientation="True" x:Name="dockManager"
+        DocumentsSource="{Binding Docs}"
+        AnchorablesSource="{Binding Anchors}">
+
         <ad:DockingManager.Theme>
             <ad:Vs2013BlueTheme/>
         </ad:DockingManager.Theme>

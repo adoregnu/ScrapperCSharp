@@ -22,7 +22,8 @@ namespace Scrapper.ViewModel
     class MainViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
         public ICommand CmdFileToFolder { get; private set; }
-        
+        public ICommand KeyDownCommand { get; private set; }
+
         public ObservableCollection<Pane> Docs { get; }
             = new ObservableCollection<Pane>();
         public ObservableCollection<Pane> Anchors { get; }
@@ -51,6 +52,8 @@ namespace Scrapper.ViewModel
             Docs.Add(new BrowserViewModel());
 
             CmdFileToFolder = new RelayCommand(() => OnFileToFolder());
+            KeyDownCommand = new RelayCommand<EventArgs>(e => OnKeyDown(e));
+
             _dialogService = dialogService;
 
             MessengerInstance.Register<NotificationMessage<string>>(
@@ -63,6 +66,14 @@ namespace Scrapper.ViewModel
         {
             var dialog = new FileToFolderViewModel();
             _dialogService.ShowDialog<FileToFolderDialog>(this, dialog);
+        }
+
+        void OnKeyDown(EventArgs e)
+        {
+            foreach (var doc in Docs)
+            {
+                doc.OnKeyDown(e as KeyEventArgs);
+            }
         }
 
         void OnStatusMessage(NotificationMessage<string> msg)

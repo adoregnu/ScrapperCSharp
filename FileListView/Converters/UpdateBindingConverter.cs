@@ -34,31 +34,29 @@
 			if (values == null)
 				return Binding.DoNothing;
 
-			var inputValues = values as object[];
-
-			if (inputValues == null)
+			if (values == null)
 				return Binding.DoNothing;
 
-			if (inputValues.Length != 3)
+			if (values.Length != 3)
 				return Binding.DoNothing;
 
 			// IsLoaded Binding: Is the view loaded, yet ???
-			if (inputValues[0] is bool == false)  // Updates that are not drawn should not be 
+			if (values[0] is bool == false)  // Updates that are not drawn should not be 
 				return Binding.DoNothing;        // hidden from view
 												 //- since init can otherwise fail for pop-ups etc
 
-			if (((bool)inputValues[0]) == false)
-				return inputValues[2];           // Lets update the view since it isn't loaded yet
+			if (((bool)values[0]) == false)
+				return values[2];           // Lets update the view since it isn't loaded yet
 
-			if (inputValues[1] is bool == false)
+			if (values[1] is bool == false)
 				return Binding.DoNothing;
 
-			var UpdateYesNo = (bool)inputValues[2];
+			var UpdateYesNo = (bool)values[1];
 
 			if (UpdateYesNo == false)      // These binding changes are not shown to the view
 				return Binding.DoNothing;
 
-			return inputValues[2];       // Return the ItemSource binding for updates since processing is done
+			return values[2];       // Return the ItemSource binding for updates since processing is done
 		}
 
 		/// <summary>

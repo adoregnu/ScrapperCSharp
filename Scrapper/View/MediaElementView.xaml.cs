@@ -20,8 +20,7 @@ namespace Scrapper.View
     /// </summary>
     public partial class MediaElementView : UserControl
     {
-        bool _isOpened = false;
-        bool _hasTakenThumbnail = false;
+        //bool _hasTakenThumbnail = false;
         public string MediaSource
         {
             get { return (string)GetValue(MediaSourceProperty); }
@@ -86,7 +85,7 @@ namespace Scrapper.View
                 using (var tmp = new Bitmap(BgImagePath))
                 {
                     BgImage.Source = FileToImageConverter.ConvertBitmap(tmp, MediaWidth);
-                    _hasTakenThumbnail = true;
+                    //_hasTakenThumbnail = true;
                 }
             }
             catch (Exception ex)
@@ -101,7 +100,7 @@ namespace Scrapper.View
         void InitEventHandler()
         { 
             Media.MediaReady += OnMediaReady;
-            Media.RenderingVideo += OnRenderingVideo;
+            //Media.RenderingVideo += OnRenderingVideo;
             _stopTimer.Interval = TimeSpan.FromMilliseconds(DELAY_ON_PLAY_MS);
             _stopTimer.Tick += new EventHandler(OnStopTimer);
 
@@ -118,6 +117,7 @@ namespace Scrapper.View
             await Media.Play();
         }
 
+#if false
         void SnapThumbnail(BitmapDataBuffer bitmap)
         {
             var path = Path.GetDirectoryName(MediaSource);
@@ -129,7 +129,6 @@ namespace Scrapper.View
                 UpdateBgimage();
             }
         }
-
         void OnRenderingVideo(object sender, RenderingVideoEventArgs e)
         {
             const double snapshotPosition = 3;
@@ -147,13 +146,13 @@ namespace Scrapper.View
             SnapThumbnail(e.Bitmap);
             _hasTakenThumbnail = true;
         }
+#endif
         async void OpenMedia()
         {
-            if (_isOpened) return;
+            if (Media.IsOpen) return;
             try
             {
                 Log.Print($"Opening {MediaSource}");
-                _isOpened = true;
                 await Media.Open(new Uri(MediaSource));
                 BgImage.Visibility = Visibility.Hidden;
             }
@@ -165,12 +164,9 @@ namespace Scrapper.View
 
         async void CloseMedia()
         {
-            if (!_isOpened) return;
+            if (!Media.IsOpen) return;
             Log.Print($"closing {MediaSource}");
             _lastPosition = Media.FramePosition;
-            _isOpened = false;
-            if (Media.IsOpen)
-                await Media.Stop();
 
             await Media.Close();
             BgImage.Visibility = Visibility.Visible;
@@ -178,7 +174,7 @@ namespace Scrapper.View
 
         void MediaPlayerOnMouseEnter(object sender, MouseEventArgs e)
         {
-            if (!_isOpened)
+            if (!Media.IsOpen)
             {
                 _startTimer.Start();
             }

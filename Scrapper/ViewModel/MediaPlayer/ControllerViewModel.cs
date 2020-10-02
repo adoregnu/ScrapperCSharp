@@ -345,7 +345,10 @@ namespace Scrapper.ViewModel.MediaPlayer
 
         private EqualizerFilterValues ParseVideoEqualizerFilter()
         {
-            var result = new EqualizerFilterValues { Contrast = 1d, Brightness = 0d, Saturation = 1d };
+            var result = new EqualizerFilterValues
+            {
+                Contrast = 1d, Brightness = 0d, Saturation = 1d
+            };
 
             if (_me == null || _me.HasVideo == false) return result;
 
@@ -378,9 +381,12 @@ namespace Scrapper.ViewModel.MediaPlayer
             {
                 var currentValues = ParseVideoEqualizerFilter();
 
-                contrast = contrast == null ? currentValues.Contrast : contrast < -2d ? -2d : contrast > 2d ? 2d : contrast;
-                brightness = brightness == null ? currentValues.Brightness : brightness < -1d ? -1d : brightness > 1d ? 1d : brightness;
-                saturation = saturation == null ? currentValues.Saturation : saturation < 0d ? 0d : saturation > 3d ? 3d : saturation;
+                contrast = contrast == null ? currentValues.Contrast :
+                            contrast < -2d ? -2d : contrast > 2d ? 2d : contrast;
+                brightness = brightness == null ? currentValues.Brightness :
+                            brightness < -1d ? -1d : brightness > 1d ? 1d : brightness;
+                saturation = saturation == null ? currentValues.Saturation :
+                            saturation < 0d ? 0d : saturation > 3d ? 3d : saturation;
 
                 var targetFilter = $"{VideoEqContrast}{contrast:+0.000;-0.000}" +
                     $"{VideoEqBrightness}{brightness:+0.000;-0.000}" +

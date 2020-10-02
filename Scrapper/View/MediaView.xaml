@@ -3,9 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:vm="clr-namespace:Scrapper.ViewModel"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:cmd="http://www.galasoft.ch/mvvmlight"
              xmlns:local="clr-namespace:Scrapper.View"
              xmlns:player="clr-namespace:Scrapper.View.MediaPlayer"
              mc:Ignorable="d" 
@@ -32,11 +29,11 @@
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ViewType, Mode=TwoWay}" Value="1">
                             <Setter Property="Template"
-                                    Value="{DynamicResource MediaListTamplate}"/>
+                                    Value="{StaticResource MediaListTamplate}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding ViewType, Mode=TwoWay}" Value="2">
                             <Setter Property="Template"
-                                    Value="{DynamicResource MediaPlayerTemplate}"/>
+                                    Value="{StaticResource MediaPlayerTemplate}"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

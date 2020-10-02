@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
-
 
 namespace Scrapper.ViewModel.Base
 {
@@ -43,5 +42,9 @@ namespace Scrapper.ViewModel.Base
             }
         }
         public bool CanHide { get; set; }
+
+        public virtual void OnKeyDown(KeyEventArgs e)
+        { 
+        }
     }
 }

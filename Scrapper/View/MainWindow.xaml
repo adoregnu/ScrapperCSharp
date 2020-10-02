@@ -4,11 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:cmd="http://www.galasoft.ch/mvvmlight"
         xmlns:view="clr-namespace:Scrapper.View"
         mc:Ignorable="d"
         md:DialogServiceViews.IsRegistered="True"
         Title="Scrapper" Height="1000" Width="2000"
         DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="PreviewKeyDown">
+            <cmd:EventToCommand
+                Command="{Binding KeyDownCommand}"
+                PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>

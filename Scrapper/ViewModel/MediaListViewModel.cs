@@ -21,6 +21,9 @@ using Scrapper.Extension;
 using Scrapper.Model;
 using Scrapper.Tasks;
 using FFmpeg.AutoGen;
+using Scrapper.ViewModel.MediaPlayer;
+using Unosquare.FFME;
+using System.Windows.Threading;
 
 namespace Scrapper.ViewModel
 {
@@ -70,6 +73,7 @@ namespace Scrapper.ViewModel
                 }
             }
         }
+        public PlayerViewModel Player { get; set; }
 
         public ICommand CmdExclude { get; set; }
         public ICommand CmdDownload { get; set; }

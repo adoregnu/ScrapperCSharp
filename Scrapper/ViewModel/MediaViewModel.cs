@@ -43,8 +43,8 @@ namespace Scrapper.ViewModel
             Title = "Media";
 
             FileList = new FileListViewModel(this);
-            MediaList = new MediaListViewModel();
             MediaPlayer = new PlayerViewModel();
+            MediaList = new MediaListViewModel();
 
             //KeyDownCommand = new RelayCommand<EventArgs>(e => Log.Print(e.ToString()));
             MessengerInstance.Register<NotificationMessage<string>>(
@@ -56,25 +56,15 @@ namespace Scrapper.ViewModel
             var path = PathFactory.Create(App.CurrentPath);
             FileList.NavigateToFolder(path);
         }
-#if false
-        void UpdateViewType(string path)
+
+        public override void OnKeyDown(KeyEventArgs e)
         {
-            bool folderExist = FileList.FolderItemsView.CurrentItems
-                                .Any(i => i.ItemType == FSItemType.Folder);
-            var media = MediaList.GetMedia(path);
-            if (folderExist || media == null)
+            if (ViewType == 2)
             {
-                ViewType = 1;
+                MediaPlayer.OnKeyDown(e);
             }
-            else
-            {
-                MediaPlayer.SetMediaItem(media);
-                ViewType = 2;
-            }
-            MediaList.CurrentFolder = path;
-            MediaList.RefreshMediaList(FileList.FolderItemsView.CurrentItems);
         }
-#endif
+
         void IFileListNotifier.OnDirectoryChanged(string path)
         {
             bool folderExist = FileList.FolderItemsView.CurrentItems
@@ -97,6 +87,7 @@ namespace Scrapper.ViewModel
             if (string.IsNullOrEmpty(path))
             {
                 ViewType = 1;
+                MediaPlayer.CloseCommand.Execute(null);
                 return;
             }
             _selectedFile = path;
@@ -114,11 +105,11 @@ namespace Scrapper.ViewModel
                 MediaList.UpdateMediaList(item);
         }
 
-        void IFileListNotifier.OnFileDeleted(ILVItemViewModel item)
+        void IFileListNotifier.OnFileDeleted(ILVItemViewModel fsItem)
         {
-            //working on it...
-            MediaList.RemoveMedia(item.ItemPath);
-            //ViewType = 1;
+            MediaPlayer.SetMediaItem(null);
+            MediaList.RemoveMedia(fsItem.ItemPath);
+            ViewType = 1;
         }
 
         /// <summary>

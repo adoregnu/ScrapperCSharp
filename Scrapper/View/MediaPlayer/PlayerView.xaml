@@ -3,10 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:iex="http://schemas.microsoft.com/expression/2010/interactions"
+            xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+            xmlns:cmd="http://www.galasoft.ch/mvvmlight"
              xmlns:local="clr-namespace:Scrapper.View.MediaPlayer"
-             xmlns:cmd="http://www.galasoft.ch/mvvmlight"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -24,38 +23,22 @@
         </Storyboard>
     </UserControl.Resources>
     <Grid>
-        <ContentControl Content="{Binding MediaPlayer}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseEnter">
-                    <cmd:EventToCommand
-                        Command="{Binding MouseEnterCommand}"
-                        PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-                <i:EventTrigger EventName="MouseLeave">
-                    <cmd:EventToCommand
-                        Command="{Binding MouseLeaveCommand}"
-                        PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-                <i:EventTrigger EventName="PreviewKeyDown">
-                    <cmd:EventToCommand
-                        Command="{Binding KeyDownCommand}"
-                        PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </ContentControl>
+        <Grid.Background>
+            <ImageBrush ImageSource="{Binding MediaItem.BgImagePath, Converter=
+                {StaticResource PathToImageConverter}}"/>
+        </Grid.Background>
+        <ContentControl x:Name="PlayerControl" Content="{Binding MediaPlayer}"
+                        Style="{StaticResource ContentControlStyle}"/>
         <DockPanel x:Name="LayoutPanel" LastChildFill="False">
-
             <local:ControllerPanel
                 x:Name="ControllerPanel"
                 DockPanel.Dock="Bottom"
-                Visibility="{Binding IsPlayerLoaded,
-                    Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                Visibility="{Binding IsPlayerLoaded, Converter={StaticResource boolToVis}}"/>
 
             <local:PropertiesPanel
                 x:Name="PropertiesPanel"
                 DockPanel.Dock="Right" 
-                Visibility="{Binding IsPropertiesPanelOpen,
-                    Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                Visibility="{Binding IsPropertiesPanelOpen, Converter={StaticResource boolToVis}}"/>
         </DockPanel>
         <!--<Image Source="{Binding BackgroundImage}"></Image>-->
     </Grid>

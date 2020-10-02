@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Scrapper.ViewModel"
              xmlns:fvconv="clr-namespace:FileListView.Converters;assembly=FileListView"
+             xmlns:converter="clr-namespace:Scrapper.Converter"
              StartupUri="View\MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -12,6 +13,7 @@
                     <local:ViewModelLocator x:Key="Locator" />
                     <fvconv:UpdateBindingConverter x:Key="UpdateBindingConverter" />
                     <BooleanToVisibilityConverter x:Key="boolToVis" />
+                    <converter:FileToImageConverter x:Key="PathToImageConverter"/>
                 </ResourceDictionary>
 
                 <ResourceDictionary Source="View\MediaListResources.xaml"/>
