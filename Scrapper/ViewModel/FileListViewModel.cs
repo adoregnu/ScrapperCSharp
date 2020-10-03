@@ -10,15 +10,15 @@ using System.Windows;
 using System.Windows.Input;
 
 using FileListView.Interfaces;
-using FileListView.ViewModels.Base;
 using FileSystemModels;
 using FileSystemModels.Browse;
 using FileSystemModels.Events;
 using FileSystemModels.Interfaces;
+using FileSystemModels.Models.FSItems.Base;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-
+using GalaSoft.MvvmLight.Messaging;
 using Scrapper.Tasks;
 
 namespace Scrapper.ViewModel
@@ -85,11 +85,12 @@ namespace Scrapper.ViewModel
 
 			FolderItemsView = FileListView.Factory.CreateFileListViewModel();
 			UpCommand = new RelayCommand<object>(p => OnUpCommand(), p => CanUpCommand());
-			RefreshCommand = new RelayCommand<object>( p => OnRefreshCommand());
+			RefreshCommand = new RelayCommand<object>(
+				p => NavigateToFolder(PathFactory.Create(_selectedFoder)));
 			SelectionChanged = new RelayCommand<object>( p => {
-                if (p is ILVItemViewModel)
+                if (p is ILVItemViewModel fsItem)
                 {
-                    _fileListNotifier.OnFileSelected(p.ToString());
+                    _fileListNotifier.OnFileSelected(fsItem);
                 }
 			});
 			EscPressed = new RelayCommand<object>(
@@ -106,6 +107,9 @@ namespace Scrapper.ViewModel
             // This event is fired when a user opens a file
             WeakEventManager<IFileOpenEventSource, FileOpenEventArgs>
                 .AddHandler(FolderItemsView, "OnFileOpen", FolderItemsView_OnFileOpen);
+
+            MessengerInstance.Register<NotificationMessage<bool>>(
+                this, OnDialogMessage);
         }
 
         void OnUpCommand()
@@ -130,8 +134,8 @@ namespace Scrapper.ViewModel
 			return false;
 		}
 
-		void OnRefreshCommand()
-		{
+		void OnDialogMessage(NotificationMessage<bool> msg)
+		{ 
 			NavigateToFolder(PathFactory.Create(_selectedFoder));
 		}
 
@@ -144,7 +148,17 @@ namespace Scrapper.ViewModel
 
 			Task.Run(() => {
 				Thread.Sleep(300);
-				Directory.Delete(fsItem.ItemPath, true);
+				try
+				{
+					if (fsItem.ItemType == FSItemType.Folder)
+						Directory.Delete(fsItem.ItemPath, true);
+					else
+						File.Delete(fsItem.ItemPath);
+				}
+				catch (Exception ex)
+				{
+					Log.Print(ex.Message);
+				}
 			});
 		}
 

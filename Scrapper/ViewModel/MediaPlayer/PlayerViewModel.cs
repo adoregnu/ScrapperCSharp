@@ -25,9 +25,13 @@ namespace Scrapper.ViewModel.MediaPlayer
         bool _isPropertiesPanelOpen = App.IsInDesignMode;
         bool _isPlayerLoaded = App.IsInDesignMode;
         bool _isPlaying = false;
+        MediaItem _mediaItem;
 
-
-        public MediaItem MediaItem { get; private set; }
+        public MediaItem MediaItem
+        {
+            get => _mediaItem;
+            private set => Set(ref _mediaItem, value);
+        }
         public Unosquare.FFME.MediaElement MediaPlayer { get; private set; }
         public MediaOptions CurrentMediaOptions { get; set; }
         public ControllerViewModel Controller { get; private set; }
@@ -114,15 +118,16 @@ namespace Scrapper.ViewModel.MediaPlayer
                     await MediaPlayer.Close();
                 }
 
-                if (media == null)
+                if (media != null)
                 {
-                    return;
+                    MediaItem = media;
+                    await MediaPlayer.Open(new Uri(media.MediaPath));
                 }
-
-                MediaItem = media;
-                await MediaPlayer.Open(new Uri(media.MediaPath));
             }
-            RaisePropertyChanged("MediaItem");
+            else //in case of updating cover image only
+            {
+                RaisePropertyChanged("MediaItem");
+            }
         }
 
         void OnMediaOpening(object sender, MediaOpeningEventArgs e)

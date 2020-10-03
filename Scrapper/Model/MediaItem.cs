@@ -18,7 +18,7 @@ namespace Scrapper.Model
         public bool IsImage { get; private set; } = true;
         public bool IsMediaDir
         {
-            get { return !string.IsNullOrEmpty(MediaPath) && MediaPath.Length > 0; }
+            get { return !string.IsNullOrEmpty(MediaPath); }
         }
         public List<string> Screenshots { get; private set; } = new List<string>();
 
@@ -26,7 +26,7 @@ namespace Scrapper.Model
             ".mp4", ".avi", ".mkv", ".ts", ".wmv", ".m4v"
         };
 
-        public void SetField(string path)
+        public void UpdateField(string path)
         {
             string fname = Path.GetFileName(path);
             if (fname.EndsWith("torrent"))

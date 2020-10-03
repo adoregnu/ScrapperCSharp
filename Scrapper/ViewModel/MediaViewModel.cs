@@ -14,6 +14,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 
 using Scrapper.ViewModel.Base;
 using Scrapper.ViewModel.MediaPlayer;
+using Scrapper.Model;
 
 namespace Scrapper.ViewModel
 {
@@ -23,14 +24,7 @@ namespace Scrapper.ViewModel
         public int ViewType
         {
             get => _viewType;
-            set
-            {
-                if (_viewType != value)
-                {
-                    _viewType = value;
-                    RaisePropertyChanged("ViewType");
-                }
-            }
+            set => Set(ref _viewType, value);
         }
 
         public MediaListViewModel MediaList { get; private set; }
@@ -82,20 +76,34 @@ namespace Scrapper.ViewModel
         }
 
         string _selectedFile;
-        void IFileListNotifier.OnFileSelected(string path)
+        void IFileListNotifier.OnFileSelected(ILVItemViewModel fsItem)
         {
-            if (string.IsNullOrEmpty(path))
+            MediaItem media = null;
+            if (fsItem != null)
             {
-                ViewType = 1;
-                MediaPlayer.CloseCommand.Execute(null);
-                return;
+                if (fsItem.ItemType == FSItemType.File)
+                {
+                    media = new MediaItem();
+                    media.UpdateField(fsItem.ItemPath);
+                    if (!media.IsMediaDir || media.IsImage) media = null;
+                }
+                else
+                {
+                    media = MediaList.GetMedia(fsItem.ItemPath);
+                }
             }
-            _selectedFile = path;
-            var media = MediaList.GetMedia(path);
-            if (media == null) return;
-            if (_viewType != 2) ViewType = 2;
 
-            MediaPlayer.SetMediaItem(media);
+            if (media != null)
+            {
+                ViewType = 2;
+                MediaPlayer.SetMediaItem(media);
+                _selectedFile = fsItem.ItemPath;
+            }
+            else
+            { 
+                MediaPlayer.CloseCommand.Execute(null);
+                ViewType = 1;
+            }
         }
 
         void IFileListNotifier.OnCheckboxChanged(ILVItemViewModel item)

@@ -62,6 +62,7 @@ namespace Scrapper.Model
 
         [Required]
         public string PId { get; set; }
+        public bool Sensored { get; set; }
 
         public DateTime ReleaseDate { get; set; }
         public AvStudio Studio { get; set; }

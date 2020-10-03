@@ -65,7 +65,11 @@ namespace Scrapper.ViewModel
         void OnFileToFolder()
         {
             var dialog = new FileToFolderViewModel();
-            _dialogService.ShowDialog<FileToFolderDialog>(this, dialog);
+            bool? ret = _dialogService.ShowDialog<FileToFolderDialog>(this, dialog);
+            if (ret.HasValue && ret.Value)
+            {
+                MessengerInstance.Send(new NotificationMessage<bool>(ret.Value, "FileRenamed"));
+            }
         }
 
         void OnKeyDown(EventArgs e)

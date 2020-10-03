@@ -46,7 +46,7 @@ namespace Scrapper.Spider
 
         void OnMultiResult(List<object> list)
         {
-            Log.Print($"{list.Count} items found!");
+            Log.Print($"OnMultiResult : {list.Count} items found!");
             if (list == null || list.Count == 0)
             {
                 Browser.StopAll();
@@ -74,7 +74,8 @@ namespace Scrapper.Spider
             switch (_state)
             {
             case 0:
-                Browser.ExecJavaScript(XPath("//li[@class='item-list']/a/@href"),
+                Browser.ExecJavaScript(
+                    XPath("//li[starts-with(@class,'item-list')]/a/@href"),
                     OnMultiResult);
                 break;
             case 1:

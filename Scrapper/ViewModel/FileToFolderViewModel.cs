@@ -112,6 +112,7 @@ namespace Scrapper.ViewModel
                 }
             }
             tmp.ForEach(x => { Files.Remove(x); });
+            DialogResult = true;
         }
     }
 }

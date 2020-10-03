@@ -90,7 +90,6 @@ namespace Scrapper.Spider
         {
             foreach (var xpath in _xpathDic)
             {
-                //ExecJavaScript(item, xpath);
                 Browser.ExecJavaScript(xpath.Value, item, xpath.Key);
             }
             _state = -1;

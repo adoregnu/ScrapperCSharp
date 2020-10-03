@@ -204,7 +204,7 @@ namespace Scrapper.ViewModel
             var files = Directory.GetFileSystemEntries(path);
             foreach (var file in files)
             {
-                item.SetField(file);
+                item.UpdateField(file);
                 if (item.IsExcluded || item.IsDownload)
                     return null;
             }
