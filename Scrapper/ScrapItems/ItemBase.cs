@@ -76,6 +76,7 @@ namespace Scrapper.ScrapItems
         protected void PrintItem(string name, List<object> items)
         {
             Log.Print("{0} : scrapped {1}", name, items != null ? items.Count : 0);
+            if (items == null) return;
             foreach (string it in items)
             {
                 Log.Print($"\t{name}: {it.Trim()}");

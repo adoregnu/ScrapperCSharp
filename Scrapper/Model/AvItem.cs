@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 using System.Data.SQLite;
 using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 using SQLite.CodeFirst;
 

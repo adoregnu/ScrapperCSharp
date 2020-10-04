@@ -20,6 +20,7 @@ namespace Scrapper.View.Pane
         public DataTemplate BrowserViewTemplate { get; set; }
         public DataTemplate MediaViewTemplate { get; set; }
         public DataTemplate FileViewTemplate { get; set; }
+        public DataTemplate AvDbViewTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
@@ -29,6 +30,8 @@ namespace Scrapper.View.Pane
                 return BrowserViewTemplate;
             if (item is MediaViewModel)
                 return MediaViewTemplate;
+            if (item is AvDbViewModel)
+                return AvDbViewTemplate;
             return base.SelectTemplate(item, container);
         }
     }

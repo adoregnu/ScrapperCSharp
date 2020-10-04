@@ -7,6 +7,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="2" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <DockPanel Grid.Column="0">
+            <ComboBox
+                DockPanel.Dock="Top"
+                ItemsSource="{Binding SourceTypes}"
+                SelectedItem="{Binding SelectedType}"/>
+            <ListBox
+                ItemsSource="{Binding ItemsSource}"
+                SelectedItem="{Binding SelectedItem}">
+            </ListBox>
+        </DockPanel>
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
+        <local:MediaListView Grid.Column="2" DataContext="{Binding MediaList}"/>
     </Grid>
 </UserControl>

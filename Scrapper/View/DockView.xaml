@@ -37,6 +37,11 @@
                     </DataTemplate>
                 </pane:PanesTemplateSelector.MediaViewTemplate>
 
+                <pane:PanesTemplateSelector.AvDbViewTemplate>
+                    <DataTemplate>
+                        <view:AvDbView></view:AvDbView>
+                    </DataTemplate>
+                </pane:PanesTemplateSelector.AvDbViewTemplate>
             </pane:PanesTemplateSelector>
         </ad:DockingManager.LayoutItemTemplateSelector>
 
