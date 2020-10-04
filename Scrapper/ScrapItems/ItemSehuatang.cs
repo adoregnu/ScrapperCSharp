@@ -87,8 +87,7 @@ namespace Scrapper.ScrapItems
 
         void IScrapItem.OnJsResult(string name, List<object> items)
         {
-            Log.Print("{0} scrapped {1} items", name,
-                items != null ? items.Count : 0);
+            PrintItem(name, items);
 
             if (_bStop) return;
             if (name == "pid")

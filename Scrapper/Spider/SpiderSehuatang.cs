@@ -35,7 +35,7 @@ namespace Scrapper.Spider
                 if (_selectedBoard != value)
                 {
                     _selectedBoard = value;
-                    MediaPath = $"{App.CurrentPath}sehuatang\\{value}\\";
+                    MediaPath = $"{App.DataPath}sehuatang\\{value}\\";
                 }
             }
         }
@@ -62,7 +62,7 @@ namespace Scrapper.Spider
             {
                 "censored", "uncensored", "subtitle"
             };
-            MediaPath = $"{App.CurrentPath}sehuatang\\{SelectedBoard}\\";
+            MediaPath = $"{App.DataPath}sehuatang\\{SelectedBoard}\\";
         }
 
         void ParsePage()

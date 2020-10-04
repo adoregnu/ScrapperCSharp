@@ -20,7 +20,8 @@ namespace Scrapper.Model
         [Autoincrement]
         public int Id { get; set; }
 
-        public string Genre { get; set; }
+        public string Name { get; set; }
+        public virtual ICollection<AvItem> Items { get; set; }
     }
 
     public class AvActorName
@@ -30,7 +31,6 @@ namespace Scrapper.Model
         public int Id { get; set; }
 
         public string Name { get; set; }
-
         public AvActor Actor { get; set; }
     }
 
@@ -41,8 +41,8 @@ namespace Scrapper.Model
         public int Id { get; set; }
 
         public string PicturePath { get; set; }
-
         public ICollection<AvActorName> Names { get; set; }
+        public virtual ICollection<AvItem> Items { get; set; }
     }
 
     public class AvStudio
@@ -60,8 +60,9 @@ namespace Scrapper.Model
         [Autoincrement]
         public int Id { get; set; }
 
-        [Required]
-        public string PId { get; set; }
+        public string Pid { get; set; }
+        [MaxLength(256)]
+        public string Title { get; set; }
         public bool Sensored { get; set; }
 
         public DateTime ReleaseDate { get; set; }
@@ -70,11 +71,12 @@ namespace Scrapper.Model
         [Required]
         public string Path { get; set; }
         public string Set { get; set; }
+        [MaxLength(512)]
         public string Plot { get; set; }
         //public string Poster { get; set; }
         //public string Screenshots { get; set; }
         public float Rating { get; set; }
-        public ICollection<AvGenre> Genres { get; set; }
-        public ICollection<AvActor> Actors { get; set; }
+        public virtual ICollection<AvGenre> Genres { get; set; }
+        public virtual ICollection<AvActor> Actors { get; set; }
     }
 }

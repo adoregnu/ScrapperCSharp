@@ -2,9 +2,6 @@
 using System.Linq;
 using System.Windows.Input;
 
-using Unosquare.FFME;
-using Unosquare.FFME.Common;
-
 using FileSystemModels;
 using FileSystemModels.Models.FSItems.Base;
 using FileListView.Interfaces;
@@ -47,7 +44,7 @@ namespace Scrapper.ViewModel
             MessengerInstance.Register<NotificationMessageAction<string>>(
                 this, OnQueryMediaPath);
 
-            var path = PathFactory.Create(App.CurrentPath);
+            var path = PathFactory.Create(App.DataPath);
             FileList.NavigateToFolder(path);
         }
 
@@ -108,7 +105,6 @@ namespace Scrapper.ViewModel
 
         void IFileListNotifier.OnCheckboxChanged(ILVItemViewModel item)
         {
-			//Log.Print($"path :{item.ItemPath}, IsChecked: {item.IsChecked}");
             if (item.ItemType == FSItemType.Folder)
                 MediaList.UpdateMediaList(item);
         }
@@ -121,7 +117,8 @@ namespace Scrapper.ViewModel
         }
 
         /// <summary>
-        /// Callend when it receives message from Spider class' OnScrapCompleted
+        /// mediaUpdated : A message from SpiderBase's OnScrapCompleted
+        /// mediaAdded   : A message from SpiderSehuatang's OnScrapCompleted 
         /// </summary>
         /// <param name="msg"></param>
         void OnMediaUpdated(NotificationMessage<string> msg)
@@ -143,6 +140,11 @@ namespace Scrapper.ViewModel
             }
         }
 
+        /// <summary>
+        ///  querySelectedPath: A message from Spider's Navigate method
+        ///  queryCurrentPath: A message from FileToFolderViewModel
+        /// </summary>
+        /// <param name="msgAction"></param>
         void OnQueryMediaPath(NotificationMessageAction<string> msgAction)
         {
             if (msgAction.Notification == "queryCurrentPath")

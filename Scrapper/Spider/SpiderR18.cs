@@ -29,7 +29,7 @@ namespace Scrapper.Spider
                 { "genre",    XPath("//label[contains(.,'Categories:')]/following-sibling::div[1]/a/text()") },
                 { "plot",     XPath("//h1[contains(., 'Product Description')]/following-sibling::p/text()") },
                 { "cover",    XPath("//div[contains(@class,'box01')]/img/@src") },
-                { "actor_thumb", XPath("//ul[contains(@class,'cmn-list-product03')]//img/@src") },
+                { "actor_thumb", XPath("//ul[contains(@class,'cmn-list-product03')]//img") },
             };
         }
 

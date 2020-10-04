@@ -29,52 +29,33 @@ namespace Scrapper.ViewModel
     class MediaListViewModel : ViewModelBase
     {
         //readonly FileSystemWatcher _fsWatcher;
-        Dictionary<string, MediaItem> _mediaCache
-            = new Dictionary<string, MediaItem>();
-        bool _isBrowsing = false;
+        readonly Dictionary<string, MediaItem> _mediaCache;
 
         MediaItem _selectedMedia = null;
+        bool _isBrowsing = false;
+
         public MediaItem SelectedMedia
         {
             get => _selectedMedia;
-            set
-            {
-                _selectedMedia = value;
-                if (value != null)
-                {
-                    Screenshots = value.Screenshots;
-                }
-                else
-                {
-                    Screenshots = null;
-                }
-                RaisePropertyChanged("Screenshots");
-            }
+            set => Set(ref _selectedMedia, value);
         }
-
-        public ObservableCollection<MediaItem> MediaList { get; set; } =
-            new ObservableCollection<MediaItem>();
-        public List<string> Screenshots { get; set; } = null;
-        public string CurrentFolder { get; set; }
         public bool IsBrowsing
         {
             get => _isBrowsing;
-            set
-            {
-                if (_isBrowsing != value)
-                {
-                    _isBrowsing = value;
-                    RaisePropertyChanged("IsBrowsing");
-                }
-            }
+            set => Set(ref _isBrowsing, value);
         }
+        public ObservableCollection<MediaItem> MediaList { get; private set; }
         public PlayerViewModel Player { get; set; }
+        public string CurrentFolder { get; set; }
 
         public ICommand CmdExclude { get; set; }
         public ICommand CmdDownload { get; set; }
 
         public MediaListViewModel()
         {
+            MediaList = new ObservableCollection<MediaItem>();
+            _mediaCache = new Dictionary<string, MediaItem>();
+
             CmdExclude = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.excluded));
             CmdDownload = new RelayCommand<MediaItem>(
@@ -121,7 +102,6 @@ namespace Scrapper.ViewModel
                 else
                 {
                     IsBrowsing = true;
-                    //Task.Run(() => { UpdateMediaListInternal(item.ItemPath); });
                     _serialQueue.Enqueue(() => UpdateMediaListInternal(item.ItemPath));
 
                     UiServices.Invoke(delegate {

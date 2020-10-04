@@ -13,9 +13,6 @@ using Unosquare.FFME.Common;
 using GalaSoft.MvvmLight.Command;
 
 using Scrapper.Model;
-using System.Threading;
-using Unosquare.FFME;
-using System.Windows;
 using Scrapper.Extension;
 
 namespace Scrapper.ViewModel.MediaPlayer

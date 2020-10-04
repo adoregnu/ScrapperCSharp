@@ -6,10 +6,11 @@
                     xmlns:cmd="http://www.galasoft.ch/mvvmlight"
                     xmlns:local="clr-namespace:Scrapper.View"
                     xmlns:player="clr-namespace:Scrapper.View.MediaPlayer" >
-    <conv:SetParamConverter x:Key="SetParamConverter"/>
+    <conv:ScreenshotsToVisibilityConverter x:Key="ScreenshotsToVisConverter"/>
     <ControlTemplate x:Key="ImageItem">
-         <Grid Width="240" Height="200" Tag="{Binding RelativeSource=
-             {RelativeSource FindAncestor, AncestorType={x:Type local:MediaListView}},
+         <Grid Width="240" Height="200"
+               Tag="{Binding RelativeSource={RelativeSource FindAncestor,
+                        AncestorType={x:Type local:MediaListView}},
              Path=DataContext}">
             <Grid.ContextMenu>
                 <ContextMenu>

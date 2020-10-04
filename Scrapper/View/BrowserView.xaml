@@ -41,7 +41,9 @@
         <cefSharp:ChromiumWebBrowser x:Name="browser" Grid.Row="1"
             WebBrowser="{Binding WebBrowser, Mode=OneWayToSource}"
             Title="{Binding Title, Mode=OneWayToSource}"
-            Address="{Binding Address, Mode=TwoWay}">
+            Address="{Binding Address, Mode=TwoWay}"
+            UseLayoutRounding="True"
+            RenderOptions.BitmapScalingMode="NearestNeighbor">
             <!--
             Opacity="{Binding ElementName=opacitySlider, Path=Value}"
             AllowDrop="True"

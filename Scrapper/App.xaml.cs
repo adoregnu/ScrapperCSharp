@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,6 +18,8 @@ using FFmpeg.AutoGen;
 using Unosquare.FFME;
 
 using Scrapper.BrowserHandlers;
+using Scrapper.Model;
+using Scrapper.Extension;
 
 namespace Scrapper
 {
@@ -26,6 +29,8 @@ namespace Scrapper
     public partial class App : Application
     {
         public static string CurrentPath { get; set; }
+        public static string DataPath { get; set; }
+        public static AvDbContext DbContext { get; set; }
 
         /// <summary>
         /// Determines if the Application is in design mode.
@@ -37,30 +42,42 @@ namespace Scrapper
         public App()
         {
             log4net.Config.XmlConfigurator.Configure();
-            //CurrentPath = Directory.GetCurrentDirectory() + "\\web\\";
-            CurrentPath = @"d:\tmp\";
-            var di = new DirectoryInfo(CurrentPath);
+            CurrentPath = Directory.GetCurrentDirectory();
+            DataPath = @"d:\tmp\";
+            var di = new DirectoryInfo(DataPath);
             if (!di.Exists)
             {
-                Directory.CreateDirectory(CurrentPath);
+                Directory.CreateDirectory(DataPath);
             }
 
-            // Change the default location of the ffmpeg binaries (same directory as application)
-            // You can get the 32-bit binaries here: https://ffmpeg.zeranoe.com/builds/win32/shared/ffmpeg-4.2.1-win32-shared.zip
-            // You can get the 64-bit binaries here: https://ffmpeg.zeranoe.com/builds/win64/shared/ffmpeg-4.2.1-win64-shared.zip
-            Library.FFmpegDirectory = @"c:\ffmpeg" + (Environment.Is64BitProcess ? @"\x64" : string.Empty);
+            // Change the default location of the ffmpeg binaries 
+            // (same directory as application)
+            Library.FFmpegDirectory = @"c:\ffmpeg" +
+                (Environment.Is64BitProcess ? @"\x64" : string.Empty);
 
             // You can pick which FFmpeg binaries are loaded. See issue #28
-            // For more specific control (issue #414) you can set Library.FFmpegLoadModeFlags to:
-            // FFmpegLoadMode.LibraryFlags["avcodec"] | FFmpegLoadMode.LibraryFlags["avfilter"] | ... etc.
+            // For more specific control (issue #414) you can set
+            // Library.FFmpegLoadModeFlags to: FFmpegLoadMode.LibraryFlags["avcodec"]
+            //  | FFmpegLoadMode.LibraryFlags["avfilter"] | ... etc.
             // Full Features is already the default.
             Library.FFmpegLoadModeFlags = FFmpegLoadMode.FullFeatures;
 
             // Multi-threaded video enables the creation of independent
-            // dispatcher threads to render video frames. This is an experimental feature
-            // and might become deprecated in the future as no real performance enhancements
-            // have been detected.
-            //Library.EnableWpfMultiThreadedVideo = !Debugger.IsAttached; // test with true and false
+            // dispatcher threads to render video frames. This is an experimental
+            // feature and might become deprecated in the future as no real
+            // performance enhancements have been detected.
+            //Library.EnableWpfMultiThreadedVideo = !Debugger.IsAttached;
+            // test with true and false
+
+            using (AvDbContext context = new AvDbContext("avDb"))
+            {
+                var studio = new AvStudio { Name = "Init" };
+                if (!context.Studios.Any())
+                {
+                    context.Studios.Add(studio);
+                    context.SaveChanges();
+                }
+            }
         }
 
         public static string ReadResource(string name)
@@ -81,7 +98,7 @@ namespace Scrapper
             }
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        void InitCefSharp()
         {
             IBrowserProcessHandler browserProcessHandler =
                 new ProcessHandler();
@@ -129,41 +146,48 @@ namespace Scrapper
             {
                 throw new Exception("Unable to Initialize Cef");
             }
-            base.OnStartup(e);
+        }
 
-            SetupExceptionHandling();
+        async void PreLoadFFmpeg()
+        {
             // Pre-load FFmpeg libraries in the background. This is optional.
-            // FFmpeg will be automatically loaded if not already loaded when you try to open
-            // a new stream or file. See issue #242
-            Task.Run(async () =>
+            // FFmpeg will be automatically loaded if not already loaded
+            // when you try to open a new stream or file. See issue #242
+            try
             {
-                try
-                {
-                    // Pre-load FFmpeg
-                    await Library.LoadFFmpegAsync();
-                }
-                catch (Exception ex)
-                {
-                    var dispatcher = Current?.Dispatcher;
-                    if (dispatcher != null)
-                    {
-                        await dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            MessageBox.Show(MainWindow,
-                                $"Unable to Load FFmpeg Libraries from path:\r\n    {Library.FFmpegDirectory}" +
-                                $"\r\nMake sure the above folder contains FFmpeg shared binaries (dll files) for the " +
-                                $"applicantion's architecture ({(Environment.Is64BitProcess ? "64-bit" : "32-bit")})" +
-                                $"\r\nTIP: You can download builds from https://ffmpeg.zeranoe.com/builds/" +
-                                $"\r\n{ex.GetType().Name}: {ex.Message}\r\n\r\nApplication will exit.",
-                                "FFmpeg Error",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
+                // Pre-load FFmpeg
+                await Library.LoadFFmpegAsync();
+            }
+            catch (Exception ex)
+            {
+                var dispatcher = Current?.Dispatcher;
+                if (dispatcher == null)
+                    return;
 
-                            Current?.Shutdown();
-                        }));
-                    }
-                }
-            });
+                await dispatcher.BeginInvoke(new Action(() =>
+                {
+                    MessageBox.Show(MainWindow,
+                        $"Unable to Load FFmpeg Libraries from path:\r\n    {Library.FFmpegDirectory}" +
+                        $"\r\nMake sure the above folder contains FFmpeg shared binaries (dll files) for the " +
+                        $"applicantion's architecture ({(Environment.Is64BitProcess ? "64-bit" : "32-bit")})" +
+                        $"\r\nTIP: You can download builds from https://ffmpeg.zeranoe.com/builds/" +
+                        $"\r\n{ex.GetType().Name}: {ex.Message}\r\n\r\nApplication will exit.",
+                        "FFmpeg Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+
+                    Current?.Shutdown();
+                }));
+            }
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            SetupExceptionHandling();
+
+            InitCefSharp();
+            Task.Run(() => PreLoadFFmpeg());
         }
 
         private void SetupExceptionHandling()

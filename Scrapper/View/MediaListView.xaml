@@ -8,17 +8,16 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel>
         <ListBox ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                     ItemTemplate="{DynamicResource ScreenshotTemplate}"
-                     ItemsPanel="{DynamicResource ImagePanelTemplate}"
-                     ItemsSource="{Binding Screenshots}"
-                     Height="150" DockPanel.Dock="Bottom">
+                 ItemTemplate="{DynamicResource ScreenshotTemplate}"
+                 ItemsPanel="{DynamicResource ImagePanelTemplate}"
+                 ItemsSource="{Binding SelectedMedia.Screenshots}"
+                 Visibility="{Binding SelectedMedia,
+                    Converter={StaticResource ScreenshotsToVisConverter}}"
+                 Height="150" DockPanel.Dock="Bottom">
             <ListBox.Background>
                 <Brush>Black</Brush>
             </ListBox.Background>
         </ListBox>
-<!--
-            ItemsSource="{Binding MediaList}"
--->
         <ListBox
             x:Name="ImageListBox"
             VirtualizingPanel.IsVirtualizing="True"
