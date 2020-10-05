@@ -12,18 +12,19 @@ namespace Scrapper.Extension
         public static int FindItem<TItem, TKey>(this ObservableCollection<TItem> collection,
             TItem itemToAdd, Func<TItem, TKey> keyGetter)
         {
-            return collection.ToList().BinarySearch(
+            return collection.BinarySearch(
                 keyGetter(itemToAdd), Comparer<TKey>.Default, keyGetter);
-            //collection.Insert(index, itemToAdd);
         }
         /// <summary>
-        /// Inserts an item into a list in the correct place, based on the provided key and key comparer. Use like OrderBy(o => o.PropertyWithKey).
+        /// Inserts an item into a list in the correct place,
+        /// based on the provided key and key comparer.
+        /// Use like OrderBy(o => o.PropertyWithKey).
         /// </summary>
         public static void InsertInPlace<TItem, TKey>(
             this ObservableCollection<TItem> collection,
             TItem itemToAdd, Func<TItem, TKey> keyGetter)
         {
-            int index = collection.ToList().BinarySearch(
+            int index = collection.BinarySearch(
                 keyGetter(itemToAdd), Comparer<TKey>.Default, keyGetter);
             collection.Insert(index, itemToAdd);
         }
@@ -53,7 +54,8 @@ namespace Scrapper.Extension
             while (lower <= upper)
             {
                 int middle = lower + (upper - lower) / 2;
-                int comparisonResult = comparer.Compare(keyToFind, keyGetter.Invoke(collection[middle]));
+                int comparisonResult = comparer.Compare(keyToFind,
+                    keyGetter.Invoke(collection[middle]));
                 if (comparisonResult == 0)
                 {
                     return middle;

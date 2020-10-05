@@ -11,7 +11,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 
-using Scrapper.Spider;
 using Scrapper.ViewModel.Base;
 using Scrapper.View;
 using Unosquare.FFME;
@@ -22,7 +21,7 @@ namespace Scrapper.ViewModel
     class MainViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
         public ICommand CmdFileToFolder { get; private set; }
-        public ICommand KeyDownCommand { get; private set; }
+        //public ICommand KeyDownCommand { get; private set; }
 
         public ObservableCollection<Pane> Docs { get; }
             = new ObservableCollection<Pane>();
@@ -53,7 +52,7 @@ namespace Scrapper.ViewModel
             Docs.Add(new BrowserViewModel());
 
             CmdFileToFolder = new RelayCommand(() => OnFileToFolder());
-            KeyDownCommand = new RelayCommand<EventArgs>(e => OnKeyDown(e));
+            //KeyDownCommand = new RelayCommand<EventArgs>(e => OnKeyDown(e));
 
             _dialogService = dialogService;
 
@@ -72,7 +71,7 @@ namespace Scrapper.ViewModel
                 MessengerInstance.Send(new NotificationMessage<bool>(ret.Value, "FileRenamed"));
             }
         }
-
+#if false
         void OnKeyDown(EventArgs e)
         {
             foreach (var doc in Docs)
@@ -80,7 +79,7 @@ namespace Scrapper.ViewModel
                 doc.OnKeyDown(e as KeyEventArgs);
             }
         }
-
+#endif
         void OnStatusMessage(NotificationMessage<string> msg)
         {
             if (!msg.Notification.EndsWith("Status")) return;

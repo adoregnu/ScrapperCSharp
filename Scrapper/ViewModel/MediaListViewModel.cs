@@ -28,8 +28,8 @@ namespace Scrapper.ViewModel
     }
     class MediaListViewModel : ViewModelBase
     {
-        //readonly FileSystemWatcher _fsWatcher;
         readonly Dictionary<string, MediaItem> _mediaCache;
+        readonly SerialQueue _serialQueue = new SerialQueue();
 
         MediaItem _selectedMedia = null;
         bool _isBrowsing = false;
@@ -60,85 +60,25 @@ namespace Scrapper.ViewModel
                 p => OnContextMenu(p, MediaListMenuType.excluded));
             CmdDownload = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.downloaded));
-
-#if false
-            try
-            {
-                UpdateMedia();
-                _fsWatcher = new FileSystemWatcher
-                {
-                    Path = CurrentFolder,
-                    Filter = "*.*",
-                    NotifyFilter = NotifyFilters.FileName,
-                    IncludeSubdirectories = true
-                };
-                _fsWatcher.Created += new FileSystemEventHandler(OnChanged);
-                _fsWatcher.Deleted += new FileSystemEventHandler(OnChanged);
-                _fsWatcher.EnableRaisingEvents = true;
-            }
-            catch (Exception ex)
-            {
-                Log.Print(ex.Message, ex);
-            }
-#endif
         }
 
-        readonly List<MediaItem> _deselectedItems = new List<MediaItem>();
-        readonly SerialQueue _serialQueue = new SerialQueue();
-        public void UpdateMediaList(ILVItemViewModel item)
+        public void AddMedia(string itemPath)
         {
-            if (item.IsChecked)
-            {
-                var dselectedMedias = _deselectedItems.FindAll(
-                                i => i.MediaPath.StartsWith(item.ItemPath));
-                if (dselectedMedias.Count > 0)
-                {
-                    foreach (var media in dselectedMedias)
-                    {
-                        MediaList.InsertInPlace(media, i => i.DownloadDt);
-                        _deselectedItems.Remove(media);
-                    }
-                }
-                else
-                {
-                    IsBrowsing = true;
-                    _serialQueue.Enqueue(() => UpdateMediaListInternal(item.ItemPath));
-
-                    UiServices.Invoke(delegate {
-                        IsBrowsing = false;
-                    });
-                }
-            }
-            else
-            {
-                var medias = MediaList.Where(i => i.MediaPath.StartsWith(
-                        item.ItemPath, StringComparison.CurrentCultureIgnoreCase)).ToList();
-
-                medias.ForEach(x => {
-                    MediaList.Remove(x);
-                    _deselectedItems.Add(x);
-                });
-            }
+            _serialQueue.Enqueue(() => UpdateMediaListInternal(itemPath));
         }
-#if false
-        public void OnFolderChanged(IEnumerable<ILVItemViewModel> flvItems)
+
+        public void RemoveMedia(string path)
         {
-            //down
-            var excludeList = MediaList.Where(i => i.MediaPath != CurrentFolder).ToList();
-            excludeList.ForEach(i => MediaList.Remove(i));
-
-            //up
-            //...
+            var medias = MediaList.Where(i => i.MediaPath.StartsWith(path,
+                    StringComparison.CurrentCultureIgnoreCase)).ToList();
+            medias.ForEach(x => MediaList.Remove(x));
         }
-#endif
+
         public void RefreshMediaList(IEnumerable<ILVItemViewModel> currentFiles)
         {
             IsBrowsing = true;
             MediaList.Clear();
             Task.Run(() => {
-                if (_deselectedItems.Count > 0)
-                    _deselectedItems.Clear();
-
                 foreach (var file in currentFiles)
                 {
                     if (!file.IsChecked) continue;
@@ -210,36 +150,6 @@ namespace Scrapper.ViewModel
             }, true);
             Thread.Sleep(10);
         }
-
-        public void RemoveMedia(string path)
-        {
-            var medias = MediaList.Where(i => i.MediaPath.StartsWith(path,
-                    StringComparison.CurrentCultureIgnoreCase)).ToList();
-            medias.ForEach(x => MediaList.Remove(x));
-        }
-#if false
-        void AddNewMedia(string path)
-        {
-            Log.Print($"AddNewMedia: {path}");
-        }
-
-        void RemoveMedia(string path)
-        {
-            Log.Print($"RemoveMedia : {path}");
-        }
-        void OnChanged(object sender, FileSystemEventArgs e)
-        {
-            switch (e.ChangeType)
-            {
-                case WatcherChangeTypes.Deleted:
-                    RemoveMedia(e.FullPath);
-                    break;
-                case WatcherChangeTypes.Created:
-                    AddNewMedia(e.FullPath);
-                    break;
-            }
-        }
-#endif
 
         void OnContextMenu(MediaItem item, MediaListMenuType type)
         {

@@ -105,8 +105,12 @@ namespace Scrapper.ViewModel
 
         void IFileListNotifier.OnCheckboxChanged(ILVItemViewModel item)
         {
-            if (item.ItemType == FSItemType.Folder)
-                MediaList.UpdateMediaList(item);
+            if (item.ItemType != FSItemType.Folder)
+                return;
+            if (item.IsChecked)
+                MediaList.AddMedia(item.ItemPath);
+            else
+                MediaList.RemoveMedia(item.ItemPath);
         }
 
         void IFileListNotifier.OnFileDeleted(ILVItemViewModel fsItem)

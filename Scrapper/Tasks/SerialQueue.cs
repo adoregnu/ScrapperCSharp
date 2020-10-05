@@ -26,7 +26,8 @@ namespace Scrapper.Tasks
 
                 if (_lastTask.TryGetTarget(out lastTask))
                 {
-                    resultTask = lastTask.ContinueWith(_ => function(), TaskContinuationOptions.ExecuteSynchronously);
+                    resultTask = lastTask.ContinueWith(_ => function(),
+                        TaskContinuationOptions.ExecuteSynchronously);
                 }
                 else
                 {
@@ -48,7 +49,8 @@ namespace Scrapper.Tasks
 
                 if (_lastTask.TryGetTarget(out lastTask))
                 {
-                    resultTask = lastTask.ContinueWith(_ => asyncAction(), TaskContinuationOptions.ExecuteSynchronously).Unwrap();
+                    resultTask = lastTask.ContinueWith(_ => asyncAction(),
+                        TaskContinuationOptions.ExecuteSynchronously).Unwrap();
                 }
                 else
                 {
@@ -70,7 +72,8 @@ namespace Scrapper.Tasks
 
                 if (_lastTask.TryGetTarget(out lastTask))
                 {
-                    resultTask = lastTask.ContinueWith(_ => asyncFunction(), TaskContinuationOptions.ExecuteSynchronously).Unwrap();
+                    resultTask = lastTask.ContinueWith(_ => asyncFunction(),
+                        TaskContinuationOptions.ExecuteSynchronously).Unwrap();
                 }
                 else
                 {
