@@ -205,7 +205,8 @@ namespace Scrapper.ViewModel.MediaPlayer
             if (e.Key == Key.M || e.Key == Key.VolumeMute)
             {
                 MediaPlayer.IsMuted = !MediaPlayer.IsMuted;
-                //ViewModel.NotificationMessage = Media.IsMuted ? "Muted." : "Unmuted.";
+                //ViewModel.NotificationMessage = 
+                //  Media.IsMuted ? "Muted." : "Unmuted.";
                 return;
             }
 

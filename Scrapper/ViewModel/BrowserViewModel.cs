@@ -20,6 +20,7 @@ namespace Scrapper.ViewModel
     partial class BrowserViewModel : Pane
     {
         bool _bStarted = false;
+        string _pid;
 
         string address;
         public string Address
@@ -36,7 +37,11 @@ namespace Scrapper.ViewModel
         }
 
         public List<SpiderBase> Spiders { get; set; }
-        public string Pid { get; set; }
+        public string Pid
+        { 
+            get => _pid;
+            set => Set(ref _pid, value);
+        }
 
         SpiderBase _selectedSpider;
         public SpiderBase SelectedSpider
@@ -46,7 +51,6 @@ namespace Scrapper.ViewModel
             {
                 if (value != null)
                 {
-                    _selectedSpider = value;
                     value.SetCookies();
                     Address = value.URL;
                     if (value is SpiderSehuatang ss)
@@ -54,7 +58,7 @@ namespace Scrapper.ViewModel
                         SelectedBoard = ss.Boards[0];
                     }
                 }
-                RaisePropertyChanged("SelectedSpider");
+                Set(ref _selectedSpider, value);
             }
         }
 

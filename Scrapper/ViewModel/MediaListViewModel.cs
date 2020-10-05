@@ -19,12 +19,13 @@ using Scrapper.Extension;
 using Scrapper.Model;
 using Scrapper.Tasks;
 using Scrapper.ViewModel.MediaPlayer;
+using System.Data.Entity.Core.Metadata.Edm;
 
 namespace Scrapper.ViewModel
 {
     enum MediaListMenuType
     { 
-        excluded, downloaded
+        excluded, downloaded, scrap
     }
     class MediaListViewModel : ViewModelBase
     {
@@ -50,6 +51,7 @@ namespace Scrapper.ViewModel
 
         public ICommand CmdExclude { get; set; }
         public ICommand CmdDownload { get; set; }
+        public ICommand CmdScrap { get; set; }
 
         public MediaListViewModel()
         {
@@ -60,6 +62,13 @@ namespace Scrapper.ViewModel
                 p => OnContextMenu(p, MediaListMenuType.excluded));
             CmdDownload = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.downloaded));
+            CmdScrap = new RelayCommand<object>( p => OnScrap(p));
+        }
+        public void ClearMedia()
+        {
+            IsBrowsing = true;
+            MediaList.Clear();
+            IsBrowsing = false;
         }
 
         public void AddMedia(string itemPath)
@@ -69,9 +78,11 @@ namespace Scrapper.ViewModel
 
         public void RemoveMedia(string path)
         {
+            IsBrowsing = true;
             var medias = MediaList.Where(i => i.MediaPath.StartsWith(path,
                     StringComparison.CurrentCultureIgnoreCase)).ToList();
             medias.ForEach(x => MediaList.Remove(x));
+            IsBrowsing = false; 
         }
 
         public void RefreshMediaList(IEnumerable<ILVItemViewModel> currentFiles)
@@ -149,6 +160,15 @@ namespace Scrapper.ViewModel
                 MediaList.Insert(idx, item);
             }, true);
             Thread.Sleep(10);
+        }
+
+        void OnScrap(object param)
+        {
+            var items = param as IList<object>;
+            foreach (MediaItem it in items)
+            {
+                Log.Print(it.MediaPath);
+            }
         }
 
         void OnContextMenu(MediaItem item, MediaListMenuType type)

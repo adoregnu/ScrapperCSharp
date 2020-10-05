@@ -23,6 +23,13 @@
                              Duration="0:0:2" From="1.0" To="0.0" BeginTime="0:0:2" />
         </Storyboard>
     </UserControl.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="PreviewKeyDown">
+            <cmd:EventToCommand
+                Command="{Binding KeyDownCommand}"
+                PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="{Binding MediaItem.BgImagePath, Converter=

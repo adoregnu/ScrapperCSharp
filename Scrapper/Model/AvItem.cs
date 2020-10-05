@@ -58,18 +58,22 @@ namespace Scrapper.Model
         [Autoincrement]
         public int Id { get; set; }
 
+        [Required]
         public string Pid { get; set; }
-        [MaxLength(256)]
-        public string Title { get; set; }
-        public bool Sensored { get; set; }
 
+        [MaxLength(512)]
+        public string Title { get; set; }
+
+        public bool Sensored { get; set; }
         public DateTime ReleaseDate { get; set; }
         public AvStudio Studio { get; set; }
 
         [Required]
         public string Path { get; set; }
+
         public string Set { get; set; }
-        [MaxLength(512)]
+
+        [MaxLength(1024)]
         public string Plot { get; set; }
         //public string Poster { get; set; }
         //public string Screenshots { get; set; }

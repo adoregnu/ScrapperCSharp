@@ -133,15 +133,28 @@ namespace Scrapper.ViewModel
 
         void UpdateMedia()
         {
+            MediaList.ClearMedia();
             if (SelectedType == "Actor")
             {
                 var actor = _context.Actors
                     .Include("Names").Include("Items")
                     .FirstOrDefault(a => a.Names.Any(n => n.Name == SelectedItem));
                 if (actor == null) return;
+
                 foreach (var item in actor.Items)
                 {
-                    Log.Print(item.Pid);
+                    //Log.Print(item.Pid);
+                    MediaList.AddMedia(item.Path);
+                }
+            }
+            else if (SelectedType == "Studio")
+            {
+                var items = _context.Items
+                    .Where(x => x.Studio.Name == SelectedItem)
+                    .ToList();
+                foreach (var item in items)
+                {
+                    MediaList.AddMedia(item.Path);
                 }
             }
         }

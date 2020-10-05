@@ -5,13 +5,13 @@
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:cmd="http://www.galasoft.ch/mvvmlight"
                     xmlns:local="clr-namespace:Scrapper.View"
+                    xmlns:bindLocal="clr-namespace:FileListView.Views;assembly=FileListView"
                     xmlns:player="clr-namespace:Scrapper.View.MediaPlayer" >
     <conv:ScreenshotsToVisibilityConverter x:Key="ScreenshotsToVisConverter"/>
     <ControlTemplate x:Key="ImageItem">
          <Grid Width="240" Height="200"
                Tag="{Binding RelativeSource={RelativeSource FindAncestor,
-                        AncestorType={x:Type local:MediaListView}},
-             Path=DataContext}">
+                        AncestorType={x:Type local:MediaListView}}, Path=DataContext}">
             <Grid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Exclude" 
@@ -51,6 +51,25 @@
 
     <ControlTemplate x:Key="VideoItem">
         <Grid Width="240" Height="200">
+            <Grid.Resources>
+                <bindLocal:BindingProxy
+                    x:Key="VmContext"
+                    Data="{Binding RelativeSource={RelativeSource FindAncestor,
+                        AncestorType={x:Type local:MediaListView}}, Path=DataContext}"/>
+                <bindLocal:BindingProxy
+                    x:Key="CtrlContext"
+                    Data="{Binding RelativeSource={RelativeSource FindAncestor,
+                        AncestorType={x:Type ListBox}}}"/>
+            </Grid.Resources>
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Scrap Info" 
+                        Command="{Binding Data.CmdScrap,
+                            Source={StaticResource VmContext}}"
+                        CommandParameter="{Binding Data.SelectedItems,
+                            Source={StaticResource CtrlContext}}"/>
+                </ContextMenu>
+            </Grid.ContextMenu>
             <local:MediaElementView
                 MediaSource="{Binding MediaPath}"
                 BgImagePath="{Binding BgImagePath}"/>

@@ -13,6 +13,7 @@ using Scrapper.Extension;
 using System.Data.Entity;
 using System.Globalization;
 using Scrapper.ViewModel;
+using System.Data.Entity.Validation;
 
 namespace Scrapper.ScrapItems
 {
@@ -68,7 +69,10 @@ namespace Scrapper.ScrapItems
             if (_numScrapedItem == NumItemsToScrap)
             {
                 _spider.OnScrapCompleted();
-                UdpateAvItem();
+                lock (_context)
+                {
+                    UdpateAvItem();
+                }
                 Clear();
             }
         }
@@ -150,16 +154,30 @@ namespace Scrapper.ScrapItems
 
         protected virtual void UdpateAvItem()
         {
-            lock (_context)
-            {
-                if (!_context.Items.Any(x => x.Pid == _avItem.Pid))
-                {
-                    _avItem.Studio = _studio;
-                    _avItem.Actors = _actors;
-                    _avItem.Genres = _genres;
+            if (_context.Items.Any(x => x.Pid == _avItem.Pid))
+                return;
 
-                    _context.Items.Add(_avItem);
-                    _context.SaveChanges();
+            _avItem.Studio = _studio;
+            _avItem.Actors = _actors;
+            _avItem.Genres = _genres;
+
+            try
+            {
+                _context.Items.Add(_avItem);
+                _context.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    Log.Print("Entity of type \"{0}\" in state \"{1}\" has " +
+                        "the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        Log.Print("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage);
+                    }
                 }
             }
         }
