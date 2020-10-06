@@ -111,7 +111,7 @@ namespace Scrapper.Spider
             }
             else
             {
-                Browser.StopAll();
+                Browser.StopScrapping();
             }
         }
 

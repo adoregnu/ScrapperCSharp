@@ -1,7 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+
 using CefSharp;
 using CefSharp.Wpf;
 
@@ -9,11 +12,11 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 
+using Scrapper.Model;
 using Scrapper.Spider;
 using Scrapper.ScrapItems;
 using Scrapper.BrowserHandler;
 using Scrapper.ViewModel.Base;
-using System.IO;
 
 namespace Scrapper.ViewModel
 {
@@ -43,6 +46,8 @@ namespace Scrapper.ViewModel
             set => Set(ref _pid, value);
         }
 
+        public MediaItem SelectedMedia;
+
         SpiderBase _selectedSpider;
         public SpiderBase SelectedSpider
         {
@@ -64,8 +69,8 @@ namespace Scrapper.ViewModel
 
         public BrowserViewModel()
         {
-            CmdStart = new RelayCommand(() => OnStart());
-            CmdStop = new RelayCommand(() => StopAll());
+            CmdStart = new RelayCommand(() => OnStartScrapping());
+            CmdStop = new RelayCommand(() => StopScrapping(true));
 
             Spiders = new List<SpiderBase>
             {
@@ -78,18 +83,40 @@ namespace Scrapper.ViewModel
             Title = Address = _selectedSpider.URL;
 
             PropertyChanged += OnPropertyChanged;
+
+            MessengerInstance.Register<NotificationMessage<MediaItem>>(
+                this, OnMediaSelected);
         }
 
-        public void OnStart()
+        int _nextScrappingIndex = 0;
+        List<MediaItem> _mediaToScrap;
+        public void StartBatchedScrapping(List<MediaItem> mediaItems = null)
         {
+            if (mediaItems != null) _mediaToScrap = mediaItems;
+            if (_mediaToScrap.Count <= _nextScrappingIndex) return;
+            var media = _mediaToScrap[_nextScrappingIndex++];
+            Pid = media.Pid;
+            OnStartScrapping();
+        }
+
+        public void OnStartScrapping()
+        {
+            if (string.IsNullOrEmpty(Pid))
+            {
+                Log.Print("No Pid is set!");
+                return;
+            }
+
             _bStarted = true;
             SelectedSpider.Navigate();
         }
 
-        public void StopAll()
+        public void StopScrapping(bool forceStop = false)
         {
             webBrowser.Stop();
             _bStarted = false;
+            if (!forceStop && _nextScrappingIndex > 0)
+                StartBatchedScrapping();
         }
 
         public DownloadHandler DownloadHandler { get; private set; }
@@ -181,6 +208,12 @@ namespace Scrapper.ViewModel
                 }
                 item.OnJsResult(name, x.Result.Result as List<object>);
             });
+        }
+
+        void OnMediaSelected(NotificationMessage<MediaItem> msg)
+        {
+            SelectedMedia = msg.Content;
+            Pid = SelectedMedia.Pid;
         }
     }
 }

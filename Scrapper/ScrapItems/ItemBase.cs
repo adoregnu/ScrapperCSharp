@@ -24,7 +24,6 @@ namespace Scrapper.ScrapItems
         readonly protected SpiderBase _spider;
         readonly protected AvDbContext _context;
 
-        public string Pid;
         public int NumItemsToScrap;
 
         protected int _numScrapedItem = 0;
@@ -49,7 +48,7 @@ namespace Scrapper.ScrapItems
         {
             if (e.IsComplete)
             {
-                Log.Print($"{Pid} download completed: {e.FullPath}");
+                Log.Print($"{_spider.Pid} download completed: {e.FullPath}");
                 CheckCompleted();
             };
         }
@@ -79,7 +78,8 @@ namespace Scrapper.ScrapItems
 
         protected void PrintItem(string name, List<object> items)
         {
-            Log.Print("{0} : scrapped {1}", name, items != null ? items.Count : 0);
+            Log.Print("{0} : scrapped {1}", name,
+                items != null ? items.Count : 0);
             if (items == null) return;
             foreach (string it in items)
             {

@@ -70,10 +70,11 @@
                             Source={StaticResource CtrlContext}}"/>
                 </ContextMenu>
             </Grid.ContextMenu>
+            <player:MiniPlayer MediaSource="{Binding}"/>
+<!--
             <local:MediaElementView
                 MediaSource="{Binding MediaPath}"
                 BgImagePath="{Binding BgImagePath}"/>
-<!--
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseEnter">
                     <cmd:EventToCommand

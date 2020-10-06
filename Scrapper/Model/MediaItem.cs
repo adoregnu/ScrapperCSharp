@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Scrapper.Model
 {
-    class MediaItem
+    public class MediaItem
     {
         public DateTime DownloadDt;
 
@@ -13,6 +13,10 @@ namespace Scrapper.Model
         public string MediaPath { get; private set; }
         public string Torrent { get; private set; }
         public string BgImagePath { get; private set; }
+        public string Pid
+        {
+            get => Path.GetDirectoryName(MediaPath).Split('\\').Last();
+        }
         public bool IsDownload { get; private set; } = false;
         public bool IsExcluded { get; private set; } = false;
         public bool IsImage { get; private set; } = true;

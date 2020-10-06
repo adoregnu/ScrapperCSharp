@@ -16,6 +16,7 @@ namespace Scrapper.ScrapItems
     {
         public DateTime DateTime;
 
+        string _pid = null;
         string _outPath = null;
         int _downloadCount = 0;
         bool _bStop = false;
@@ -39,7 +40,7 @@ namespace Scrapper.ScrapItems
                 if (_spider.Browser.StopOnExistingId)
                 {
                     Log.Print("Stop Scrapping!");
-                    _spider.Browser.StopAll();
+                    _spider.Browser.StopScrapping();
                 }
                 else
                 {
@@ -65,16 +66,16 @@ namespace Scrapper.ScrapItems
                     postfix = "cover";
                 else
                     postfix = $"screenshot{idx}";
-                e.SuggestedFileName = _outPath + $"{Pid}_{postfix}{ext}";
+                e.SuggestedFileName = _outPath + $"{_pid}_{postfix}{ext}";
             }
-            Log.Print($"{Pid} file to store: {e.SuggestedFileName}");
+            Log.Print($"{_pid} file to store: {e.SuggestedFileName}");
         }
 
         protected override void OnDownloadUpdated(object sender, DownloadItem e)
         {
             if (e.IsComplete)
             {
-                Log.Print($"{Pid} download completed: {e.FullPath}");
+                Log.Print($"{_pid} download completed: {e.FullPath}");
                 Interlocked.Decrement(ref _downloadCount);
                 File.SetLastWriteTime(e.FullPath, DateTime);
                 if (_downloadCount == 0)
@@ -93,14 +94,13 @@ namespace Scrapper.ScrapItems
             if (name == "pid")
             {
                 string title = items[0] as string;
-                var m = Regex.Match(title, @"[\d\w\-_]+",
-                    RegexOptions.CultureInvariant);
+                var m = Regex.Match(title, @"[\d\w\-_]+", RegexOptions.CultureInvariant);
 
                 _outPath = _spider.MediaPath;
                 if (m.Success)
                 {
-                    Pid = m.Groups[0].Value;
-                    _outPath += Pid + "\\";
+                    _pid = m.Groups[0].Value;
+                    _outPath += _pid + "\\";
                     PrepareDirectory();
                 }
                 else

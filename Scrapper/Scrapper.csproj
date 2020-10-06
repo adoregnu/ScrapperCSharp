@@ -244,6 +244,9 @@
     <Compile Include="View\MediaPlayer\ControllerPanel.xaml.cs">
       <DependentUpon>ControllerPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\MediaPlayer\MiniControllerPanel.xaml.cs">
+      <DependentUpon>MiniControllerPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MediaPlayer\MiniPlayer.xaml.cs">
       <DependentUpon>MiniPlayer.xaml</DependentUpon>
     </Compile>
@@ -314,6 +317,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\MediaPlayer\Icons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MediaPlayer\MiniControllerPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,64 @@
+﻿<UserControl x:Class="Scrapper.View.MediaPlayer.MiniControllerPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Scrapper.View.MediaPlayer"
+             mc:Ignorable="d" >
+    <Grid Height="100">
+        <Canvas IsHitTestVisible="False" Background="{DynamicResource ShadedBackgroundBrush}" />
+        <Grid Height="100">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="70"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Slider Name="PositionSlider" Grid.Row="0" Margin="10,0" Cursor="Hand"
+                Style="{DynamicResource PositionSliderStyle}"
+                Visibility="{Binding Controller.SeekBarVisibility}"
+                IsEnabled="{Binding MediaPlayer.IsOpen}"
+                IsSnapToTickEnabled="False"
+                SmallChange="{Binding MediaPlayer.PositionStep,
+                    Converter={StaticResource TimeSpanToSecondsConverter}}"
+                LargeChange="{Binding MediaPlayer.PositionStep,
+                    Converter={StaticResource TimeSpanToSecondsConverter}}"
+                Minimum="{Binding MediaPlayer.PlaybackStartTime,
+                    Converter={StaticResource TimeSpanToSecondsConverter}}"
+                Maximum="{Binding MediaPlayer.PlaybackEndTime,
+                    Converter={StaticResource TimeSpanToSecondsConverter}}" 
+                Value="{Binding MediaPlayer.Position,
+                    Converter={StaticResource TimeSpanToSecondsConverter}}" />
+            <DockPanel Name="CenterControls" HorizontalAlignment="Center" Grid.Row="1">
+                <Button
+                    Visibility="{Binding Controller.PlayButtonVisibility}"
+                    Style="{DynamicResource ModernButtonStyle}"
+                    Command="{Binding PlayCommand}">
+                    <Path
+                        Stretch="Uniform"
+                        Data="{Binding Source={StaticResource PlayIcon}, Path=Data}"
+                        Fill="{Binding Path=Foreground, RelativeSource=
+                            {RelativeSource AncestorType={x:Type Button}}}" />
+                </Button>
+                <Button
+                    Visibility="{Binding Controller.PauseButtonVisibility}"
+                    Style="{DynamicResource ModernButtonStyle}"
+                    Command="{Binding PauseCommand}">
+                    <Path
+                        Stretch="Uniform"
+                        Data="{Binding Source={StaticResource PauseIcon}, Path=Data}"
+                        Fill="{Binding Path=Foreground, RelativeSource=
+                            {RelativeSource AncestorType={x:Type Button}}}" />
+                </Button>
+                <Button
+                    Visibility="{Binding Controller.StopButtonVisibility}"
+                    Style="{DynamicResource ModernButtonStyle}"
+                    Command="{Binding StopCommand}">
+                    <Path
+                        Stretch="Uniform"
+                        Data="{Binding Source={StaticResource StopIcon}, Path=Data}"
+                        Fill="{Binding Path=Foreground, RelativeSource=
+                            {RelativeSource AncestorType={x:Type Button}}}" />
+                </Button>
+            </DockPanel>
+        </Grid>
+    </Grid>
+</UserControl>

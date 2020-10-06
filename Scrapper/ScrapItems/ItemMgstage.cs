@@ -21,19 +21,17 @@ namespace Scrapper.ScrapItems
         { 
             var ext = Path.GetExtension(e.SuggestedFileName);
             if (_numDownloadCnt == 0)
-                e.SuggestedFileName = $"{_spider.MediaPath}\\{Pid}_poster{ext}";
+                e.SuggestedFileName = $"{_spider.MediaPath}\\" +
+                    $"{_spider.Pid}_poster{ext}";
             else
-                e.SuggestedFileName = $"{_spider.MediaPath}\\{Pid}_screenshot{_numDownloadCnt}{ext}";
+                e.SuggestedFileName = $"{_spider.MediaPath}\\" +
+                    $"{_spider.Pid}_screenshot{_numDownloadCnt}{ext}";
             Interlocked.Increment(ref _numDownloadCnt);
         }
 
         void ParseItem(string name, List<object> items)
         {
-            if (name == "id")
-            {
-                Pid = items[0] as string;
-            }
-            else if (name == "cover")
+            if (name == "cover")
             {
                 var url = items[0] as string;
                 if (!url.StartsWith("http"))

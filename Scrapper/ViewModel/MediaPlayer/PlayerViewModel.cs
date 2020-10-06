@@ -27,7 +27,7 @@ namespace Scrapper.ViewModel.MediaPlayer
         public MediaItem MediaItem
         {
             get => _mediaItem;
-            private set => Set(ref _mediaItem, value);
+            set => Set(ref _mediaItem, value);
         }
         public Unosquare.FFME.MediaElement MediaPlayer { get; private set; }
         public MediaOptions CurrentMediaOptions { get; set; }

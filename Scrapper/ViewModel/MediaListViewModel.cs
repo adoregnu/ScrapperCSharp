@@ -20,6 +20,7 @@ using Scrapper.Model;
 using Scrapper.Tasks;
 using Scrapper.ViewModel.MediaPlayer;
 using System.Data.Entity.Core.Metadata.Edm;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Scrapper.ViewModel
 {
@@ -38,7 +39,12 @@ namespace Scrapper.ViewModel
         public MediaItem SelectedMedia
         {
             get => _selectedMedia;
-            set => Set(ref _selectedMedia, value);
+            set
+            { 
+                MessengerInstance.Send(new NotificationMessage<MediaItem>(
+                    value, "mediaSelected"));
+                Set(ref _selectedMedia, value);
+            }
         }
         public bool IsBrowsing
         {

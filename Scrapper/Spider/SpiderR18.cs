@@ -49,7 +49,7 @@ namespace Scrapper.Spider
             Log.Print($"OnMultiResult : {list.Count} items found!");
             if (list == null || list.Count == 0)
             {
-                Browser.StopAll();
+                Browser.StopScrapping();
                 return;
             }
 

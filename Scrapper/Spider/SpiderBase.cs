@@ -23,7 +23,7 @@ namespace Scrapper.Spider
         public BrowserViewModel Browser { get; private set; }
         public string URL = null;
         public string Name { get; protected set; } = "";
-        public string Pid { get; set; }
+        public string Pid { get => Browser.Pid; }
         public string MediaPath { get; set; }
 
         protected Dictionary<string, string> _xpathDic;
@@ -54,15 +54,6 @@ namespace Scrapper.Spider
         public virtual void Navigate()
         {
             _state = 0;
-            MessengerInstance.Send(new NotificationMessageAction<string>(
-                "querySelectedPath", p => { MediaPath = p; }));
-
-            if (!File.GetAttributes(MediaPath).HasFlag(FileAttributes.Directory))
-            {
-                Log.Print($"SpiderBase: {MediaPath} is not a directory!");
-                return;
-            }
-            Pid = Path.GetFileName(MediaPath);
         }
 
         public virtual Cookie CreateCookie() { return null; }
@@ -81,7 +72,7 @@ namespace Scrapper.Spider
 
         public virtual void OnScrapCompleted(string path = null)
         {
-            Browser.StopAll();
+            Browser.StopScrapping();
             MessengerInstance.Send(
                 new NotificationMessage<string>(MediaPath, "mediaUpdated"));
         }

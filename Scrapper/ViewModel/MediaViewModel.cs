@@ -153,8 +153,6 @@ namespace Scrapper.ViewModel
         {
             if (msgAction.Notification == "queryCurrentPath")
                 msgAction.Execute(FileList.SelectedFolder);
-            else if (msgAction.Notification == "querySelectedPath")
-                msgAction.Execute(_selectedFile);
         }
     }
 }
