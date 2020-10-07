@@ -51,7 +51,7 @@ namespace Scrapper.ScrapItems
             var ext = Path.GetExtension(e.SuggestedFileName);
             if (_downloadUrls[e.OriginalUrl] == "cover")
             {
-                e.SuggestedFileName = $"{_spider.MediaPath}\\{_spider.Pid}_poster{ext}";
+                e.SuggestedFileName = $"{_spider.MediaFolder}\\{_spider.Pid}_poster{ext}";
             }
             else
             {

@@ -26,6 +26,7 @@ namespace Scrapper.Spider
 
         public int NumPage = 1;
         public List<string> Boards;
+        public override string MediaFolder { get; protected set; }
 
         public string SelectedBoard
         {
@@ -35,7 +36,7 @@ namespace Scrapper.Spider
                 if (_selectedBoard != value)
                 {
                     _selectedBoard = value;
-                    MediaPath = $"{App.DataPath}sehuatang\\{value}\\";
+                    MediaFolder = $"{App.DataPath}sehuatang\\{value}\\";
                 }
             }
         }
@@ -62,7 +63,7 @@ namespace Scrapper.Spider
             {
                 "censored", "uncensored", "subtitle"
             };
-            MediaPath = $"{App.DataPath}sehuatang\\{SelectedBoard}\\";
+            MediaFolder = $"{App.DataPath}sehuatang\\{SelectedBoard}\\";
         }
 
         void ParsePage()

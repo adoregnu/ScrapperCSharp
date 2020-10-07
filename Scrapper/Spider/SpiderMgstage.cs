@@ -12,7 +12,7 @@ namespace Scrapper.Spider
         public SpiderMgstage(BrowserViewModel browser) : base(browser)
         {
             Name = "MGStage";
-            URL = "https://www.mgstage.com";
+            URL = "https://www.mgstage.com/";
 
             _xpathDic = new Dictionary<string, string>
             {
@@ -40,7 +40,7 @@ namespace Scrapper.Spider
         public override void Navigate()
         {
             base.Navigate();
-            Browser.Address = $"{URL}/product/product_detail/{Pid}";
+            Browser.Address = $"{URL}product/product_detail/{Pid}";
         }
 
         public override void Scrap()

@@ -85,7 +85,7 @@ namespace Scrapper.ViewModel
         public void RemoveMedia(string path)
         {
             IsBrowsing = true;
-            var medias = MediaList.Where(i => i.MediaPath.StartsWith(path,
+            var medias = MediaList.Where(i => i.MediaFile.StartsWith(path,
                     StringComparison.CurrentCultureIgnoreCase)).ToList();
             medias.ForEach(x => MediaList.Remove(x));
             IsBrowsing = false; 
@@ -171,16 +171,17 @@ namespace Scrapper.ViewModel
         void OnScrap(object param)
         {
             var items = param as IList<object>;
-            foreach (MediaItem it in items)
+            if (items != null && items.Count > 0)
             {
-                Log.Print(it.MediaPath);
+                MessengerInstance.Send(new NotificationMessage<List<MediaItem>>(
+                    items.Cast<MediaItem>().ToList(), "scrap"));
             }
         }
 
         void OnContextMenu(MediaItem item, MediaListMenuType type)
         {
             if (item == null) return;
-            var dir = Path.GetDirectoryName(item.MediaPath);
+            var dir = Path.GetDirectoryName(item.MediaFile);
             if (type == MediaListMenuType.downloaded)
             {
                 try

@@ -22,6 +22,7 @@ namespace Scrapper.ViewModel.MediaPlayer
         bool _isPropertiesPanelOpen = App.IsInDesignMode;
         bool _isPlayerLoaded = App.IsInDesignMode;
         bool _isPlaying = false;
+        bool _isMiniMode = false;
         MediaItem _mediaItem;
 
         public MediaItem MediaItem
@@ -66,23 +67,37 @@ namespace Scrapper.ViewModel.MediaPlayer
         public ICommand StopCommand { get; private set; }
         public ICommand CloseCommand { get; private set; }
 
-        public PlayerViewModel()
+        public PlayerViewModel(bool isMiniMode = false)
         {
+            _isMiniMode = isMiniMode;
             MediaPlayer = new Unosquare.FFME.MediaElement
             {
                 Background = Brushes.Black,
-                LoadedBehavior = MediaPlaybackState.Stop,
                 // https://stackoverflow.com/questions/24321237/switching-a-control-over-different-windows-inside-contentcontrol
                 UnloadedBehavior = MediaPlaybackState.Manual,
                 IsDesignPreviewEnabled = true,
                 IsMuted = true
             };
+            if (_isMiniMode)
+            {
+                MediaPlayer.LoadedBehavior = MediaPlaybackState.Play;
+            }
+            else
+            {
+                MediaPlayer.LoadedBehavior = MediaPlaybackState.Stop;
+            }
 
             InitMediaEventHandler();
 
             KeyDownCommand = new RelayCommand<KeyEventArgs>(e => OnKeyDown(e));
 
-            PlayCommand = new RelayCommand(async () => await MediaPlayer.Play());
+            PlayCommand = new RelayCommand(async () =>
+            {
+                if (_isMiniMode && !MediaPlayer.IsOpen)
+                    await MediaPlayer.Open(new Uri(_mediaItem.MediaFile));
+                else
+                    await MediaPlayer.Play();
+            });
             PauseCommand = new RelayCommand(async () => await MediaPlayer.Pause());
             StopCommand = new RelayCommand(async () => await MediaPlayer.Stop());
             CloseCommand = new RelayCommand(async () => await MediaPlayer.Close());
@@ -90,7 +105,6 @@ namespace Scrapper.ViewModel.MediaPlayer
             Controller = new ControllerViewModel(this);
             Controller.OnApplicationLoaded();
             IsPlayerLoaded = true;
-            Log.Print("PlayerViewModel");
         }
 
         void InitMediaEventHandler()
@@ -108,22 +122,25 @@ namespace Scrapper.ViewModel.MediaPlayer
 
         async public void SetMediaItem(MediaItem media)
         {
-            if (media != MediaItem)
+            if (media == MediaItem)
             {
-                if (MediaPlayer.IsOpen)
-                {
-                    await MediaPlayer.Close();
-                }
-
-                if (media != null)
-                {
-                    MediaItem = media;
-                    await MediaPlayer.Open(new Uri(media.MediaPath));
-                }
-            }
-            else //in case of updating cover image only
-            {
+                //in case of updating cover image only
                 RaisePropertyChanged("MediaItem");
+                return;
+            }
+
+            if (MediaPlayer.IsOpen)
+            {
+                await MediaPlayer.Close();
+            }
+
+            if (media != null)
+            {
+                MediaItem = media;
+                if (!_isMiniMode)
+                {
+                    await MediaPlayer.Open(new Uri(media.MediaFile));
+                }
             }
         }
 

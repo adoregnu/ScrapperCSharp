@@ -34,7 +34,7 @@ namespace Scrapper.ScrapItems
             _avItem = new AvItem
             {
                 Pid = spider.Pid,
-                Path = spider.MediaPath,
+                Path = spider.MediaFolder,
             };
             _context = new AvDbContext("avDb");
 
@@ -65,6 +65,7 @@ namespace Scrapper.ScrapItems
         protected void CheckCompleted()
         {
             Interlocked.Increment(ref _numScrapedItem);
+            Log.Print($"{_numScrapedItem}/{NumItemsToScrap}");
             if (_numScrapedItem == NumItemsToScrap)
             {
                 _spider.OnScrapCompleted();

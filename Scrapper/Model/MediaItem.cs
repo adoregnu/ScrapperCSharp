@@ -10,25 +10,33 @@ namespace Scrapper.Model
         public DateTime DownloadDt;
 
         public string MediaName { get; private set; }
-        public string MediaPath { get; private set; }
+        public string MediaFile { get; private set; }
+        public string MediaFolder { get; private set; }
         public string Torrent { get; private set; }
         public string BgImagePath { get; private set; }
-        public string Pid
-        {
-            get => Path.GetDirectoryName(MediaPath).Split('\\').Last();
-        }
+        public string Pid { get; private set; }
+
         public bool IsDownload { get; private set; } = false;
         public bool IsExcluded { get; private set; } = false;
         public bool IsImage { get; private set; } = true;
         public bool IsMediaDir
         {
-            get { return !string.IsNullOrEmpty(MediaPath); }
+            get { return !string.IsNullOrEmpty(MediaFile); }
         }
         public List<string> Screenshots { get; private set; } = new List<string>();
 
         public static string[] VideoExts = new string[] {
             ".mp4", ".avi", ".mkv", ".ts", ".wmv", ".m4v"
         };
+
+        void UpdateMediaField(string path)
+        {
+            MediaFile = path;
+            MediaFolder = Path.GetDirectoryName(path);
+            Pid = MediaFolder.Split('\\').Last();
+            DownloadDt = File.GetLastWriteTime(path);
+            MediaName = $"{Pid} / " + DownloadDt.ToString("%M-%d %h:%m:%s");
+        }
 
         public void UpdateField(string path)
         {
@@ -59,17 +67,11 @@ namespace Scrapper.Model
             }
             else if (fname.Contains("_cover."))
             {
-                var dir = Path.GetDirectoryName(path).Split('\\').Last();
-                MediaPath = path;
-                DownloadDt = File.GetLastWriteTime(path);
-                MediaName = $"{dir} / " + DownloadDt.ToString("%M-%d %h:%m:%s");
+                UpdateMediaField(path);
             }
             else if (VideoExts.Any(s => fname.EndsWith(s, StringComparison.CurrentCultureIgnoreCase)))
             {
-                var dir = Path.GetDirectoryName(path).Split('\\').Last();
-                MediaPath = path;
-                DownloadDt = File.GetLastWriteTime(path);
-                MediaName = $"{dir} / " + DownloadDt.ToString("%M-%d %h:%m:%s");
+                UpdateMediaField(path);
                 IsImage = false;
             }
         }

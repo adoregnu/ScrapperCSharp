@@ -96,7 +96,7 @@ namespace Scrapper.ScrapItems
                 string title = items[0] as string;
                 var m = Regex.Match(title, @"[\d\w\-_]+", RegexOptions.CultureInvariant);
 
-                _outPath = _spider.MediaPath;
+                _outPath = _spider.MediaFolder;
                 if (m.Success)
                 {
                     _pid = m.Groups[0].Value;

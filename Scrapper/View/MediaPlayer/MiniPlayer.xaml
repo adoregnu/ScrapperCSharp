@@ -4,13 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Scrapper.View.MediaPlayer"
+             xmlns:vm="clr-namespace:Scrapper.ViewModel.MediaPlayer"
              mc:Ignorable="d" >
-    <Grid>
+    <UserControl.Resources>
+        <Storyboard x:Key="ShowControlOpacity" Storyboard.TargetProperty="(UIElement.Opacity)">
+            <DoubleAnimation To="1" Duration="0:0:0.100" FillBehavior="HoldEnd" />
+        </Storyboard>
+        <Storyboard x:Key="HideControlOpacity" Storyboard.TargetProperty="(UIElement.Opacity)">
+            <DoubleAnimation To="0" Duration="0:0:0.300" FillBehavior="HoldEnd" />
+        </Storyboard>
+    </UserControl.Resources>
+    <Grid x:Name="LayoutRoot">
+        <Grid.Background>
+            <ImageBrush ImageSource="{Binding MediaItem.BgImagePath, Converter=
+                {StaticResource PathToImageConverter}}" Stretch="Uniform"/>
+        </Grid.Background>
         <ContentControl x:Name="MPlayerControl" Content="{Binding MediaPlayer}"
                         Style="{StaticResource ContentControlStyle}"/>
         <local:MiniControllerPanel
                 x:Name="MiniControllerPanel"
-                DockPanel.Dock="Bottom"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
                 Visibility="{Binding IsPlayerLoaded, Converter={StaticResource boolToVis}}"/>
     </Grid>
 </UserControl>

@@ -20,7 +20,7 @@ namespace Scrapper.ScrapItems
         protected override void OnBeforeDownload(object sender, DownloadItem e)
         {
             var ext = Path.GetExtension(e.SuggestedFileName);
-            e.SuggestedFileName = $"{_spider.MediaPath}\\{_spider.Pid}_poster{ext}";
+            e.SuggestedFileName = $"{_spider.MediaFolder}\\{_spider.Pid}_poster{ext}";
         }
 
         void IScrapItem.OnJsResult(string name, List<object> items)

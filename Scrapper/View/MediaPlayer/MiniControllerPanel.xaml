@@ -6,8 +6,10 @@
              xmlns:local="clr-namespace:Scrapper.View.MediaPlayer"
              mc:Ignorable="d" >
     <Grid Height="100">
+<!--
         <Canvas IsHitTestVisible="False" Background="{DynamicResource ShadedBackgroundBrush}" />
-        <Grid Height="100">
+-->
+        <Grid >
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"></RowDefinition>
                 <RowDefinition Height="70"></RowDefinition>
@@ -51,7 +53,7 @@
                 <Button
                     Visibility="{Binding Controller.StopButtonVisibility}"
                     Style="{DynamicResource ModernButtonStyle}"
-                    Command="{Binding StopCommand}">
+                    Command="{Binding CloseCommand}">
                     <Path
                         Stretch="Uniform"
                         Data="{Binding Source={StaticResource StopIcon}, Path=Data}"

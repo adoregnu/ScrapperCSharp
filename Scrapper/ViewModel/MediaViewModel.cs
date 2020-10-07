@@ -72,7 +72,6 @@ namespace Scrapper.ViewModel
             }, true);
         }
 
-        string _selectedFile;
         void IFileListNotifier.OnFileSelected(ILVItemViewModel fsItem)
         {
             MediaItem media = null;
@@ -94,7 +93,6 @@ namespace Scrapper.ViewModel
             {
                 ViewType = 2;
                 MediaPlayer.SetMediaItem(media);
-                _selectedFile = fsItem.ItemPath;
             }
             else
             { 

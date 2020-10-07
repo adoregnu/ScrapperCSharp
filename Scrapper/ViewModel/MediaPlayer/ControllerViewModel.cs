@@ -278,14 +278,14 @@ namespace Scrapper.ViewModel.MediaPlayer
 
             _me.WhenChanged(() =>
             {
-                PlayButtonVisibility = _me.IsOpen &&
+                PlayButtonVisibility = /*_me.IsOpen &&*/
                     _me.IsPlaying == false &&
                     _me.HasMediaEnded == false &&
                     _me.IsSeeking == false &&
                     _me.IsChanging == false ?
                         Visibility.Visible : Visibility.Collapsed;
             },
-            nameof(_me.IsOpen),
+            //nameof(_me.IsOpen),
             nameof(_me.IsPlaying),
             nameof(_me.HasMediaEnded),
             nameof(_me.IsSeeking),

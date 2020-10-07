@@ -16,12 +16,6 @@
         <Storyboard x:Key="HideControlOpacity" Storyboard.TargetProperty="(UIElement.Opacity)">
             <DoubleAnimation To="0" Duration="0:0:0.300" FillBehavior="HoldEnd" />
         </Storyboard>
-        <Storyboard x:Key="ShowNotification" Storyboard.TargetProperty="(UIElement.Opacity)">
-            <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                             Duration="0:0:0.25" To="1.0" />
-            <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                             Duration="0:0:2" From="1.0" To="0.0" BeginTime="0:0:2" />
-        </Storyboard>
     </UserControl.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="PreviewKeyDown">

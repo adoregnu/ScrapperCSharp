@@ -12,7 +12,6 @@ using Scrapper.ViewModel;
 using Scrapper.ScrapItems;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using System.IO;
 
 namespace Scrapper.Spider
 {
@@ -24,7 +23,11 @@ namespace Scrapper.Spider
         public string URL = null;
         public string Name { get; protected set; } = "";
         public string Pid { get => Browser.Pid; }
-        public string MediaPath { get; set; }
+        public virtual string MediaFolder
+        {
+            get => Browser.SelectedMedia.MediaFolder;
+            protected set { _ = value; }
+        }
 
         protected Dictionary<string, string> _xpathDic;
         protected int _state = -1;
@@ -74,7 +77,7 @@ namespace Scrapper.Spider
         {
             Browser.StopScrapping();
             MessengerInstance.Send(
-                new NotificationMessage<string>(MediaPath, "mediaUpdated"));
+                new NotificationMessage<string>(MediaFolder, "mediaUpdated"));
         }
 
         protected void ParsePage(IScrapItem item)

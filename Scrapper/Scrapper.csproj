@@ -235,9 +235,6 @@
     <Compile Include="View\FileToFolderDialog.xaml.cs">
       <DependentUpon>FileToFolderDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\MediaElementView.xaml.cs">
-      <DependentUpon>MediaElementView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\MediaListView.xaml.cs">
       <DependentUpon>MediaListView.xaml</DependentUpon>
     </Compile>
@@ -300,10 +297,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\MediaElementView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\MediaListResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -28,15 +28,12 @@
             </Grid.ContextMenu>
             <!--Bind Image Path in Image Control-->
             <Image HorizontalAlignment="Center" ToolTipService.ShowDuration="20000"
-                   Source="{Binding MediaPath, Converter=
+                   Source="{Binding MediaFile, Converter=
                       {StaticResource PathToImageConverter}, ConverterParameter=240}">
                 <!--View Large Image on Image Control Tooltip-->
                 <Image.ToolTip>
                     <ToolTip>
-                    <!--
-                        Source="{Binding RelativeSource= {RelativeSource AncestorType=ToolTip}, Path=PlacementTarget.Source}"
-                    -->
-                        <Image Source="{Binding MediaPath, Converter=
+                        <Image Source="{Binding MediaFile, Converter=
                             {StaticResource PathToImageConverter}}"/>
                     </ToolTip>
                 </Image.ToolTip>
@@ -70,37 +67,7 @@
                             Source={StaticResource CtrlContext}}"/>
                 </ContextMenu>
             </Grid.ContextMenu>
-            <player:MiniPlayer MediaSource="{Binding}"/>
-<!--
-            <local:MediaElementView
-                MediaSource="{Binding MediaPath}"
-                BgImagePath="{Binding BgImagePath}"/>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseEnter">
-                    <cmd:EventToCommand
-                        Command="{Binding DataContext.CmdMouseEnter, RelativeSource=
-                            {RelativeSource AncestorType=local:MediaListView}}"
-                        CommandParameter="{Binding}"/>
-                </i:EventTrigger>
-                <i:EventTrigger EventName="MouseLeave">
-                    <cmd:EventToCommand Command="{Binding DataContext.CmdMouseLeave,
-                        RelativeSource={RelativeSource AncestorType=local:MediaListView}}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <Grid.Background>
-                <ImageBrush Stretch="Uniform"
-                    ImageSource="{Binding BgImagePath, Converter=
-                        {StaticResource PathToImageConverter}, ConverterParameter=240}" />
-            </Grid.Background>
-            <player:MiniPlayer DataContext="{Binding DataContext.Player, RelativeSource=
-                    {RelativeSource AncestorType=local:MediaListView}}"/>
--->
-            <DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Center"
-                        Background="Black" Opacity="0.70">
-                <TextBlock Text="{Binding MediaName}" Foreground="White"
-                    Height="40" Margin="15,0,15,0" FontWeight="SemiBold"/>
-            </DockPanel>
-
+            <player:MiniPlayer MediaSource="{Binding}" />
         </Grid>
     </ControlTemplate>
 

@@ -85,7 +85,12 @@ namespace Scrapper.ViewModel
             PropertyChanged += OnPropertyChanged;
 
             MessengerInstance.Register<NotificationMessage<MediaItem>>(
-                this, OnMediaSelected);
+                this, (msg) => {
+                    SelectedMedia = msg.Content;
+                    if (SelectedMedia != null) Pid = SelectedMedia.Pid;
+                });
+            MessengerInstance.Register<NotificationMessage<List<MediaItem>>>(
+                this, (msg) => StartBatchedScrapping(msg.Content));
         }
 
         int _nextScrappingIndex = 0;
@@ -96,6 +101,7 @@ namespace Scrapper.ViewModel
             if (_mediaToScrap.Count <= _nextScrappingIndex) return;
             var media = _mediaToScrap[_nextScrappingIndex++];
             Pid = media.Pid;
+            SelectedMedia = media;
             OnStartScrapping();
         }
 
@@ -208,12 +214,6 @@ namespace Scrapper.ViewModel
                 }
                 item.OnJsResult(name, x.Result.Result as List<object>);
             });
-        }
-
-        void OnMediaSelected(NotificationMessage<MediaItem> msg)
-        {
-            SelectedMedia = msg.Content;
-            Pid = SelectedMedia.Pid;
         }
     }
 }
