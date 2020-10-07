@@ -23,6 +23,8 @@ namespace Scrapper.ViewModel
     partial class BrowserViewModel : Pane
     {
         bool _bStarted = false;
+        int _nextScrappingIndex = 0;
+        List<MediaItem> _mediaToScrap;
         string _pid;
 
         string address;
@@ -93,12 +95,14 @@ namespace Scrapper.ViewModel
                 this, (msg) => StartBatchedScrapping(msg.Content));
         }
 
-        int _nextScrappingIndex = 0;
-        List<MediaItem> _mediaToScrap;
         public void StartBatchedScrapping(List<MediaItem> mediaItems = null)
         {
             if (mediaItems != null) _mediaToScrap = mediaItems;
-            if (_mediaToScrap.Count <= _nextScrappingIndex) return;
+            if (_mediaToScrap.Count <= _nextScrappingIndex)
+            {
+                _nextScrappingIndex = 0;
+                return;
+            }
             var media = _mediaToScrap[_nextScrappingIndex++];
             Pid = media.Pid;
             SelectedMedia = media;
@@ -123,6 +127,8 @@ namespace Scrapper.ViewModel
             _bStarted = false;
             if (!forceStop && _nextScrappingIndex > 0)
                 StartBatchedScrapping();
+            else
+                _nextScrappingIndex = 0;
         }
 
         public DownloadHandler DownloadHandler { get; private set; }

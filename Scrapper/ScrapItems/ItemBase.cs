@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+
+using System.Data.Entity;
+using System.Globalization;
+using System.Data.Entity.Validation;
 
 using CefSharp;
 
 using Scrapper.Model;
 using Scrapper.Spider;
-using Scrapper.Extension;
-using System.Data.Entity;
-using System.Globalization;
-using Scrapper.ViewModel;
-using System.Data.Entity.Validation;
-
 namespace Scrapper.ScrapItems
 {
     abstract class ItemBase

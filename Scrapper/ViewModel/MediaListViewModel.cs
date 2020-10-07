@@ -11,6 +11,7 @@ using System.Windows.Input;
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 
 using FileListView.Interfaces;
 using FileSystemModels.Models.FSItems.Base;
@@ -19,8 +20,6 @@ using Scrapper.Extension;
 using Scrapper.Model;
 using Scrapper.Tasks;
 using Scrapper.ViewModel.MediaPlayer;
-using System.Data.Entity.Core.Metadata.Edm;
-using GalaSoft.MvvmLight.Messaging;
 
 namespace Scrapper.ViewModel
 {
@@ -170,8 +169,7 @@ namespace Scrapper.ViewModel
 
         void OnScrap(object param)
         {
-            var items = param as IList<object>;
-            if (items != null && items.Count > 0)
+            if (param is IList<object> items && items.Count > 0)
             {
                 MessengerInstance.Send(new NotificationMessage<List<MediaItem>>(
                     items.Cast<MediaItem>().ToList(), "scrap"));
