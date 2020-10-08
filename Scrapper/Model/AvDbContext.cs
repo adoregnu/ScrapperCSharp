@@ -4,9 +4,11 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SQLite.CodeFirst;
 
 namespace Scrapper.Model
 {
+    using  DbInitializer = SqliteDropCreateDatabaseWhenModelChanges<AvDbContext>;
     public class AvDbContext : DbContext
     {
         public AvDbContext(string nameOrConnectionString)
@@ -20,7 +22,7 @@ namespace Scrapper.Model
         {
             AvModelConfig.Config(modelBuilder);
 
-            var initilizer = new AvDbInitializer(modelBuilder);
+            var initilizer = new DbInitializer(modelBuilder);
             Database.SetInitializer(initilizer);
         }
 

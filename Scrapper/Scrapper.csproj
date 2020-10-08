@@ -184,9 +184,11 @@
     <Compile Include="Extension\ReactiveExtensions.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Model\AvDbContext.cs" />
-    <Compile Include="Model\AvDbInitializer.cs" />
     <Compile Include="Model\AvItem.cs" />
     <Compile Include="Model\AvModelConfig.cs" />
+    <Compile Include="Model\MiscDbContext.cs" />
+    <Compile Include="Model\MiscItem.cs" />
+    <Compile Include="Model\MiscModelConfig.cs" />
     <Compile Include="ScrapItems\ItemBase.cs" />
     <Compile Include="ScrapItems\ItemJavlibrary.cs" />
     <Compile Include="ScrapItems\ItemMgstage.cs" />
