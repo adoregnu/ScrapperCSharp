@@ -17,6 +17,9 @@ namespace Scrapper.ScrapItems
         {
         }
 
+        protected override void UdpateAvItem()
+        { }
+
         protected override void OnBeforeDownload(object sender, DownloadItem e)
         {
             var ext = Path.GetExtension(e.SuggestedFileName);
@@ -28,6 +31,7 @@ namespace Scrapper.ScrapItems
             PrintItem(name, items);
             if (items != null && items.Count == 0)
             {
+                _numValidItems++;
                 if (name == "cover")
                 {
                     var url = items[0] as string;

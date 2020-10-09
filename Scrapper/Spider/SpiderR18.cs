@@ -47,20 +47,35 @@ namespace Scrapper.Spider
         void OnMultiResult(List<object> list)
         {
             Log.Print($"OnMultiResult : {list.Count} items found!");
-            if (list == null || list.Count == 0)
-            {
-                Browser.StopScrapping();
-                return;
-            }
+            if (list == null || list.Count == 0) goto NotFound;
 
+            string exactUrl = null;
             if (list.Count == 1)
             {
-                _state = 1;
-                Browser.Address = list[0] as string;
-                return;
+                exactUrl = list[0] as string;
+                goto Found;
             }
-            //var pattern = @"id=(?:h_)?(?:\d+)?([a-z0-9]+[0-9]{3,5})(?:.+)?/";
-            //Regex reg = new Regex(pattern, RegexOptions.Compiled);
+            var tmp = Pid.Split('-', '_');
+            if (tmp.Length < 2) goto NotFound;
+
+            var pattern = tmp[0].ToLower() + @"\d+";
+            foreach (string url in list)
+            {
+                Log.Print(url);
+                var m = Regex.Match(url, pattern);
+                if (m.Success)
+                {
+                    exactUrl = url;
+                    goto Found;
+                }
+            }
+            if (string.IsNullOrEmpty(exactUrl)) goto NotFound;
+        Found:
+            _state = 1;
+            Browser.Address = exactUrl;
+            return;
+        NotFound:
+            Browser.StopScrapping();
         }
 
         public override void Navigate()

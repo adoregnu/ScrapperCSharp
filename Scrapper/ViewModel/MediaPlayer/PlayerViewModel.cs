@@ -122,13 +122,7 @@ namespace Scrapper.ViewModel.MediaPlayer
 
         async public void SetMediaItem(MediaItem media)
         {
-            if (media == MediaItem)
-            {
-                //in case of updating cover image only
-                RaisePropertyChanged("MediaItem");
-                return;
-            }
-
+            MediaItem = media;
             if (MediaPlayer.IsOpen)
             {
                 await MediaPlayer.Close();
@@ -136,7 +130,6 @@ namespace Scrapper.ViewModel.MediaPlayer
 
             if (media != null)
             {
-                MediaItem = media;
                 if (!_isMiniMode)
                 {
                     await MediaPlayer.Open(new Uri(media.MediaFile));

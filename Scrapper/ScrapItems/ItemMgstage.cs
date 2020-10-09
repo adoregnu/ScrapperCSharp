@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 using CefSharp;
@@ -16,6 +17,8 @@ namespace Scrapper.ScrapItems
         public ItemMgstage(SpiderBase spider) : base(spider)
         {
         }
+
+        //protected override void UdpateAvItem() { }
 
         protected override void OnBeforeDownload(object sender, DownloadItem e)
         { 
@@ -44,13 +47,40 @@ namespace Scrapper.ScrapItems
                 }
                 Interlocked.Increment(ref NumItemsToScrap);
             }
+            else if (name == "studio")
+            {
+                var m = Regex.Match(items[0] as string, @"\]=([\w\d]+)");
+                if (m.Success)
+                {
+                    Log.Print($"\tstudio:{m.Groups[1].Value}");
+                    UpdateStudio(m.Groups[1].Value);
+                }
+            }
+            else if (name == "title")
+            {
+                _avItem.Title = (items[0] as string).Trim();
+            }
+            else if (name == "releasedate")
+            { 
+                var strdate = (items[0] as string).Trim(); ;
+                try
+                {
+                    _avItem.ReleaseDate = DateTime.ParseExact(
+                        strdate, "yyyy/MM/dd", enUS);
+                }
+                catch (Exception e)
+                {
+                    Log.Print(e.Message);
+                }
+            }
         }
 
         void IScrapItem.OnJsResult(string name, List<object> items)
-        { 
-            Log.Print("{0} : scrapped {1}", name, items != null ? items.Count : 0);
+        {
+            PrintItem(name, items);
             if (items != null && items.Count > 0)
             {
+                _numValidItems++;
                 ParseItem(name, items);
             }
             CheckCompleted();

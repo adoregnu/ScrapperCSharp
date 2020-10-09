@@ -139,11 +139,21 @@ namespace Scrapper.Spider
             }
         }
 
-        public override void OnScrapCompleted(string path)
+        public override void OnScrapCompleted(bool isValid, string path)
         {
-            MoveArticle(null);
-            if (!string.IsNullOrEmpty(path))
-                MessengerInstance.Send(new NotificationMessage<string>(path, "mediaAdded"));
+            if (!isValid && Browser.StopOnExistingId)
+            {
+                Browser.StopScrapping();
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(path))
+                    MessengerInstance.Send(new NotificationMessage<string>(
+                        path, "mediaAdded"));
+                else
+                    Log.Print(" Continue next Item!");
+                MoveArticle(null);
+            }
         }
 
         public override void Navigate()

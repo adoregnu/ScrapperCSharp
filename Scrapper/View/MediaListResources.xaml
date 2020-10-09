@@ -45,6 +45,10 @@
 
     <ControlTemplate x:Key="VideoItem">
         <Grid Width="240" Height="200">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
             <Grid.Resources>
                 <bindLocal:BindingProxy
                     x:Key="VmContext"
@@ -64,7 +68,11 @@
                             Source={StaticResource CtrlContext}}"/>
                 </ContextMenu>
             </Grid.ContextMenu>
-            <player:MiniPlayer MediaSource="{Binding}" />
+            <player:MiniPlayer MediaSource="{Binding}" Grid.Row="0"/>
+            <TextBlock
+                Text="{Binding Info}" Grid.Row="1" Opacity="0.5"
+                HorizontalAlignment="Center" VerticalAlignment="Center"
+                Foreground="White"/>
         </Grid>
     </ControlTemplate>
 

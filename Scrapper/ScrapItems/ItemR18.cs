@@ -137,9 +137,9 @@ namespace Scrapper.ScrapItems
         void IScrapItem.OnJsResult(string name, List<object> items)
         {
             PrintItem(name, items);
-
             if (!items.IsNullOrEmpty())
             {
+                _numValidItems++;
                 if (name == "cover")
                 {
                     var url = items[0] as string;
@@ -158,7 +158,8 @@ namespace Scrapper.ScrapItems
                 }
                 else if (name == "studio")
                 {
-                    UpdateStudio(items);
+                    var studio = (items[0] as string).Trim();
+                    UpdateStudio(studio);
                 }
                 else if (name == "actor")
                 {
@@ -171,6 +172,15 @@ namespace Scrapper.ScrapItems
                 else if (name == "title")
                 {
                     _avItem.Title = (items[0] as string).Trim();
+                }
+                else if (name == "set")
+                {
+                    //_avItem.Set = (items[0] as string).Trim();
+                }
+                else if (name == "plot")
+                {
+                    if (items[0] is string plot && string.IsNullOrEmpty(plot))
+                        _avItem.Plot = plot.Trim();
                 }
             }
 

@@ -111,7 +111,8 @@ namespace Scrapper.ViewModel
 
         public void OnStartScrapping()
         {
-            if (string.IsNullOrEmpty(Pid))
+            if (!(SelectedSpider is SpiderSehuatang) &&
+                string.IsNullOrEmpty(Pid))
             {
                 Log.Print("No Pid is set!");
                 return;
@@ -125,6 +126,10 @@ namespace Scrapper.ViewModel
         {
             webBrowser.Stop();
             _bStarted = false;
+
+            if (!(SelectedSpider is SpiderSehuatang))
+                SelectedMedia.UpdateFields();
+
             if (!forceStop && _nextScrappingIndex > 0)
                 StartBatchedScrapping();
             else

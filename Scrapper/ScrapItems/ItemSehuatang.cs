@@ -37,16 +37,7 @@ namespace Scrapper.ScrapItems
             {
                 _bStop = true;
                 Log.Print($"Already downloaded! {_outPath}");
-                if (_spider.Browser.StopOnExistingId)
-                {
-                    Log.Print("Stop Scrapping!");
-                    _spider.Browser.StopScrapping();
-                }
-                else
-                {
-                    Log.Print(" Continue next Item!");
-                    _spider.OnScrapCompleted(null);
-                }
+                _spider.OnScrapCompleted(false, null);
                 Clear();
             }
         }
@@ -80,8 +71,9 @@ namespace Scrapper.ScrapItems
                 File.SetLastWriteTime(e.FullPath, DateTime);
                 if (_downloadCount == 0)
                 {
+                    _spider.OnScrapCompleted(true,
+                        Path.GetDirectoryName(e.FullPath));
                     Clear();
-                    _spider.OnScrapCompleted(Path.GetDirectoryName(e.FullPath));
                 }
             }
         }

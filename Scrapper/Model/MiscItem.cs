@@ -20,5 +20,6 @@ namespace Scrapper.Model
         public int Id { get; set; }
 
         public string Pid { get; set; }
+        public int Status { get; set; }
     }
 }

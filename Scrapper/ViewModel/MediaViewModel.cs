@@ -81,7 +81,7 @@ namespace Scrapper.ViewModel
                 {
                     media = new MediaItem();
                     media.UpdateField(fsItem.ItemPath);
-                    if (!media.IsMediaDir || media.IsImage) media = null;
+                    if (!media.IsMediaFolder || media.IsImage) media = null;
                 }
                 else
                 {
@@ -119,7 +119,6 @@ namespace Scrapper.ViewModel
         }
 
         /// <summary>
-        /// mediaUpdated : A message from SpiderBase's OnScrapCompleted
         /// mediaAdded   : A message from SpiderSehuatang's OnScrapCompleted 
         /// </summary>
         /// <param name="msg"></param>
@@ -132,19 +131,10 @@ namespace Scrapper.ViewModel
                     MediaList.InsertMedia(msg.Content);
                 }
             }
-            else if (msg.Notification == "mediaUpdated")
-            {
-                if (ViewType == 2)
-                {
-                    var media = MediaList.GetMedia(msg.Content, true);
-                    MediaPlayer.SetMediaItem(media);
-                }
-            }
         }
 
         /// <summary>
         ///  querySelectedPath: A message from Spider's Navigate method
-        ///  queryCurrentPath: A message from FileToFolderViewModel
         /// </summary>
         /// <param name="msgAction"></param>
         void OnQueryMediaPath(NotificationMessageAction<string> msgAction)

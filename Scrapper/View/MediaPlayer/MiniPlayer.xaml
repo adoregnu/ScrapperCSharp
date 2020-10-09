@@ -16,15 +16,15 @@
     </UserControl.Resources>
     <Grid x:Name="LayoutRoot">
         <Grid.Background>
-            <ImageBrush ImageSource="{Binding MediaItem.BgImagePath, Converter=
-                {StaticResource PathToImageConverter}}" Stretch="Uniform"/>
+            <ImageBrush Stretch="Uniform"
+                ImageSource="{Binding MediaItem.BgImagePath, Converter=
+                {StaticResource PathToImageConverter}, ConverterParameter=240}" />
         </Grid.Background>
         <ContentControl x:Name="MPlayerControl" Content="{Binding MediaPlayer}"
                         Style="{StaticResource ContentControlStyle}"/>
         <local:MiniControllerPanel
                 x:Name="MiniControllerPanel"
                 VerticalAlignment="Center"
-                HorizontalAlignment="Center"
                 Visibility="{Binding IsPlayerLoaded, Converter={StaticResource boolToVis}}"/>
     </Grid>
 </UserControl>

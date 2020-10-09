@@ -30,6 +30,7 @@ namespace Scrapper
     {
         public static string CurrentPath { get; set; }
         public static string DataPath { get; set; }
+        public static string JavPath { get; set; }
         public static AvDbContext DbContext { get; set; }
 
         /// <summary>
@@ -44,6 +45,7 @@ namespace Scrapper
             log4net.Config.XmlConfigurator.Configure();
             CurrentPath = Directory.GetCurrentDirectory();
             DataPath = @"d:\tmp\";
+            JavPath = @"d:\JAV";
             var di = new DirectoryInfo(DataPath);
             if (!di.Exists)
             {
@@ -69,14 +71,12 @@ namespace Scrapper
             //Library.EnableWpfMultiThreadedVideo = !Debugger.IsAttached;
             // test with true and false
 
-            using (AvDbContext context = new AvDbContext("avDb"))
+            DbContext = new AvDbContext("avDb");
+            var studio = new AvStudio { Name = "Init" };
+            if (!DbContext.Studios.Any())
             {
-                var studio = new AvStudio { Name = "Init" };
-                if (!context.Studios.Any())
-                {
-                    context.Studios.Add(studio);
-                    context.SaveChanges();
-                }
+                DbContext.Studios.Add(studio);
+                DbContext.SaveChanges();
             }
         }
 

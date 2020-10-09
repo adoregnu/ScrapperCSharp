@@ -73,11 +73,9 @@ namespace Scrapper.Spider
             _isCookieSet = true;
         }
 
-        public virtual void OnScrapCompleted(string path = null)
+        public virtual void OnScrapCompleted(bool isValid, string path = null)
         {
             Browser.StopScrapping();
-            MessengerInstance.Send(
-                new NotificationMessage<string>(MediaFolder, "mediaUpdated"));
         }
 
         protected void ParsePage(IScrapItem item)

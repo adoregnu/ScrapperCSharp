@@ -52,7 +52,7 @@ namespace Scrapper.ViewModel
             CmdRename = new RelayCommand(() => OnRename());
 
             Pattern = @"([a-zA-Z0-9]+)(?:-|00| )?" +
-                @"([0-9]{3,5})(?:\D)?([0-9A-Ca-c])?";
+                @"([0-9]{3,8})(?:\D)?([0-9A-Ca-c])?";
 
             OnPreview();
         }

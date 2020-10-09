@@ -29,8 +29,9 @@ namespace Scrapper.ViewModel
     }
     class MediaListViewModel : ViewModelBase
     {
-        readonly Dictionary<string, MediaItem> _mediaCache;
-        readonly SerialQueue _serialQueue = new SerialQueue();
+        static readonly Dictionary<string, MediaItem> _mediaCache
+            = new Dictionary<string, MediaItem>();
+        static readonly SerialQueue _serialQueue = new SerialQueue();
 
         MediaItem _selectedMedia = null;
         bool _isBrowsing = false;
@@ -51,7 +52,6 @@ namespace Scrapper.ViewModel
             set => Set(ref _isBrowsing, value);
         }
         public ObservableCollection<MediaItem> MediaList { get; private set; }
-        public PlayerViewModel Player { get; set; }
         public string CurrentFolder { get; set; }
 
         public ICommand CmdExclude { get; set; }
@@ -61,7 +61,6 @@ namespace Scrapper.ViewModel
         public MediaListViewModel()
         {
             MediaList = new ObservableCollection<MediaItem>();
-            _mediaCache = new Dictionary<string, MediaItem>();
 
             CmdExclude = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.excluded));
@@ -69,6 +68,7 @@ namespace Scrapper.ViewModel
                 p => OnContextMenu(p, MediaListMenuType.downloaded));
             CmdScrap = new RelayCommand<object>( p => OnScrap(p));
         }
+
         public void ClearMedia()
         {
             IsBrowsing = true;
@@ -125,31 +125,20 @@ namespace Scrapper.ViewModel
             }
         }
 
-        public MediaItem GetMedia(string path, bool updateCache = false)
+        public MediaItem GetMedia(string path)
         {
-            MediaItem item = null;
-            bool isCached = false;
             if (_mediaCache.ContainsKey(path))
             {
-                if (!updateCache) return _mediaCache[path];
-                item = _mediaCache[path];
-                isCached = true;
+                return _mediaCache[path];
             }
 
-            if (!isCached) item = new MediaItem();
-            var files = Directory.GetFileSystemEntries(path);
-            foreach (var file in files)
-            {
-                item.UpdateField(file);
-                if (item.IsExcluded || item.IsDownload)
-                    return null;
-            }
-
-            if (!item.IsMediaDir)
+            var item = new MediaItem(path);
+            if (item.IsExcluded || item.IsDownload || !item.IsMediaFolder)
             {
                 return null;
             }
-            if (!isCached) _mediaCache.Add(path, item);
+
+            _mediaCache.Add(path, item);
             return item;
         }
 

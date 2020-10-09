@@ -24,6 +24,7 @@ namespace Scrapper.ScrapItems
         public int NumItemsToScrap;
 
         protected int _numScrapedItem = 0;
+        protected int _numValidItems = 0;
         protected AvItem _avItem;
         public ItemBase(SpiderBase spider)
         {
@@ -33,7 +34,7 @@ namespace Scrapper.ScrapItems
                 Pid = spider.Pid,
                 Path = spider.MediaFolder,
             };
-            _context = new AvDbContext("avDb");
+            _context = App.DbContext;
 
             var dh = _spider.Browser.DownloadHandler;
             dh.OnBeforeDownloadFired += OnBeforeDownload;
@@ -55,7 +56,6 @@ namespace Scrapper.ScrapItems
             var dh = _spider.Browser.DownloadHandler;
             dh.OnBeforeDownloadFired -= OnBeforeDownload;
             dh.OnDownloadUpdatedFired -= OnDownloadUpdated;
-            _context.Dispose();
             Log.Print("ItemBase::Clear()");
         }
 
@@ -65,11 +65,12 @@ namespace Scrapper.ScrapItems
             Log.Print($"{_numScrapedItem}/{NumItemsToScrap}");
             if (_numScrapedItem == NumItemsToScrap)
             {
-                _spider.OnScrapCompleted();
-                lock (_context)
+                Log.Print($"Num valid items {_numValidItems}");
+                if (_numValidItems > 0) lock (_context)
                 {
                     UdpateAvItem();
                 }
+                _spider.OnScrapCompleted(_numValidItems > 0);
                 Clear();
             }
         }
@@ -105,9 +106,9 @@ namespace Scrapper.ScrapItems
         }
 
         AvStudio _studio;
-        protected void UpdateStudio(List<object> items)
+        protected void UpdateStudio(string studio)
         {
-            var studio = (items[0] as string).Trim();
+            //var studio = (items[0] as string).Trim();
             if (string.IsNullOrEmpty(studio)) return;
 
             lock (_context)
