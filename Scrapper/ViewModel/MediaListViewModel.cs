@@ -29,8 +29,6 @@ namespace Scrapper.ViewModel
     }
     class MediaListViewModel : ViewModelBase
     {
-        static readonly Dictionary<string, MediaItem> _mediaCache
-            = new Dictionary<string, MediaItem>();
         static readonly SerialQueue _serialQueue = new SerialQueue();
 
         MediaItem _selectedMedia = null;
@@ -57,9 +55,12 @@ namespace Scrapper.ViewModel
         public ICommand CmdExclude { get; set; }
         public ICommand CmdDownload { get; set; }
         public ICommand CmdScrap { get; set; }
+        public ICommand CmdMoveItem { get; set; }
 
-        public MediaListViewModel()
+        IMediaListNotifier _mediaListNotifier;
+        public MediaListViewModel(IMediaListNotifier notifier)
         {
+            _mediaListNotifier = notifier;
             MediaList = new ObservableCollection<MediaItem>();
 
             CmdExclude = new RelayCommand<MediaItem>(
@@ -67,6 +68,7 @@ namespace Scrapper.ViewModel
             CmdDownload = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.downloaded));
             CmdScrap = new RelayCommand<object>( p => OnScrap(p));
+            CmdMoveItem = new RelayCommand<object>( p => OnMoveItem(p));
         }
 
         public void ClearMedia()
@@ -127,18 +129,12 @@ namespace Scrapper.ViewModel
 
         public MediaItem GetMedia(string path)
         {
-            if (_mediaCache.ContainsKey(path))
-            {
-                return _mediaCache[path];
-            }
-
             var item = new MediaItem(path);
             if (item.IsExcluded || item.IsDownload || !item.IsMediaFolder)
             {
                 return null;
             }
 
-            _mediaCache.Add(path, item);
             return item;
         }
 
@@ -162,6 +158,22 @@ namespace Scrapper.ViewModel
             {
                 MessengerInstance.Send(new NotificationMessage<List<MediaItem>>(
                     items.Cast<MediaItem>().ToList(), "scrap"));
+            }
+        }
+
+        void OnMoveItem(object param)
+        {
+            if (param is IList<object> items && items.Count > 0)
+            {
+                foreach (var item in items.Cast<MediaItem>().ToList())
+                {
+                    var path = item.MediaFolder;
+                    if (item.MoveItem())
+                    {
+                        MediaList.Remove(item);
+                        _mediaListNotifier.OnMediaItemMoved(path);
+                    }
+                }
             }
         }
 
@@ -190,7 +202,6 @@ namespace Scrapper.ViewModel
                 MediaList.Remove(item);
                 Log.Print($"Mark excluded {item.Torrent}");
             }
-            _mediaCache.Remove(dir);
         }
     }
 }

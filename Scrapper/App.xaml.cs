@@ -31,6 +31,7 @@ namespace Scrapper
         public static string CurrentPath { get; set; }
         public static string DataPath { get; set; }
         public static string JavPath { get; set; }
+        public static string LocalAppData { get; set; }
         public static AvDbContext DbContext { get; set; }
 
         /// <summary>
@@ -45,7 +46,8 @@ namespace Scrapper
             log4net.Config.XmlConfigurator.Configure();
             CurrentPath = Directory.GetCurrentDirectory();
             DataPath = @"d:\tmp\";
-            JavPath = @"d:\JAV";
+            JavPath = @"d:\JAV\";
+            LocalAppData = Environment.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\");
             var di = new DirectoryInfo(DataPath);
             if (!di.Exists)
             {
@@ -124,6 +126,12 @@ namespace Scrapper
                 // http://magpcss.org/ceforum/viewtopic.php?f=6&t=14095
                 settings.CefCommandLineArgs.Add("enable-begin-frame-scheduling");
             }
+            settings.CefCommandLineArgs.Add("enable-experimental-web-platform-features");
+
+            //The location where cache data will be stored on disk. If empty an in-memory cache will be used for some features and a temporary disk cache for others.
+            //HTML5 databases such as localStorage will only persist across sessions if a cache path is specified. 
+            settings.CachePath = LocalAppData + "CEF\\cache";
+            //settings.CachePath = LocalAppData + @"Google\Chrome\User Data\Default";
 
             //This must be set before Cef.Initialized is called
             CefSharpSettings.FocusedNodeChangedEnabled = true;
@@ -216,8 +224,8 @@ namespace Scrapper
             string message = $"Unhandled exception ({source})";
             try
             {
-                System.Reflection.AssemblyName assemblyName
-                    = System.Reflection.Assembly.GetExecutingAssembly().GetName();
+                AssemblyName assemblyName
+                    = Assembly.GetExecutingAssembly().GetName();
                 message = string.Format("Unhandled exception in {0} v{1}",
                     assemblyName.Name, assemblyName.Version);
             }

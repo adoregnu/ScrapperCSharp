@@ -86,6 +86,11 @@
             };
         }
 
+        public static void RemoveSubscripion(this INotifyPropertyChanged publisher)
+        {
+            Subscriptions.Remove(publisher);
+        }
+
         internal sealed class SubscriptionSet : Dictionary<string, CallbackList> { }
 
         internal sealed class CallbackList : List<Action>

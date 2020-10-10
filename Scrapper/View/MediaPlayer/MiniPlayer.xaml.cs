@@ -49,6 +49,14 @@ namespace Scrapper.View.MediaPlayer
             InitializeComponent();
             LayoutRoot.DataContext = new PlayerViewModel(true);
             InitializePlayer();
+            Unloaded += (s, e) =>
+            {
+                if (LayoutRoot.DataContext is IDisposable dc)
+                {
+                    dc.Dispose();
+                }
+                MouseMoveTimer.Stop();
+            };
         }
 
         static void OnPropertyChanged(DependencyObject src,
@@ -94,7 +102,6 @@ namespace Scrapper.View.MediaPlayer
             {
                 LastMouseMoveTime = DateTime.UtcNow.Subtract(TimeSpan.FromSeconds(10));
             };
-
             MouseMoveTimer = new DispatcherTimer(DispatcherPriority.Background)
             {
                 Interval = TimeSpan.FromMilliseconds(150),
@@ -119,7 +126,6 @@ namespace Scrapper.View.MediaPlayer
                     ShowControllerAnimation?.Begin();
                 }
             };
-
             MouseMoveTimer.Start();
         }
     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using FFmpeg.AutoGen;
 using GalaSoft.MvvmLight;
 
 namespace Scrapper.Model
@@ -18,7 +18,8 @@ namespace Scrapper.Model
         public string Torrent { get; private set; }
         public string BgImagePath
         {
-            get => _bgImagePath; 
+            get => !string.IsNullOrEmpty(_bgImagePath) ?
+                        $"{MediaFolder}\\{_bgImagePath}" : null;
             private set => Set(ref _bgImagePath, value);
         }
         public string Pid { get; private set; }
@@ -56,6 +57,43 @@ namespace Scrapper.Model
             }
         }
 
+        public bool MoveItem()
+        {
+            if (_avItem == null)
+            {
+                Log.Print($"No info for {Pid}");
+                return false;
+            }
+            var studio = _avItem.Studio.Name;
+            var targetPath = $"{App.JavPath}{studio}";
+
+            if (MediaFolder.Equals(targetPath + "\\" + Pid,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                Log.Print($"{Pid} already moved!");
+                return false;
+            }
+
+            if (!new DirectoryInfo(targetPath).Exists)
+            {
+                Directory.CreateDirectory(targetPath);
+            }
+            try
+            {
+                targetPath += "\\" + Pid;
+                Directory.Move(MediaFolder, targetPath);
+                MediaFolder = targetPath;
+                _avItem.Path = MediaFolder;
+                App.DbContext.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Print(ex.Message);
+            }
+            return false;
+        }
+
         void UpdateMediaField(string path)
         {
             MediaFile = path;
@@ -65,7 +103,7 @@ namespace Scrapper.Model
             MediaName = $"{Pid} / " + DownloadDt.ToString("%M-%d %h:%m:%s");
         }
 
-        public void ReloadAvItem()
+        void ReloadAvItem()
         {
             _avItem = App.DbContext.Items
                 .Include("Studio")
@@ -78,7 +116,7 @@ namespace Scrapper.Model
             foreach (var file in Directory.GetFiles(MediaFolder))
             {
                 UpdateField(file);
-                if (IsExcluded || IsDownload) break;
+                if (IsExcluded || IsDownload) return;
             }
             ReloadAvItem();
         }
@@ -96,11 +134,11 @@ namespace Scrapper.Model
             }
             else if (fname.Contains("_poster."))
             {
-                BgImagePath = path;
+                BgImagePath = fname;
             }
             else if (string.IsNullOrEmpty(BgImagePath) && fname.Contains("_thumbnail."))
             { 
-                BgImagePath = path;
+                BgImagePath = fname;
             }
             else if (fname.EndsWith(".downloaded"))
             {
@@ -116,8 +154,8 @@ namespace Scrapper.Model
             }
             else if (VideoExts.Any(s => fname.EndsWith(s, StringComparison.CurrentCultureIgnoreCase)))
             {
-                UpdateMediaField(path);
                 IsImage = false;
+                UpdateMediaField(path);
                 if (_avItem == null)
                 {
                     ReloadAvItem();

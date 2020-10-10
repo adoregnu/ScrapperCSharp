@@ -15,7 +15,7 @@ using Scrapper.Model;
 
 namespace Scrapper.ViewModel
 {
-    class MediaViewModel : Pane, IFileListNotifier
+    class MediaViewModel : Pane, IFileListNotifier, IMediaListNotifier
     {
         int _viewType = 1;
         public int ViewType
@@ -35,7 +35,7 @@ namespace Scrapper.ViewModel
 
             FileList = new FileListViewModel(this);
             MediaPlayer = new PlayerViewModel();
-            MediaList = new MediaListViewModel();
+            MediaList = new MediaListViewModel(this);
 
             //KeyDownCommand = new RelayCommand<EventArgs>(e => Log.Print(e.ToString()));
             MessengerInstance.Register<NotificationMessage<string>>(
@@ -54,6 +54,12 @@ namespace Scrapper.ViewModel
             {
                 MediaPlayer.OnKeyDown(e);
             }
+        }
+
+        void IMediaListNotifier.OnMediaItemMoved(string path)
+        {
+            //FileList.RefreshCommand.Execute(null);
+            FileList.RemoveItem(path);
         }
 
         void IFileListNotifier.OnDirectoryChanged(string path)

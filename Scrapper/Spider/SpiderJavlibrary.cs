@@ -18,7 +18,7 @@ namespace Scrapper.Spider
         public SpiderJavlibrary(BrowserViewModel browser) : base(browser)
         {
             Name = "javlibrary";
-            URL = "http://www.javlibrary.com/en/";
+            URL = "https://www.javlibrary.com/en/";
             _xpathDic = new Dictionary<string, string>
             {
                 { "title",  XPath("//*[@id='video_title']/h3/a/text()") },
@@ -32,7 +32,6 @@ namespace Scrapper.Spider
                 { "actor",  XPath("//*[@id='video_cast']//*[@class='star']//text()") },
             };
         }
-
         public override Cookie CreateCookie()
         {
             return new Cookie

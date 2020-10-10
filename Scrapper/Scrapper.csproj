@@ -169,6 +169,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BrowserHandler\AvRequestHandler.cs" />
     <Compile Include="BrowserHandler\DownloadHandler.cs" />
     <Compile Include="BrowserHandler\PopupHandler.cs" />
     <Compile Include="BrowserHandler\ProcessHandler.cs" />
@@ -213,6 +214,7 @@
     <Compile Include="ViewModel\FileListViewModel.cs" />
     <Compile Include="ViewModel\FileToFolderViewModel.cs" />
     <Compile Include="ViewModel\IFileListNotifier.cs" />
+    <Compile Include="ViewModel\IMediaListNotifier.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="Model\MediaItem.cs" />
     <Compile Include="ViewModel\MediaListViewModel.cs" />

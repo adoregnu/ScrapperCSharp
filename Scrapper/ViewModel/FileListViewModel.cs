@@ -28,7 +28,7 @@ namespace Scrapper.ViewModel
 		readonly SemaphoreSlim _SlowStuffSemaphore;
 		readonly CancellationTokenSource _CancelTokenSource;
 		readonly OneTaskLimitedScheduler _OneTaskScheduler;
-		IFileListNotifier _fileListNotifier;
+		readonly IFileListNotifier _fileListNotifier;
 		bool _disposed = false;
 		bool _isAllChecked = false;
 
@@ -49,10 +49,10 @@ namespace Scrapper.ViewModel
 			{
 				if (_selectedFoder != value)
 				{
-					_selectedFoder = value;
-					RaisePropertyChanged("SelectedFolder");
+					_isAllChecked = false;
 					_fileListNotifier.OnDirectoryChanged(value);
 				}
+				Set(ref _selectedFoder, value);
 			}
 		}
 		public bool IsAllChecked
@@ -136,11 +136,21 @@ namespace Scrapper.ViewModel
 			NavigateToFolder(PathFactory.Create(_selectedFoder));
 		}
 
+		public void RemoveItem(string path)
+		{ 
+			var items = FolderItemsView.CurrentItems
+							as ObservableCollection<ILVItemViewModel>;
+			var item = items.FirstOrDefault(i => i.ItemPath == path);
+			if (item != null)
+				items.Remove(item);
+		}
+
 		void OnDeleteFile(object param)
 		{
 			var fsItem = param as ILVItemViewModel;
 			_fileListNotifier.OnFileDeleted(fsItem);
-			var items = FolderItemsView.CurrentItems as ObservableCollection<ILVItemViewModel>;
+			var items = FolderItemsView.CurrentItems
+							as ObservableCollection<ILVItemViewModel>;
 			items.Remove(fsItem);
 
 			Task.Run(() => {

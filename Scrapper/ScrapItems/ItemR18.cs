@@ -26,6 +26,11 @@ namespace Scrapper.ScrapItems
         readonly Dictionary<string, string> _actorPicturs;
         readonly List<AvActorName> _actorNames;
 
+        string posterPath
+        {
+            get => $"{_spider.MediaFolder}\\{_spider.Pid}_poster";
+        }
+
         public ItemR18(SpiderBase spider) : base(spider)
         { 
             _downloadUrls = new ConcurrentDictionary<string, string>();
@@ -51,7 +56,7 @@ namespace Scrapper.ScrapItems
             var ext = Path.GetExtension(e.SuggestedFileName);
             if (_downloadUrls[e.OriginalUrl] == "cover")
             {
-                e.SuggestedFileName = $"{_spider.MediaFolder}\\{_spider.Pid}_poster{ext}";
+                e.SuggestedFileName = $"{posterPath}{ext}";
             }
             else
             {
@@ -134,6 +139,16 @@ namespace Scrapper.ScrapItems
             }
         }
 
+        void ParseCover(string name, string url)
+        {
+            var ext = url.Split('.').Last();
+            if (File.Exists($"{posterPath}.{ext}")) return;
+
+            Interlocked.Increment(ref NumItemsToScrap);
+            _downloadUrls.TryAdd(url, name);
+            _spider.Browser.Download(url);
+        }
+
         void IScrapItem.OnJsResult(string name, List<object> items)
         {
             PrintItem(name, items);
@@ -143,10 +158,7 @@ namespace Scrapper.ScrapItems
                 if (name == "cover")
                 {
                     var url = items[0] as string;
-
-                    Interlocked.Increment(ref NumItemsToScrap);
-                    _downloadUrls.TryAdd(url, name);
-                    _spider.Browser.Download(url);
+                    ParseCover(name, url.Trim());
                 }
                 else if (name == "actor_thumb")
                 {

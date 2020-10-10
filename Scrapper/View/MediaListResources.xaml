@@ -66,6 +66,12 @@
                             Source={StaticResource VmContext}}"
                         CommandParameter="{Binding Data.SelectedItems,
                             Source={StaticResource CtrlContext}}"/>
+                    <MenuItem Header="Move" 
+                        Command="{Binding Data.CmdMoveItem,
+                            Source={StaticResource VmContext}}"
+                        CommandParameter="{Binding Data.SelectedItems,
+                            Source={StaticResource CtrlContext}}"/>
+
                 </ContextMenu>
             </Grid.ContextMenu>
             <player:MiniPlayer MediaSource="{Binding}" Grid.Row="0"/>

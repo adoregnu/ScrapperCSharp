@@ -9,7 +9,7 @@ using Scrapper.Model;
 using Scrapper.ViewModel.Base;
 namespace Scrapper.ViewModel
 {
-    class AvDbViewModel : Pane
+    class AvDbViewModel : Pane, IMediaListNotifier
     {
         List<string> _items;
         readonly AvDbContext _context;
@@ -53,7 +53,7 @@ namespace Scrapper.ViewModel
             Title = "Db Viewer";
             _context = new AvDbContext("avDb");
 
-            MediaList = new MediaListViewModel();
+            MediaList = new MediaListViewModel(this);
             SourceTypes = new List<string>
             {
                 "Actor",
@@ -61,6 +61,10 @@ namespace Scrapper.ViewModel
                 "Genre"
             };
             SelectedType = "Actor";
+        }
+
+        void IMediaListNotifier.OnMediaItemMoved(string path)
+        {
         }
 
         void InitActorList()

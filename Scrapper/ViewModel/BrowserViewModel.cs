@@ -100,6 +100,7 @@ namespace Scrapper.ViewModel
             if (mediaItems != null) _mediaToScrap = mediaItems;
             if (_mediaToScrap.Count <= _nextScrappingIndex)
             {
+                _mediaToScrap.Clear();
                 _nextScrappingIndex = 0;
                 return;
             }
@@ -127,7 +128,7 @@ namespace Scrapper.ViewModel
             webBrowser.Stop();
             _bStarted = false;
 
-            if (!(SelectedSpider is SpiderSehuatang))
+            if (!(SelectedSpider is SpiderSehuatang) && SelectedMedia != null)
                 SelectedMedia.UpdateFields();
 
             if (!forceStop && _nextScrappingIndex > 0)
@@ -144,6 +145,7 @@ namespace Scrapper.ViewModel
             WebBrowser.MenuHandler = new MenuHandler();
             WebBrowser.DownloadHandler = DownloadHandler;
             WebBrowser.LifeSpanHandler = new PopupHandler();
+            //WebBrowser.RequestHandler = new AvRequestHandler();
 
             WebBrowser.ConsoleMessage += (s, e) =>
             {

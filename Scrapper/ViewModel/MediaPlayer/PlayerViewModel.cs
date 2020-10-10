@@ -17,7 +17,7 @@ using Scrapper.Extension;
 
 namespace Scrapper.ViewModel.MediaPlayer
 {
-    class PlayerViewModel : GalaSoft.MvvmLight.ViewModelBase
+    class PlayerViewModel : GalaSoft.MvvmLight.ViewModelBase, IDisposable
     {
         bool _isPropertiesPanelOpen = App.IsInDesignMode;
         bool _isPlayerLoaded = App.IsInDesignMode;
@@ -74,7 +74,7 @@ namespace Scrapper.ViewModel.MediaPlayer
             {
                 Background = Brushes.Black,
                 // https://stackoverflow.com/questions/24321237/switching-a-control-over-different-windows-inside-contentcontrol
-                UnloadedBehavior = MediaPlaybackState.Manual,
+                //UnloadedBehavior = MediaPlaybackState.Manual,
                 IsDesignPreviewEnabled = true,
                 IsMuted = true
             };
@@ -101,7 +101,6 @@ namespace Scrapper.ViewModel.MediaPlayer
             PauseCommand = new RelayCommand(async () => await MediaPlayer.Pause());
             StopCommand = new RelayCommand(async () => await MediaPlayer.Stop());
             CloseCommand = new RelayCommand(async () => await MediaPlayer.Close());
-
             Controller = new ControllerViewModel(this);
             Controller.OnApplicationLoaded();
             IsPlayerLoaded = true;
@@ -112,14 +111,12 @@ namespace Scrapper.ViewModel.MediaPlayer
             //MediaPlayer.MediaReady += OnMediaReady;
             //MediaPlayer.MediaInitializing += OnMediaInitializing;
             MediaPlayer.MediaOpening += OnMediaOpening;
-
             MediaPlayer.WhenChanged(() =>  
                 IsPlaying = MediaPlayer.IsPlaying ||
                     MediaPlayer.IsSeeking ||
                     MediaPlayer.MediaState == MediaPlaybackState.Pause,
                 nameof(MediaPlayer.IsPlaying));
         }
-
         async public void SetMediaItem(MediaItem media)
         {
             MediaItem = media;
@@ -127,7 +124,6 @@ namespace Scrapper.ViewModel.MediaPlayer
             {
                 await MediaPlayer.Close();
             }
-
             if (media != null)
             {
                 if (!_isMiniMode)
@@ -233,6 +229,17 @@ namespace Scrapper.ViewModel.MediaPlayer
                 MediaPlayer.SpeedRatio -= 0.05;
                 return;
             }
+        }
+        public bool IsDisposed { get; private set; }
+        void IDisposable.Dispose()
+        {
+            if (!IsDisposed)
+            {
+                MediaPlayer.RemoveSubscripion();
+                MediaPlayer.Dispose();
+                IsDisposed = true;
+            }
+            IsDisposed = true;
         }
     }
 }
