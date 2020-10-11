@@ -88,6 +88,9 @@ namespace Scrapper.ViewModel
 
             MessengerInstance.Register<NotificationMessage<MediaItem>>(
                 this, (msg) => {
+                    if (msg.Notification != "mediaSelected")
+                        return;
+
                     SelectedMedia = msg.Content;
                     if (SelectedMedia != null) Pid = SelectedMedia.Pid;
                 });

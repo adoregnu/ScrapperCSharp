@@ -108,7 +108,6 @@ namespace Scrapper.ScrapItems
         AvStudio _studio;
         protected void UpdateStudio(string studio)
         {
-            //var studio = (items[0] as string).Trim();
             if (string.IsNullOrEmpty(studio)) return;
 
             lock (_context)
@@ -116,6 +115,18 @@ namespace Scrapper.ScrapItems
                 _studio = _context.Studios.FirstOrDefault(x => x.Name == studio);
                 if (_studio == null)
                     _studio = _context.Studios.Add(new AvStudio { Name = studio });
+            }
+        }
+
+        AvSeries _series;
+        protected void UpdateSeries(string series)
+        { 
+            if (string.IsNullOrEmpty(series)) return;
+            lock (_context)
+            {
+                _series = _context.Series.FirstOrDefault(x => x.Name == series);
+                if (_series == null)
+                    _series = _context.Series.Add(new AvSeries { Name = series });
             }
         }
 
@@ -156,6 +167,7 @@ namespace Scrapper.ScrapItems
             if (_context.Items.Any(x => x.Pid == _avItem.Pid))
                 return;
 
+            _avItem.Series = _series;
             _avItem.Studio = _studio;
             _avItem.Actors = _actors;
             _avItem.Genres = _genres;
@@ -178,6 +190,13 @@ namespace Scrapper.ScrapItems
                             ve.PropertyName, ve.ErrorMessage);
                     }
                 }
+            }
+            finally
+            {
+                _series = null;
+                _studio = null;
+                _actors = null;
+                _genres = null;
             }
         }
     }

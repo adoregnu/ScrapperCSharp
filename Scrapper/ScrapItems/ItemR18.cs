@@ -45,6 +45,7 @@ namespace Scrapper.ScrapItems
                 var actorName = _actorNames.FirstOrDefault(x => x.Name == pic.Key);
                 if (actorName != null)
                 {
+                    //Log.Print($"UpdateAvItem:: name: {pic.Key}, path:{pic.Value} ");
                     actorName.Actor.PicturePath = pic.Value;
                 }
             }
@@ -130,11 +131,12 @@ namespace Scrapper.ScrapItems
 
                 var url = m.Groups[2].Value;
                 var file = $"{_actorPicturePath}\\{url.Split('/').Last()}";
-                if (File.Exists(file))
-                    continue;
+                //if (File.Exists(file)) continue;
 
                 Interlocked.Increment(ref NumItemsToScrap);
-                _downloadUrls.TryAdd(url, m.Groups[1].Value);
+                var name = m.Groups[1].Value.Trim();
+                //Log.Print($"ParseActorThumb: name:{name}, url:{url}");
+                _downloadUrls.TryAdd(url, name);
                 _spider.Browser.Download(url);
             }
         }
@@ -187,7 +189,8 @@ namespace Scrapper.ScrapItems
                 }
                 else if (name == "set")
                 {
-                    //_avItem.Set = (items[0] as string).Trim();
+                    //var series = (items[0] as string).Trim();
+                    //UpdateSeries(series);
                 }
                 else if (name == "plot")
                 {

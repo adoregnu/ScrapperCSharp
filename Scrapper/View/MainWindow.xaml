@@ -28,6 +28,7 @@
         </Grid.RowDefinitions>
         <ToolBar>
             <Button Command="{Binding CmdFileToFolder}">FileToFolder</Button>
+            <Button Command="{Binding CmdActorEdtor}">ActorEditor</Button>
         </ToolBar>
         <view:DockView Grid.Row="1" x:Name="Dock"/>
         <StatusBar  Grid.Row="2">

@@ -20,6 +20,10 @@ namespace Scrapper.Model
 
         public string Name { get; set; }
         public virtual ICollection<AvItem> Items { get; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class AvActorName
@@ -30,6 +34,10 @@ namespace Scrapper.Model
 
         public string Name { get; set; }
         public AvActor Actor { get; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class AvActor
@@ -39,8 +47,28 @@ namespace Scrapper.Model
         public int Id { get; set; }
 
         public string PicturePath { get; set; }
-        public ICollection<AvActorName> Names { get; set; }
+        public virtual ICollection<AvActorName> Names { get; set; }
         public virtual ICollection<AvItem> Items { get; set; }
+        public override string ToString()
+        {
+            int idx = 0;
+            if (Names.Count == 0)
+                return "Actor-Name relation has broken!";
+
+            string ret = "";
+            foreach (var name in Names)
+            {
+                if (idx == 0)
+                    ret = name.Name;
+                else if (idx == 1)
+                    ret += "(" + name.Name;
+                else if (idx > 1)
+                    ret += ", " + name.Name;
+                idx++;
+            }
+            if (idx > 1) ret += ")";
+            return ret;
+        }
     }
 
     public class AvStudio
@@ -48,8 +76,23 @@ namespace Scrapper.Model
         [Key]
         [Autoincrement]
         public int Id { get; set; }
-
         public string Name { get; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
+    public class AvSeries
+    { 
+        [Key]
+        [Autoincrement]
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class AvItem
@@ -63,15 +106,16 @@ namespace Scrapper.Model
 
         [MaxLength(512)]
         public string Title { get; set; }
+        [MaxLength(512)]
+        public string OrigTitle { get; set; }
 
         public bool Sensored { get; set; }
         public DateTime ReleaseDate { get; set; }
         public AvStudio Studio { get; set; }
+        public AvSeries Series { get; set; }
 
         [Required]
         public string Path { get; set; }
-
-        public string Set { get; set; }
 
         [MaxLength(1024)]
         public string Plot { get; set; }
@@ -80,5 +124,19 @@ namespace Scrapper.Model
         public float Rating { get; set; }
         public virtual ICollection<AvGenre> Genres { get; set; }
         public virtual ICollection<AvActor> Actors { get; set; }
+        public string ActorsName()
+        {
+            if (Actors.Count == 0) return "No Actor Info";
+
+            int aidx = 0;
+            string ret = "";
+            foreach (var actor in Actors)
+            {
+                if (aidx > 0) ret += "\n";
+                ret += actor.ToString();
+                aidx++;
+            }
+            return ret;
+        }
     }
 }

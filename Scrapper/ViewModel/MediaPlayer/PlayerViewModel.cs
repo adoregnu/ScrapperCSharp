@@ -74,7 +74,7 @@ namespace Scrapper.ViewModel.MediaPlayer
             {
                 Background = Brushes.Black,
                 // https://stackoverflow.com/questions/24321237/switching-a-control-over-different-windows-inside-contentcontrol
-                //UnloadedBehavior = MediaPlaybackState.Manual,
+                UnloadedBehavior = MediaPlaybackState.Manual,
                 IsDesignPreviewEnabled = true,
                 IsMuted = true
             };

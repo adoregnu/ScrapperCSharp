@@ -15,12 +15,14 @@ using Scrapper.ViewModel.Base;
 using Scrapper.View;
 using Unosquare.FFME;
 using Unosquare.FFME.Common;
+using Scrapper.Model;
 
 namespace Scrapper.ViewModel
 {
     class MainViewModel : GalaSoft.MvvmLight.ViewModelBase
     {
         public ICommand CmdFileToFolder { get; private set; }
+        public ICommand CmdActorEdtor { get; private set; }
         //public ICommand KeyDownCommand { get; private set; }
 
         public ObservableCollection<Pane> Docs { get; }
@@ -43,21 +45,26 @@ namespace Scrapper.ViewModel
 
         public MainViewModel(IDialogService dialogService)
         {
-            Anchors.Add(new DebugLogViewModel());
-            Anchors.Add(new ConsoleLogViewModel());
-            Anchors.Add(new StatusLogViewModel());
-
             Docs.Add(new MediaViewModel());
             Docs.Add(new AvDbViewModel());
             Docs.Add(new BrowserViewModel());
 
+            Anchors.Add(new DebugLogViewModel());
+            Anchors.Add(new ConsoleLogViewModel());
+            Anchors.Add(new StatusLogViewModel());
+
+
             CmdFileToFolder = new RelayCommand(() => OnFileToFolder());
+            CmdActorEdtor = new RelayCommand(() => OnActorEditor());
             //KeyDownCommand = new RelayCommand<EventArgs>(e => OnKeyDown(e));
 
             _dialogService = dialogService;
 
             MessengerInstance.Register<NotificationMessage<string>>(
                 this, OnStatusMessage);
+
+            MessengerInstance.Register<NotificationMessage<MediaItem>>(
+                this, OnAvEdit);
 
             MediaElement.FFmpegMessageLogged += OnMediaFFmpegMessageLogged;
         }
@@ -70,6 +77,12 @@ namespace Scrapper.ViewModel
             {
                 MessengerInstance.Send(new NotificationMessage<bool>(ret.Value, "FileRenamed"));
             }
+        }
+
+        void OnActorEditor()
+        { 
+            var dialog = new ActorEditorViewModel(_dialogService);
+             _dialogService.ShowDialog<ActorEditorDialog>(this, dialog);
         }
 #if false
         void OnKeyDown(EventArgs e)
@@ -91,6 +104,13 @@ namespace Scrapper.ViewModel
             { 
                 Status = "";
             }
+        }
+
+        void OnAvEdit(NotificationMessage<MediaItem> msg)
+        {
+            if (msg.Notification != "editAv") return;
+            var dialog = new AvEditorViewModel(msg.Content);
+            _dialogService.ShowDialog<AvEditorDialog>(this, dialog);
         }
 
         void OnMediaFFmpegMessageLogged(object sender, MediaLogMessageEventArgs e)

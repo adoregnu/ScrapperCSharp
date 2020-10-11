@@ -11,32 +11,11 @@ namespace Scrapper.Model
     {
         public static void Config(DbModelBuilder modelBuilder)
         {
-            ConfigActorName(modelBuilder);
-            ConfigActor(modelBuilder);
-            ConfigStudio(modelBuilder);
-            ConfigGenre(modelBuilder);
-            ConfigItem(modelBuilder);
-        }
-
-        static void ConfigActorName(DbModelBuilder modelBuilder)
-        {
             modelBuilder.Entity<AvActorName>();
-        }
-
-        static void ConfigActor(DbModelBuilder modelBuilder)
-        {
             modelBuilder.Entity<AvActor>();
-        }
-        static void ConfigStudio(DbModelBuilder modelBuilder)
-        {
             modelBuilder.Entity<AvStudio>();
-        }
-        static void ConfigGenre(DbModelBuilder modelBuilder)
-        {
             modelBuilder.Entity<AvGenre>();
-        }
-        static void ConfigItem(DbModelBuilder modelBuilder)
-        {
+            modelBuilder.Entity<AvSeries>();
             modelBuilder.Entity<AvItem>();
         }
     }

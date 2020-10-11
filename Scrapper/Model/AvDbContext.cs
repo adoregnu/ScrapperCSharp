@@ -30,6 +30,7 @@ namespace Scrapper.Model
         public DbSet<AvActor> Actors { get; set; }
         public DbSet<AvGenre> Genres { get; set; }
         public DbSet<AvStudio> Studios { get; set; }
+        public DbSet<AvSeries> Series { get; set; }
         public DbSet<AvItem> Items { get; set; }
     }
 }

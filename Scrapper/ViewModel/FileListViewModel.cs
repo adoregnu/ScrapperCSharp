@@ -73,7 +73,7 @@ namespace Scrapper.ViewModel
 		public ICommand SelectionChanged { get; set; }
 		public ICommand EscPressed { get; set; }
 		public ICommand CheckboxChanged { get; set; }
-		public ICommand DeleteCommand { get; set; }
+		//public ICommand DeleteCommand { get; set; }
 
 		public FileListViewModel(IFileListNotifier notifier)
 		{
@@ -96,7 +96,7 @@ namespace Scrapper.ViewModel
 				p => _fileListNotifier.OnFileSelected(null));
 			CheckboxChanged = new RelayCommand<object>(
 				p => _fileListNotifier.OnCheckboxChanged(p as ILVItemViewModel));
-			DeleteCommand = new RelayCommand<object>(p => OnDeleteFile(p));
+			//DeleteCommand = new RelayCommand<object>(p => OnDeleteFile(p));
 
 			// This is fired when the current folder in the listview changes to another existing folder
 			WeakEventManager<ICanNavigate, BrowsingEventArgs>
@@ -144,7 +144,7 @@ namespace Scrapper.ViewModel
 			if (item != null)
 				items.Remove(item);
 		}
-
+#if false
 		void OnDeleteFile(object param)
 		{
 			var fsItem = param as ILVItemViewModel;
@@ -168,7 +168,7 @@ namespace Scrapper.ViewModel
 				}
 			});
 		}
-
+#endif
 		void OnCheckAll(bool check)
 		{ 
 			foreach (var item in FolderItemsView.CurrentItems)

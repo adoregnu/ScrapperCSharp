@@ -1,0 +1,82 @@
+﻿<Window x:Class="Scrapper.View.ActorEditorDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:local="clr-namespace:Scrapper.View"
+        xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        md:DialogServiceViews.IsRegistered="True"
+        Title="ActorEditorDialog" Height="450" Width="800">
+    <Window.Resources>
+        <DataTemplate x:Key="ActorTemplate">
+            <Grid Width="125" Height="125">
+                <Image HorizontalAlignment="Center" Source="{Binding .,
+                    Converter={StaticResource PathToImageConverter}}"/>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="157"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Picture : "
+                       VerticalAlignment="Center"/>
+            <TextBox Grid.Column="1" Text="{Binding PicturePath}"/>
+            <Button Grid.Column="2" Content="Browse" Margin="5,0,5,0"
+                    Command="{Binding CmdBrowsePicture}"/>
+            <TextBlock Grid.Column="3" Text="Name : " Margin="5,0,0,0"
+                       VerticalAlignment="Center"/>
+            <TextBox Grid.Column="4" Text="{Binding ActorName}"/>
+            <Button Grid.Column="5" Content="Add" Margin="5,0,0,0"
+                    Command="{Binding CmdAddNewActor}"/>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ListBox Margin="5,0,0,5"
+            Grid.Column="0"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            ItemTemplate="{StaticResource ActorTemplate}"
+            ItemsPanel="{StaticResource ImagePanelTemplate}"
+            ItemsSource="{Binding Actors}"
+            SelectedItem="{Binding SelectedActor}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding CmdDoubleClick}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListBox>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <Button Content="&lt;&lt;" Margin="5,0,0,0"
+                        Command="{Binding CmdAssigneName}"/>
+            </StackPanel>
+            <DockPanel Grid.Column="2" Width="180">
+                <ListBox DockPanel.Dock="Top"  Height="100" Margin="5,0,5,5"
+                     ItemsSource="{Binding NamesOfActor}" />
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="5,0,5,0">
+                        <StackPanel DockPanel.Dock="Right"
+                                    Orientation="Horizontal">
+                            <Button Content="Add" Margin="2,0,0,0"
+                                Command="{Binding CmdAddNewName}"/>
+                        </StackPanel>
+                        <TextBox Text="{Binding NewName}"/>
+                    </DockPanel>
+                    <ListBox ItemsSource="{Binding AllNames}" Margin="5"/>
+                </DockPanel>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>

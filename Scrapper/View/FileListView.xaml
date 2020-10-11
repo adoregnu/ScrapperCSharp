@@ -110,6 +110,7 @@
 							CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu}, Path=PlacementTarget.SelectedItem}"
 							Header="{x:Static fvloc:Strings.CMD_Open_in_Application_Label}"
 							ToolTip="{x:Static fvloc:Strings.CMD_Open_in_Application_Label_TT}" />
+                        <!--
                         <MenuItem
                             Command="{Binding Data.DeleteCommand, Source=
                                 {StaticResource ParentDataContextProxy}}"
@@ -117,7 +118,6 @@
                                 {RelativeSource AncestorType=ContextMenu},
                                 Path=PlacementTarget.SelectedItem}"
                             Header="Delete" />
-                        <!--
                         <MenuItem
 							Command="{Binding OpenContainingFolderCommand}"
 							CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu}, Path=PlacementTarget.SelectedItem}"

@@ -5,7 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using GalaSoft.MvvmLight.Messaging;
+
 using Scrapper.Model;
+using Scrapper.Spider;
 using Scrapper.ViewModel.Base;
 namespace Scrapper.ViewModel
 {
@@ -61,6 +64,23 @@ namespace Scrapper.ViewModel
                 "Genre"
             };
             SelectedType = "Actor";
+
+            MessengerInstance.Register<NotificationMessage<AvActor>>(
+                this, OnActorDoubleClicked);
+        }
+
+        void OnActorDoubleClicked(NotificationMessage<AvActor> msg)
+        {
+            _selectedType = "Actor";
+            var actor = msg.Content;
+            if (actor == null) return;
+
+            IsSelected = true;
+            MediaList.ClearMedia();
+            foreach (var item in actor.Items.ToList())
+            {
+                MediaList.AddMedia(item.Path);
+            }
         }
 
         void IMediaListNotifier.OnMediaItemMoved(string path)
@@ -73,28 +93,11 @@ namespace Scrapper.ViewModel
             var actors = _context.Actors.Include("Names").ToList();
             foreach (var actor in actors)
             {
-#if false
-                int idx = 0;
-                string itemToAdd = "";
-                foreach (var name in actor.Names)
-                {
-                    if (idx == 0)
-                        itemToAdd = name.Name;
-                    else if (idx == 1)
-                        itemToAdd += $"({name.Name}";
-                    else
-                        itemToAdd += $", {name.Name}";
-                    idx++;
-                }
-                if (idx > 1) itemToAdd += ")";
-                _actors.Add(itemToAdd);
-#else
                 foreach (var name in actor.Names)
                 {
                     _actors.Add(name.Name);
                     break;
                 }
-#endif
             }
             ItemsSource = _actors;
         }

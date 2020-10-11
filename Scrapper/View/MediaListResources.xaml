@@ -61,8 +61,8 @@
             </Grid.Resources>
             <Grid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Scrap Info" 
-                        Command="{Binding Data.CmdScrap,
+                    <MenuItem Header="Scrap" 
+                        Command="{Binding Data.CmdScrapItem,
                             Source={StaticResource VmContext}}"
                         CommandParameter="{Binding Data.SelectedItems,
                             Source={StaticResource CtrlContext}}"/>
@@ -71,9 +71,23 @@
                             Source={StaticResource VmContext}}"
                         CommandParameter="{Binding Data.SelectedItems,
                             Source={StaticResource CtrlContext}}"/>
-
+                    <MenuItem Header="Delete" 
+                        Command="{Binding Data.CmdDeleteItem,
+                            Source={StaticResource VmContext}}"
+                        CommandParameter="{Binding Data.SelectedItems,
+                            Source={StaticResource CtrlContext}}"/>
+                    <MenuItem Header="Edit" 
+                        Command="{Binding Data.CmdEditItem,
+                            Source={StaticResource VmContext}}"
+                        CommandParameter="{Binding}"/>
                 </ContextMenu>
             </Grid.ContextMenu>
+            <Grid.ToolTip>
+                <ToolTip>
+                    <TextBlock Text="{Binding Actors}"/>
+                </ToolTip>
+            </Grid.ToolTip>
+
             <player:MiniPlayer MediaSource="{Binding}" Grid.Row="0"/>
             <TextBlock
                 Text="{Binding Info}" Grid.Row="1" Opacity="0.5"

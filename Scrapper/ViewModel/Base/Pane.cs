@@ -16,30 +16,16 @@ namespace Scrapper.ViewModel.Base
         [Browsable(false)]
         public string Title
         {
-            get { return _title; }
-            set
-            {
-                if (_title != value)
-                {
-                    _title = value;
-                    RaisePropertyChanged("Title");
-                }
-            }
+            get => _title;
+            set => Set(ref _title, value);
         }
 
         private bool _isSelected = false;
         [Browsable(false)]
         public bool IsSelected
         {
-            get { return _isSelected; }
-            set
-            {
-                if (_isSelected != value)
-                {
-                    _isSelected = value;
-                    RaisePropertyChanged("IsSelected");
-                }
-            }
+            get => _isSelected;
+            set => Set(ref _isSelected, value);
         }
         public bool CanHide { get; set; }
 

@@ -37,16 +37,25 @@ namespace Scrapper.Model
             ".mp4", ".avi", ".mkv", ".ts", ".wmv", ".m4v"
         };
 
-        public string Info 
+        public string Info
         {
             get
             {
-                if (_avItem == null) return Pid;
-                return $"{_avItem.Pid} / {_avItem.Studio.Name}";
+                if (AvItem == null) return Pid;
+                return $"{AvItem.Pid} / {AvItem.Studio.Name}";
             }
         }
 
-        AvItem _avItem = null;
+        public string Actors
+        {
+            get
+            {
+                if (AvItem == null) return "Not Scrapped";
+                return AvItem.ActorsName();
+            }
+        }
+
+        public AvItem AvItem { get; private set; } = null;
 
         public MediaItem(string path = null)
         {
@@ -59,12 +68,12 @@ namespace Scrapper.Model
 
         public bool MoveItem()
         {
-            if (_avItem == null)
+            if (AvItem == null)
             {
                 Log.Print($"No info for {Pid}");
                 return false;
             }
-            var studio = _avItem.Studio.Name;
+            var studio = AvItem.Studio.Name;
             var targetPath = $"{App.JavPath}{studio}";
 
             if (MediaFolder.Equals(targetPath + "\\" + Pid,
@@ -83,7 +92,7 @@ namespace Scrapper.Model
                 targetPath += "\\" + Pid;
                 Directory.Move(MediaFolder, targetPath);
                 MediaFolder = targetPath;
-                _avItem.Path = MediaFolder;
+                AvItem.Path = MediaFolder;
                 App.DbContext.SaveChanges();
                 return true;
             }
@@ -92,6 +101,26 @@ namespace Scrapper.Model
                 Log.Print(ex.Message);
             }
             return false;
+        }
+
+        public bool DeleteItem()
+        {
+            try
+            {
+                Directory.Delete(MediaFolder, true);
+                if (AvItem != null)
+                {
+                    App.DbContext.Items.Remove(AvItem);
+                    App.DbContext.SaveChanges();
+                    AvItem = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Print(ex.Message);
+                return false;
+            }
+            return true;
         }
 
         void UpdateMediaField(string path)
@@ -103,12 +132,15 @@ namespace Scrapper.Model
             MediaName = $"{Pid} / " + DownloadDt.ToString("%M-%d %h:%m:%s");
         }
 
-        void ReloadAvItem()
+        public void ReloadAvItem()
         {
-            _avItem = App.DbContext.Items
+            AvItem = App.DbContext.Items
                 .Include("Studio")
+                .Include("Genres")
+                .Include("Actors")
                 .FirstOrDefault(i => i.Pid == Pid);
             RaisePropertyChanged("Info");
+            RaisePropertyChanged("Actors");
         }
 
         public void UpdateFields()
@@ -156,7 +188,7 @@ namespace Scrapper.Model
             {
                 IsImage = false;
                 UpdateMediaField(path);
-                if (_avItem == null)
+                if (AvItem == null)
                 {
                     ReloadAvItem();
                 }

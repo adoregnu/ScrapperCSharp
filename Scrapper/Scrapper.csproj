@@ -205,7 +205,9 @@
     <Compile Include="Tasks\SerialQueue.cs" />
     <Compile Include="UiServices.cs" />
     <Compile Include="Utils\ThumbnailGenerator.cs" />
+    <Compile Include="ViewModel\ActorEditorViewModel.cs" />
     <Compile Include="ViewModel\AvDbViewModel.cs" />
+    <Compile Include="ViewModel\AvEditorViewModel.cs" />
     <Compile Include="ViewModel\Base\Pane.cs" />
     <Compile Include="ViewModel\BrowserViewModel.cs" />
     <Compile Include="ViewModel\BrowserViewModelSehuatang.cs" />
@@ -224,8 +226,14 @@
     <Compile Include="ViewModel\StatusLogViewModel.cs" />
     <Compile Include="ViewModel\TextViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\ActorEditorDialog.xaml.cs">
+      <DependentUpon>ActorEditorDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\AvDbView.xaml.cs">
       <DependentUpon>AvDbView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AvEditorDialog.xaml.cs">
+      <DependentUpon>AvEditorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Behavior\AvalonEditBehavior.cs" />
     <Compile Include="View\Behavior\GridLengthAnimation.cs" />
@@ -266,7 +274,15 @@
     <Compile Include="View\TextView.xaml.cs">
       <DependentUpon>TextView.xaml</DependentUpon>
     </Compile>
+    <Page Include="View\ActorEditorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\AvDbView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AvEditorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

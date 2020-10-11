@@ -38,9 +38,12 @@ namespace Scrapper.ViewModel
         {
             get => _selectedMedia;
             set
-            { 
-                MessengerInstance.Send(new NotificationMessage<MediaItem>(
-                    value, "mediaSelected"));
+            {
+                if (_selectedMedia != value)
+                {
+                    MessengerInstance.Send(new NotificationMessage<MediaItem>(
+                        value, "mediaSelected"));
+                }
                 Set(ref _selectedMedia, value);
             }
         }
@@ -54,8 +57,10 @@ namespace Scrapper.ViewModel
 
         public ICommand CmdExclude { get; set; }
         public ICommand CmdDownload { get; set; }
-        public ICommand CmdScrap { get; set; }
+        public ICommand CmdScrapItem { get; set; }
         public ICommand CmdMoveItem { get; set; }
+        public ICommand CmdDeleteItem { get; set; }
+        public ICommand CmdEditItem { get; set; }
 
         IMediaListNotifier _mediaListNotifier;
         public MediaListViewModel(IMediaListNotifier notifier)
@@ -67,8 +72,10 @@ namespace Scrapper.ViewModel
                 p => OnContextMenu(p, MediaListMenuType.excluded));
             CmdDownload = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.downloaded));
-            CmdScrap = new RelayCommand<object>( p => OnScrap(p));
-            CmdMoveItem = new RelayCommand<object>( p => OnMoveItem(p));
+            CmdScrapItem = new RelayCommand<object>(p => OnScrap(p));
+            CmdMoveItem = new RelayCommand<object>(p => OnMoveItem(p));
+            CmdDeleteItem = new RelayCommand<object>(p => OnDeleteItem(p));
+            CmdEditItem = new RelayCommand<object>(p => OnEditItem(p));
         }
 
         public void ClearMedia()
@@ -163,18 +170,45 @@ namespace Scrapper.ViewModel
 
         void OnMoveItem(object param)
         {
-            if (param is IList<object> items && items.Count > 0)
+            if (!(param is IList<object> items) || items.Count == 0)
+                    return;
+
+            foreach (var item in items.Cast<MediaItem>().ToList())
             {
-                foreach (var item in items.Cast<MediaItem>().ToList())
+                var path = item.MediaFolder;
+                if (item.MoveItem())
                 {
-                    var path = item.MediaFolder;
-                    if (item.MoveItem())
-                    {
-                        MediaList.Remove(item);
-                        _mediaListNotifier.OnMediaItemMoved(path);
-                    }
+                    MediaList.Remove(item);
+                    _mediaListNotifier.OnMediaItemMoved(path);
                 }
             }
+        }
+
+        void OnDeleteItem(object param)
+        {
+            if (!(param is IList<object> items) || items.Count == 0)
+                return;
+
+            foreach (var item in items.Cast<MediaItem>().ToList())
+            {
+                var path = item.MediaFolder;
+                if (item.DeleteItem())
+                {
+                    MediaList.Remove(item);
+                   _mediaListNotifier.OnMediaItemMoved(path);
+                }
+            }
+        }
+
+        void OnEditItem(object param)
+        {
+            if (param == null)
+                return;
+
+            var item = param as MediaItem;
+            if (item.AvItem == null) return;
+            MessengerInstance.Send(new NotificationMessage<MediaItem>(
+                item, "editAv"));
         }
 
         void OnContextMenu(MediaItem item, MediaListMenuType type)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Scrapper.Model;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -39,10 +40,23 @@ namespace Scrapper.Converter
         {
             try
             {
-                using (var bmpTemp = new Bitmap(value_ as string))
+                string path = null;
+                if (value_ is AvActor avactor)
                 {
-                    return ConvertBitmap(bmpTemp,
-                        parameter_ != null ? int.Parse(parameter_.ToString()) : 0);
+                    if (!string.IsNullOrEmpty(avactor.PicturePath))
+                        path = $"{App.CurrentPath}\\db\\{avactor.PicturePath}";
+                }
+                else
+                {
+                    path = value_ as string;
+                }
+                if (path != null)
+                {
+                    using (var bmpTemp = new Bitmap(path))
+                    {
+                        return ConvertBitmap(bmpTemp, parameter_ != null ?
+                            int.Parse(parameter_.ToString()) : 0);
+                    }
                 }
             }
             catch (Exception /*e*/)

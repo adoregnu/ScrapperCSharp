@@ -21,17 +21,6 @@ namespace Scrapper.View.Pane
                 pane = layout.Descendents().OfType<LayoutAnchorablePane>()
                             .FirstOrDefault(d => d.Name == "bottom");
             }
-#if false
-            else if (anchorableToShow.Content is BuildInfoViewModel)
-            {
-                var parent = layout.Descendents().OfType<LayoutPanel>().First(
-                    d => d.Orientation == Orientation.Horizontal);
-                pane = new LayoutAnchorablePane() {
-                    DockWidth = new System.Windows.GridLength(300),
-                };
-                parent.InsertChildAt(0, pane);
-            }
-#endif
             if (pane != null)
             {
                 //anchorableToShow.CanHide = false;
@@ -41,21 +30,7 @@ namespace Scrapper.View.Pane
             }
             return false;
         }
-#if false
-        //for reference 
-        static LayoutAnchorablePane CreateAnchorablePane(LayoutRoot layout, Orientation orientation,
-                    PaneLocation initLocation)
-        {
-            var parent = layout.Descendents().OfType<LayoutPanel>().First(d => d.Orientation == orientation);
-            string paneName = _paneNames[initLocation];
-            var toolsPane = new LayoutAnchorablePane { Name = paneName };
-            if (initLocation == PaneLocation.Left)
-                parent.InsertChildAt(0, toolsPane);
-            else
-                parent.Children.Add(toolsPane);
-            return toolsPane;
-        }
-#endif
+
         public void AfterInsertAnchorable(LayoutRoot layout,
             LayoutAnchorable anchorableShown)
         {
@@ -71,6 +46,28 @@ namespace Scrapper.View.Pane
         public void AfterInsertDocument(LayoutRoot layout,
             LayoutDocument anchorableShown)
         {
+            if (anchorableShown.Content is BrowserViewModel)
+            {
+                var parentDocumentGroup = anchorableShown.FindParent<LayoutDocumentPaneGroup>();
+                var parentDocumentPane = anchorableShown.Parent as LayoutDocumentPane;
+
+                if (parentDocumentGroup == null)
+                {
+                    var grandParent = parentDocumentPane.Parent;
+                    parentDocumentGroup = new LayoutDocumentPaneGroup
+                    {
+                        Orientation = Orientation.Horizontal
+                    };
+                    grandParent.ReplaceChild(parentDocumentPane, parentDocumentGroup);
+                    parentDocumentGroup.Children.Add(parentDocumentPane);
+                }
+                parentDocumentGroup.Orientation = Orientation.Horizontal;
+                var indexOfParentPane = parentDocumentGroup.IndexOfChild(parentDocumentPane);
+                parentDocumentGroup.InsertChildAt(indexOfParentPane + 1,
+                    new LayoutDocumentPane(anchorableShown));
+                anchorableShown.IsActive = true;
+                //anchorableShown.Root.CollectGarbage();
+            }
         }
     }
 }

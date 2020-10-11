@@ -73,12 +73,19 @@ namespace Scrapper
             //Library.EnableWpfMultiThreadedVideo = !Debugger.IsAttached;
             // test with true and false
 
-            DbContext = new AvDbContext("avDb");
-            var studio = new AvStudio { Name = "Init" };
-            if (!DbContext.Studios.Any())
+            try
             {
-                DbContext.Studios.Add(studio);
-                DbContext.SaveChanges();
+                DbContext = new AvDbContext("avDb");
+                var studio = new AvStudio { Name = "Init" };
+                if (!DbContext.Studios.Any())
+                {
+                    DbContext.Studios.Add(studio);
+                    DbContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Print(ex.Message);
             }
         }
 
