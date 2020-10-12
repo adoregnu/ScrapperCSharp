@@ -187,6 +187,9 @@
     <Compile Include="Model\AvDbContext.cs" />
     <Compile Include="Model\AvItem.cs" />
     <Compile Include="Model\AvModelConfig.cs" />
+    <Compile Include="Model\MediaAv.cs" />
+    <Compile Include="Model\MediaBase.cs" />
+    <Compile Include="Model\MediaTorrent.cs" />
     <Compile Include="Model\MiscDbContext.cs" />
     <Compile Include="Model\MiscItem.cs" />
     <Compile Include="Model\MiscModelConfig.cs" />

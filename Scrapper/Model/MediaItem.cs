@@ -83,12 +83,13 @@ namespace Scrapper.Model
                 return false;
             }
 
-            if (!new DirectoryInfo(targetPath).Exists)
-            {
-                Directory.CreateDirectory(targetPath);
-            }
             try
             {
+                if (!new DirectoryInfo(targetPath).Exists)
+                {
+                    Directory.CreateDirectory(targetPath);
+                }
+
                 targetPath += "\\" + Pid;
                 Directory.Move(MediaFolder, targetPath);
                 MediaFolder = targetPath;
@@ -184,7 +185,8 @@ namespace Scrapper.Model
             {
                 UpdateMediaField(path);
             }
-            else if (VideoExts.Any(s => fname.EndsWith(s, StringComparison.CurrentCultureIgnoreCase)))
+            else if (VideoExts.Any(s => fname.EndsWith(s,
+                StringComparison.CurrentCultureIgnoreCase)))
             {
                 IsImage = false;
                 UpdateMediaField(path);
