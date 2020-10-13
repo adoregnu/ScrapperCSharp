@@ -41,11 +41,27 @@
                        Width="60" TextAlignment="Right"/>
             <TextBox Text="{Binding Av.Title}"/>
         </DockPanel>
-        <DockPanel Grid.Row="2" Margin="5">
-            <TextBlock Text="Released : " DockPanel.Dock="Left"
-                       Width="60" TextAlignment="Right"/>
-            <TextBox Text="{Binding Av.ReleaseDate}"/>
-        </DockPanel>
+        <Grid Grid.Row="2" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Released : " Grid.Column="0"
+                       TextAlignment="Right"/>
+            <TextBox Grid.Column="1" Text="{Binding Av.ReleaseDate}"/>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBlock Text="Leaked PID : " Margin="5,0,0,0"
+                           VerticalAlignment="Center"/>
+                <TextBox Width="130" Text="{Binding Av.LeakedPid}"/>
+            </StackPanel>
+            <CheckBox Grid.Column="3" Margin="5,0,5,0"
+                      IsChecked="{Binding Av.IsCensored}"
+                      VerticalAlignment="Center">
+                <TextBlock Text="Sensored" />
+            </CheckBox>
+        </Grid>
         <Grid Grid.Row="3" Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -59,7 +75,7 @@
             <DockPanel Grid.Column="1">
                 <Button DockPanel.Dock="Right" Content="Set" Margin="2,0,2,0"
                         Width="30" Command="{Binding CmdSetStudio}"/>
-                <ComboBox ItemsSource="{Binding AllStudios}"
+                <ComboBox ItemsSource="{Binding AllStudios}" Margin="5,0,5,0"
                           SelectedItem="{Binding SelectedStudio}"/>
             </DockPanel>
         </Grid>
@@ -76,7 +92,7 @@
             <DockPanel Grid.Column="1">
                 <Button DockPanel.Dock="Right" Content="Set" Margin="2,0,2,0"
                         Width="30" Command="{Binding CmdSetSeries}"/>
-                <ComboBox ItemsSource="{Binding AllSeries}"
+                <ComboBox ItemsSource="{Binding AllSeries}" Margin="5,0,5,0"
                           SelectedItem="{Binding SelectedSeries}"/>
             </DockPanel>
         </Grid>
@@ -94,7 +110,7 @@
                          ItemTemplate="{StaticResource ActorMiniTemplate}"/>
             </DockPanel>
             <StackPanel  Grid.Column="1" VerticalAlignment="Center">
-                <Button Content="&lt;&lt;" Margin="2"
+                <Button Content="&lt;" Margin="2"
                         Command="{Binding CmdAddActor}"/>
             </StackPanel>
             <ListBox Grid.Column="2" MaxHeight="300" ItemsSource="{Binding AllActors}"
@@ -114,7 +130,7 @@
                          SelectedItem="{Binding SelectedAvGenre}"/>
             </DockPanel>
             <StackPanel  Grid.Column="1" VerticalAlignment="Center">
-                <Button Content="&lt;&lt;" Margin="2"
+                <Button Content="&lt;" Margin="2"
                     Command="{Binding CmdAddGenre}"/>
             </StackPanel>
             <ListBox Grid.Column="2" MaxHeight="100" ItemsSource="{Binding AllGenres}"

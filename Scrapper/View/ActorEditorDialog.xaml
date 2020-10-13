@@ -6,6 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:Scrapper.View"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+        xmlns:bindLocal="clr-namespace:FileListView.Views;assembly=FileListView"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         md:DialogServiceViews.IsRegistered="True"
@@ -25,7 +26,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="157"/>
+                <ColumnDefinition Width="137"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="Picture : "
@@ -36,46 +37,70 @@
             <TextBlock Grid.Column="3" Text="Name : " Margin="5,0,0,0"
                        VerticalAlignment="Center"/>
             <TextBox Grid.Column="4" Text="{Binding ActorName}"/>
-            <Button Grid.Column="5" Content="Add" Margin="5,0,0,0"
+            <Button Grid.Column="5" Content="Add Actor" Margin="5,0,0,0"
                     Command="{Binding CmdAddNewActor}"/>
         </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <ListBox Margin="5,0,0,5"
-            Grid.Column="0"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            ItemTemplate="{StaticResource ActorTemplate}"
-            ItemsPanel="{StaticResource ImagePanelTemplate}"
-            ItemsSource="{Binding Actors}"
-            SelectedItem="{Binding SelectedActor}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseDoubleClick">
-                        <i:InvokeCommandAction Command="{Binding CmdDoubleClick}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ListBox>
-            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                <Button Content="&lt;&lt;" Margin="5,0,0,0"
-                        Command="{Binding CmdAssigneName}"/>
-            </StackPanel>
-            <DockPanel Grid.Column="2" Width="180">
-                <ListBox DockPanel.Dock="Top"  Height="100" Margin="5,0,5,5"
-                     ItemsSource="{Binding NamesOfActor}" />
-                <DockPanel>
-                    <DockPanel DockPanel.Dock="Top" Margin="5,0,5,0">
-                        <StackPanel DockPanel.Dock="Right"
-                                    Orientation="Horizontal">
-                            <Button Content="Add" Margin="2,0,0,0"
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <WrapPanel Grid.Row="0" Orientation="Horizontal"
+                           HorizontalAlignment="Center">
+                    <ItemsControl Grid.Row="1" x:Name="numberButtonItems">
+                        <ItemsControl.Resources>
+                            <bindLocal:BindingProxy
+                                x:Key="VmContext"
+                                Data="{Binding RelativeSource={RelativeSource FindAncestor,
+                                    AncestorType={x:Type local:ActorEditorDialog}}, Path=DataContext}"/>
+                        </ItemsControl.Resources>
+                        <ItemsControl.ItemsPanel>
+                            <!-- specify the panel that is the container for your items -->
+                            <ItemsPanelTemplate>
+                                <UniformGrid Rows="1"  HorizontalAlignment="Left" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <!-- specify the template used to render each item -->
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ToggleButton
+                                    Content="{Binding}" Margin="5,0,0,5"
+                                    Command="{Binding Data.CmdActorAlphabet,
+                                        Source={StaticResource VmContext}}"
+                                    CommandParameter="{Binding}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </WrapPanel>
+                 <ListBox Margin="5,0,0,5" Grid.Row="1"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    ItemTemplate="{StaticResource ActorTemplate}"
+                    ItemsPanel="{StaticResource ImagePanelTemplate}"
+                    ItemsSource="{Binding Actors}"
+                    SelectedItem="{Binding SelectedActor}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding CmdDoubleClick}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
+            </Grid>
+            <DockPanel Grid.Column="1" Width="200">
+                <DockPanel DockPanel.Dock="Top">
+                    <DockPanel DockPanel.Dock="Top" Margin="5,0,5,5">
+                        <Button DockPanel.Dock="Right" Content="Add Name" Margin="5,0,0,0"
                                 Command="{Binding CmdAddNewName}"/>
-                        </StackPanel>
                         <TextBox Text="{Binding NewName}"/>
                     </DockPanel>
-                    <ListBox ItemsSource="{Binding AllNames}" Margin="5"/>
+                    <ListBox  Height="100" Margin="5,0,5,5"
+                     ItemsSource="{Binding NamesOfActor}" />
                 </DockPanel>
+                <ListBox ItemsSource="{Binding AllNames}" Margin="5"/>
             </DockPanel>
         </Grid>
     </DockPanel>

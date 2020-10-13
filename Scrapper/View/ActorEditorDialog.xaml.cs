@@ -22,6 +22,9 @@ namespace Scrapper.View
         public ActorEditorDialog()
         {
             InitializeComponent();
+            var buttons = Enumerable.Range('A', 'Z' - 'A' + 1).
+                      Select(c => (char)c).ToList();
+            numberButtonItems.ItemsSource = buttons;
         }
     }
 }

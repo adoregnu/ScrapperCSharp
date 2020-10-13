@@ -109,7 +109,8 @@ namespace Scrapper.Model
         [MaxLength(512)]
         public string OrigTitle { get; set; }
 
-        public bool Sensored { get; set; }
+        public bool IsCensored { get; set; }
+        public string LeakedPid { get; set; }
         public DateTime ReleaseDate { get; set; }
         public AvStudio Studio { get; set; }
         public AvSeries Series { get; set; }
@@ -119,8 +120,6 @@ namespace Scrapper.Model
 
         [MaxLength(1024)]
         public string Plot { get; set; }
-        //public string Poster { get; set; }
-        //public string Screenshots { get; set; }
         public float Rating { get; set; }
         public virtual ICollection<AvGenre> Genres { get; set; }
         public virtual ICollection<AvActor> Actors { get; set; }

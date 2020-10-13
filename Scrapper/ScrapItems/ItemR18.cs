@@ -61,6 +61,7 @@ namespace Scrapper.ScrapItems
             }
             else
             {
+                //_downloadUrls[e.OriginalUrl] contains actor name
                 _actorPicturs.Add(_downloadUrls[e.OriginalUrl], e.SuggestedFileName);
                 e.SuggestedFileName = $"{_actorPicturePath}\\{e.SuggestedFileName}";
             }
@@ -131,13 +132,16 @@ namespace Scrapper.ScrapItems
 
                 var url = m.Groups[2].Value;
                 var file = $"{_actorPicturePath}\\{url.Split('/').Last()}";
-                //if (File.Exists(file)) continue;
+                if (File.Exists(file)) continue;
 
                 Interlocked.Increment(ref NumItemsToScrap);
                 var name = m.Groups[1].Value.Trim();
                 //Log.Print($"ParseActorThumb: name:{name}, url:{url}");
-                _downloadUrls.TryAdd(url, name);
-                _spider.Browser.Download(url);
+                if (!url.EndsWith("nowprinting.gif"))
+                {
+                    _downloadUrls.TryAdd(url, name);
+                    _spider.Browser.Download(url);
+                }
             }
         }
 

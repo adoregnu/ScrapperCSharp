@@ -72,9 +72,8 @@ namespace Scrapper.ViewModel
         public ICommand CmdAddNewActor { get; private set; }
         public ICommand CmdBrowsePicture { get; private set; }
         public ICommand CmdAddNewName { get; private set; }
-        public ICommand CmdAssigneName { get; private set; }
         public ICommand CmdDoubleClick { get; private set; }
-
+        public ICommand CmdActorAlphabet { get; private set; }
         readonly IDialogService _dialogService;
 
         public ActorEditorViewModel(IDialogService dlgSvc)
@@ -88,11 +87,11 @@ namespace Scrapper.ViewModel
             CmdBrowsePicture = new RelayCommand(() => OnFileBrowse());
             CmdAddNewActor = new RelayCommand(() => OnAddNewActor());
             CmdAddNewName = new RelayCommand(() => OnAddNewName());
-            CmdAssigneName = new RelayCommand(() => OnAssigneName());
             CmdDoubleClick = new RelayCommand(() => OnDoubleClicked());
+            CmdActorAlphabet = new RelayCommand<object>((p) => OnActorAlphabet(p));
 
             AllNames = new ObservableCollection<AvActorName>(
-                App.DbContext.ActorNames.ToList());
+                App.DbContext.ActorNames);
         }
 
         void OnFileBrowse()
@@ -142,11 +141,34 @@ namespace Scrapper.ViewModel
         }
 
         void OnAddNewName()
-        { 
+        {
+            if (SelectedActor == null) return;
+            if (App.DbContext.ActorNames.Any(i => i.Name == NewName))
+            {
+                Log.Print($"{NewName} is already exists.");
+                return;
+            }
+
+            var name = new AvActorName { Name = NewName };
+            App.DbContext.ActorNames.Add(name);
+            SelectedActor.Names.Add(name);
+
+            try
+            {
+                App.DbContext.SaveChanges();
+                RaisePropertyChanged("SelectedActor");
+                AllNames.Add(name);
+                NewName = "";
+            }
+            catch (Exception ex)
+            {
+                Log.Print(ex.Message);
+            }
         }
 
-        void OnAssigneName()
-        { 
+        void OnActorAlphabet(object alphabet)
+        {
+            Log.Print(alphabet.ToString());
         }
 
         void OnDoubleClicked()

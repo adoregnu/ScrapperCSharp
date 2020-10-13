@@ -33,6 +33,7 @@ namespace Scrapper.ScrapItems
             {
                 Pid = spider.Pid,
                 Path = spider.MediaFolder,
+                IsCensored = true,
             };
             _context = App.DbContext;
 
