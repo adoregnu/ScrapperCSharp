@@ -166,9 +166,13 @@ namespace Scrapper.ViewModel
             }
         }
 
-        void OnActorAlphabet(object alphabet)
+        void OnActorAlphabet(object p)
         {
-            Log.Print(alphabet.ToString());
+            object[] param = p as object[];
+            bool isChecked = (bool)param[0];
+            char alphabet = (char)param[1];
+            Actors.Clear();
+            Log.Print($"{alphabet} : {isChecked}");
         }
 
         void OnDoubleClicked()

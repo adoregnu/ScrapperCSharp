@@ -7,6 +7,7 @@
         xmlns:local="clr-namespace:Scrapper.View"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
         xmlns:bindLocal="clr-namespace:FileListView.Views;assembly=FileListView"
+        xmlns:converter="clr-namespace:Scrapper.Converter"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         md:DialogServiceViews.IsRegistered="True"
@@ -18,6 +19,7 @@
                     Converter={StaticResource PathToImageConverter}}"/>
             </Grid>
         </DataTemplate>
+        <converter:MultiParamConverter x:Key="ParamConverter"/>
     </Window.Resources>
     <DockPanel>
         <Grid DockPanel.Dock="Top" Margin="5">
@@ -26,19 +28,37 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="137"/>
+                <ColumnDefinition Width="165"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="Picture : "
                        VerticalAlignment="Center"/>
             <TextBox Grid.Column="1" Text="{Binding PicturePath}"/>
-            <Button Grid.Column="2" Content="Browse" Margin="5,0,5,0"
-                    Command="{Binding CmdBrowsePicture}"/>
+            <Button Grid.Column="2" Margin="5,0,5,0"
+                    Style="{StaticResource ModernButtonStyle2}"
+                    Command="{Binding CmdBrowsePicture}">
+                <Path Stretch="Uniform"
+                      Data="{Binding Source={StaticResource ImgSearchIcon}, Path=Data}"
+                      Fill="{Binding Path=Foreground, RelativeSource=
+                            {RelativeSource AncestorType={x:Type Button}}}"/>
+                <Button.ToolTip>
+                    <TextBlock Text="Browse picture"/>
+                </Button.ToolTip>
+            </Button>
             <TextBlock Grid.Column="3" Text="Name : " Margin="5,0,0,0"
                        VerticalAlignment="Center"/>
             <TextBox Grid.Column="4" Text="{Binding ActorName}"/>
-            <Button Grid.Column="5" Content="Add Actor" Margin="5,0,0,0"
-                    Command="{Binding CmdAddNewActor}"/>
+            <Button Grid.Column="5" Margin="5,0,0,0"
+                    Style="{StaticResource ModernButtonStyle2}"
+                    Command="{Binding CmdAddNewActor}">
+                <Path Stretch="Uniform"
+                      Data="{Binding Source={StaticResource AddPersonIcon}, Path=Data}"
+                      Fill="{Binding Path=Foreground, RelativeSource=
+                            {RelativeSource AncestorType={x:Type Button}}}"/>
+                <Button.ToolTip>
+                    <TextBlock Text="Add New Actor"/>
+                </Button.ToolTip>
+            </Button>
         </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -71,8 +91,14 @@
                                 <ToggleButton
                                     Content="{Binding}" Margin="5,0,0,5"
                                     Command="{Binding Data.CmdActorAlphabet,
-                                        Source={StaticResource VmContext}}"
-                                    CommandParameter="{Binding}"/>
+                                        Source={StaticResource VmContext}}" >
+                                    <ToggleButton.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource ParamConverter}">
+                                            <Binding Path="IsChecked" RelativeSource="{RelativeSource Self}"/>
+                                            <Binding Path="."/>
+                                        </MultiBinding>    
+                                    </ToggleButton.CommandParameter>
+                                </ToggleButton>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -93,12 +119,21 @@
             <DockPanel Grid.Column="1" Width="200">
                 <DockPanel DockPanel.Dock="Top">
                     <DockPanel DockPanel.Dock="Top" Margin="5,0,5,5">
-                        <Button DockPanel.Dock="Right" Content="Add Name" Margin="5,0,0,0"
-                                Command="{Binding CmdAddNewName}"/>
+                        <Button DockPanel.Dock="Right" Margin="5,0,0,0"
+                                Style="{StaticResource ModernButtonStyle2}"
+                                Command="{Binding CmdAddNewName}">
+                            <Path Stretch="Uniform"
+                                  Data="{Binding Source={StaticResource AddTextIcon}, Path=Data}"
+                                  Fill="{Binding Path=Foreground, RelativeSource=
+                                        {RelativeSource AncestorType={x:Type Button}}}"/>
+                            <Button.ToolTip>
+                                <TextBlock Text="Append Actor Name"/>
+                            </Button.ToolTip>
+                        </Button>
                         <TextBox Text="{Binding NewName}"/>
                     </DockPanel>
-                    <ListBox  Height="100" Margin="5,0,5,5"
-                     ItemsSource="{Binding NamesOfActor}" />
+                    <ListBox  Height="100" Margin="5,0,5,0"
+                              ItemsSource="{Binding NamesOfActor}" />
                 </DockPanel>
                 <ListBox ItemsSource="{Binding AllNames}" Margin="5"/>
             </DockPanel>
