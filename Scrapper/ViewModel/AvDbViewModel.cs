@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using GalaSoft.MvvmLight.Messaging;
-
+using ICSharpCode.AvalonEdit.Snippets;
 using Scrapper.Model;
 using Scrapper.Spider;
 using Scrapper.ViewModel.Base;
@@ -33,7 +33,7 @@ namespace Scrapper.ViewModel
             {
                 if (_selectedType != value)
                 {
-                    _selectedType = value;
+                    Set(ref _selectedType, value);
                     UpdateList();
                 }
             }
@@ -45,7 +45,7 @@ namespace Scrapper.ViewModel
             {
                 if (_selectedItem != value)
                 {
-                    _selectedItem = value;
+                    Set(ref _selectedItem, value);
                     UpdateMedia();
                 }
             }
@@ -54,14 +54,15 @@ namespace Scrapper.ViewModel
         public AvDbViewModel()
         {
             Title = "Db Viewer";
-            _context = new AvDbContext("avDb");
+            _context = App.DbContext;
 
             MediaList = new MediaListViewModel(this);
             SourceTypes = new List<string>
             {
                 "Actor",
                 "Studio",
-                "Genre"
+                "Genre",
+                "NoActor"
             };
             SelectedType = "Actor";
 
@@ -71,7 +72,7 @@ namespace Scrapper.ViewModel
 
         void OnActorDoubleClicked(NotificationMessage<AvActor> msg)
         {
-            _selectedType = "Actor";
+            SelectedType = "Actor";
             var actor = msg.Content;
             if (actor == null) return;
 
@@ -89,37 +90,26 @@ namespace Scrapper.ViewModel
 
         void InitActorList()
         { 
-            var _actors = new List<string>();
-            var actors = _context.Actors.Include("Names").ToList();
-            foreach (var actor in actors)
-            {
-                foreach (var name in actor.Names)
-                {
-                    _actors.Add(name.Name);
-                    break;
-                }
-            }
-            ItemsSource = _actors;
+            ItemsSource = _context.ActorNames
+                .OrderBy(n => n.Name)
+                .Select(n => n.Name)
+                .ToList();
         }
 
         void InitStudioList()
         {
-            var _studios = new List<string>();
-            foreach (var studio in _context.Studios.ToList())
-            {
-                _studios.Add(studio.Name);
-            }
-            ItemsSource = _studios;
+            ItemsSource = _context.Studios
+                .OrderBy(s => s.Name)
+                .Select(s => s.Name)
+                .ToList();
         }
 
         void InitGenreList()
         {
-            var _genres = new List<string>();
-            foreach (var genre in _context.Genres.ToList())
-            {
-                _genres.Add(genre.Name);
-            }
-            ItemsSource = _genres;
+            ItemsSource = _context.Genres
+                .OrderBy(s => s.Name)
+                .Select(s => s.Name)
+                .ToList();
         }
 
         void UpdateList()
@@ -135,6 +125,19 @@ namespace Scrapper.ViewModel
             else if (SelectedType == "Genre")
             {
                 InitGenreList();
+            }
+            else if (SelectedType == "NoActor")
+            {
+                ItemsSource = null;
+                var items = _context.Items
+                    .Include("Actors")
+                    .Where(x => x.Actors.Count == 0)
+                    .ToList();
+
+                foreach (var item in items)
+                {
+                    MediaList.AddMedia(item.Path);
+                }
             }
         }
 

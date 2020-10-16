@@ -88,17 +88,20 @@
                         <!-- specify the template used to render each item -->
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ToggleButton
+                                <Button
                                     Content="{Binding}" Margin="5,0,0,5"
                                     Command="{Binding Data.CmdActorAlphabet,
-                                        Source={StaticResource VmContext}}" >
+                                        Source={StaticResource VmContext}}"
+                                    CommandParameter="{Binding}">
+<!--
                                     <ToggleButton.CommandParameter>
                                         <MultiBinding Converter="{StaticResource ParamConverter}">
                                             <Binding Path="IsChecked" RelativeSource="{RelativeSource Self}"/>
                                             <Binding Path="."/>
                                         </MultiBinding>    
                                     </ToggleButton.CommandParameter>
-                                </ToggleButton>
+-->
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

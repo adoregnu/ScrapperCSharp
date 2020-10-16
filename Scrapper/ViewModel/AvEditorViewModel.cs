@@ -66,7 +66,12 @@ namespace Scrapper.ViewModel
 
             AllSeries = App.DbContext.Series.ToList();
             AllGenres = App.DbContext.Genres.ToList();
-            AllActors = App.DbContext.Actors.ToList();
+
+            var names = App.DbContext.ActorNames
+                .Include("Actor")
+                .OrderBy(n => n.Name)
+                .ToList();
+            AllActors = names.Select(n => n.Actor).Distinct();
             AllStudios = App.DbContext.Studios.ToList();
         }
 

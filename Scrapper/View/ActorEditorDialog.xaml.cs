@@ -23,7 +23,8 @@ namespace Scrapper.View
         {
             InitializeComponent();
             var buttons = Enumerable.Range('A', 'Z' - 'A' + 1).
-                      Select(c => (char)c).ToList();
+                      Select(c => ((char)c).ToString()).ToList();
+            buttons.Insert(0, "All");
             numberButtonItems.ItemsSource = buttons;
         }
     }

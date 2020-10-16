@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using CefSharp;
 
 using Scrapper.Spider;
+using Scrapper.Extension;
 namespace Scrapper.ScrapItems
 {
     class ItemJavlibrary : ItemBase, IScrapItem
@@ -29,12 +30,13 @@ namespace Scrapper.ScrapItems
         void IScrapItem.OnJsResult(string name, List<object> items)
         {
             PrintItem(name, items);
-            if (items != null && items.Count == 0)
+            if (!items.IsNullOrEmpty())
             {
                 _numValidItems++;
                 if (name == "cover")
                 {
                     var url = items[0] as string;
+                    Interlocked.Increment(ref NumItemsToScrap);
                     if (!url.StartsWith("http"))
                     {
                         _spider.Browser.Download(_spider.URL + url);
@@ -43,7 +45,6 @@ namespace Scrapper.ScrapItems
                     {
                         _spider.Browser.Download(url);
                     }
-                    Interlocked.Increment(ref NumItemsToScrap);
                 }
             }
             CheckCompleted();

@@ -96,13 +96,13 @@ namespace Scrapper.ScrapItems
                 var genre = item.Trim();
                 if (string.IsNullOrEmpty(genre)) continue;
 
-                lock (_context)
+                UiServices.Invoke(delegate
                 {
                     var entity = _context.Genres.FirstOrDefault(x => x.Name == genre);
                     if (entity == null)
                         entity = _context.Genres.Add(new AvGenre { Name = genre });
                     _genres.Add(entity);
-                }
+                });
             }
         }
 
@@ -111,31 +111,31 @@ namespace Scrapper.ScrapItems
         {
             if (string.IsNullOrEmpty(studio)) return;
 
-            lock (_context)
+            UiServices.Invoke(delegate
             {
                 _studio = _context.Studios.FirstOrDefault(x => x.Name == studio);
                 if (_studio == null)
                     _studio = _context.Studios.Add(new AvStudio { Name = studio });
-            }
+            });
         }
 
         AvSeries _series;
         protected void UpdateSeries(string series)
         { 
             if (string.IsNullOrEmpty(series)) return;
-            lock (_context)
+            UiServices.Invoke(delegate
             {
                 _series = _context.Series.FirstOrDefault(x => x.Name == series);
                 if (_series == null)
                     _series = _context.Series.Add(new AvSeries { Name = series });
-            }
+            });
         }
 
         List<AvActor> _actors;
         protected void UpdateActor(Dictionary<string, List<AvActorName>> nameDic)
         {
             _actors = new List<AvActor>();
-            lock (_context)
+            UiServices.Invoke(delegate
             {
                 foreach (var namePair in nameDic)
                 {
@@ -160,45 +160,49 @@ namespace Scrapper.ScrapItems
                     _context.Actors.Add(actor);
                     _actors.Add(actor);
                 }
-            }
+            });
         }
 
         protected virtual void UdpateAvItem()
         {
-            if (_context.Items.Any(x => x.Pid == _avItem.Pid))
-                return;
-
-            _avItem.Series = _series;
-            _avItem.Studio = _studio;
-            _avItem.Actors = _actors;
-            _avItem.Genres = _genres;
-
-            try
+            UiServices.Invoke(delegate
             {
-                _context.Items.Add(_avItem);
-                _context.SaveChanges();
-            }
-            catch (DbEntityValidationException e)
-            {
-                foreach (var eve in e.EntityValidationErrors)
+                if (_context.Items.Any(x => x.Pid == _avItem.Pid))
+                    return;
+
+                _avItem.Series = _series;
+                _avItem.Studio = _studio;
+                _avItem.Actors = _actors;
+                _avItem.Genres = _genres;
+
+                try
                 {
-                    Log.Print("Entity of type \"{0}\" in state \"{1}\" has " +
-                        "the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                    foreach (var ve in eve.ValidationErrors)
+                    _context.Items.Add(_avItem);
+                    _context.SaveChanges();
+                }
+                catch (DbEntityValidationException e)
+                {
+                    foreach (var eve in e.EntityValidationErrors)
                     {
-                        Log.Print("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage);
+                        Log.Print("Entity of type \"{0}\" in state \"{1}\" has " +
+                            "the following validation errors:",
+                            eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                        foreach (var ve in eve.ValidationErrors)
+                        {
+                            Log.Print("- Property: \"{0}\", Error: \"{1}\"",
+                                ve.PropertyName, ve.ErrorMessage);
+                        }
                     }
                 }
-            }
-            finally
-            {
-                _series = null;
-                _studio = null;
-                _actors = null;
-                _genres = null;
-            }
+                finally
+                {
+                    _series = null;
+                    _studio = null;
+                    _actors = null;
+                    _genres = null;
+                }
+
+            });
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-
+using log4net.Config;
 using MvvmDialogs;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
 
@@ -33,13 +34,24 @@ namespace Scrapper.ViewModel
             private set => Set(nameof(DialogResult), ref _dialogResult, value);
         }
 
-        public ObservableCollection<AvActor> Actors { get; private set; }
+        ObservableCollection<AvActor> _actors;
+        public ObservableCollection<AvActor> Actors
+        {
+            get => _actors;
+            private set => Set(ref _actors, value);
+        }
+
         public IEnumerable<AvActorName> NamesOfActor
         {
             get => _namesOfActor;
             private set => Set(ref _namesOfActor, value);
         }
-        public ObservableCollection<AvActorName> AllNames { get; private set; }
+        ObservableCollection<AvActorName> _allNames;
+        public ObservableCollection<AvActorName> AllNames
+        {
+            get => _allNames;
+            private set => Set(ref _allNames, value);
+        }
 
         public AvActor SelectedActor
         {
@@ -47,7 +59,10 @@ namespace Scrapper.ViewModel
             set
             {
                 Set(ref _actor, value);
-                NamesOfActor = _actor.Names.ToList();
+                if (value != null)
+                {
+                    NamesOfActor = _actor.Names.ToList();
+                }
             }
         }
 
@@ -79,19 +94,13 @@ namespace Scrapper.ViewModel
         public ActorEditorViewModel(IDialogService dlgSvc)
         {
             _dialogService = dlgSvc;
-            var actors = App.DbContext.Actors
-                .Include("Names")
-                .ToList();
-            Actors = new ObservableCollection<AvActor>(actors);
-
             CmdBrowsePicture = new RelayCommand(() => OnFileBrowse());
             CmdAddNewActor = new RelayCommand(() => OnAddNewActor());
             CmdAddNewName = new RelayCommand(() => OnAddNewName());
             CmdDoubleClick = new RelayCommand(() => OnDoubleClicked());
             CmdActorAlphabet = new RelayCommand<object>((p) => OnActorAlphabet(p));
 
-            AllNames = new ObservableCollection<AvActorName>(
-                App.DbContext.ActorNames);
+            OnActorAlphabet('A');
         }
 
         void OnFileBrowse()
@@ -168,11 +177,29 @@ namespace Scrapper.ViewModel
 
         void OnActorAlphabet(object p)
         {
-            object[] param = p as object[];
-            bool isChecked = (bool)param[0];
-            char alphabet = (char)param[1];
-            Actors.Clear();
-            Log.Print($"{alphabet} : {isChecked}");
+            string searcStr = $"{p}%";
+
+            //Log.Print($"{searcStr}");
+            NamesOfActor = null;
+            SelectedActor = null;
+
+            var names = App.DbContext.ActorNames
+                .Include("Actor")
+                .Where(n => DbFunctions.Like(n.Name, searcStr))
+                .OrderBy(n => n.Name)
+                .ToList();
+
+            if (names != null && names.Count > 0)
+            {
+                AllNames = new ObservableCollection<AvActorName>(names);
+                Actors = new ObservableCollection<AvActor>(
+                    names.Select(n => n.Actor).Distinct());
+            }
+            else
+            { 
+                Actors.Clear();
+                AllNames.Clear();
+            }
         }
 
         void OnDoubleClicked()
