@@ -21,7 +21,6 @@
         <ListBox
             x:Name="ImageListBox"
             SelectionMode="Extended"
-            VirtualizingPanel.IsVirtualizing="True"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ItemTemplate="{DynamicResource ImageListTemplate}"
             ItemsPanel="{DynamicResource ImagePanelTemplate}"

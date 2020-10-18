@@ -87,8 +87,20 @@
                     <TextBlock Text="{Binding Actors}"/>
                 </ToolTip>
             </Grid.ToolTip>
-
+<!--
             <player:MiniPlayer MediaSource="{Binding}" Grid.Row="0"/>
+-->
+            <Image HorizontalAlignment="Center" ToolTipService.ShowDuration="20000"
+                   Source="{Binding BgImagePath, Converter=
+                      {StaticResource PathToImageConverter}, ConverterParameter=240}">
+                <!--View Large Image on Image Control Tooltip-->
+                <Image.ToolTip>
+                    <ToolTip>
+                        <Image Source="{Binding BgImagePath, Converter=
+                            {StaticResource PathToImageConverter}}"/>
+                    </ToolTip>
+                </Image.ToolTip>
+            </Image>
             <TextBlock
                 Text="{Binding Info}" Grid.Row="1" Opacity="0.5"
                 HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -132,6 +144,9 @@
     </DataTemplate>
 
     <ItemsPanelTemplate x:Key="ImagePanelTemplate">
-        <WrapPanel />
+<!--
+        <local:VirtualizingWrapPanel/>
+-->
+        <WrapPanel/>
     </ItemsPanelTemplate>
 </ResourceDictionary>
