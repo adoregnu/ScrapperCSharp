@@ -19,6 +19,14 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="center">
             <ComboBox ItemsSource="{Binding Spiders}" Width="150"
                          SelectedItem="{Binding SelectedSpider}"/>
+
+            <Button Style="{DynamicResource ModernButtonStyle2}"
+                    Command="{Binding CmdReloadUrl}">
+                <Path Stretch="Uniform"
+                    Data="{Binding Source={StaticResource RefreshIcon}, Path=Data}"
+                    Fill="{Binding Path=Foreground, RelativeSource=
+                        {RelativeSource AncestorType={x:Type Button}}}" />
+            </Button>
             <StackPanel Orientation="Horizontal" Visibility="{Binding SelectedSpider,
                     Converter={StaticResource BoardVisibilityConverter},
                     ConverterParameter=sehuatang}">

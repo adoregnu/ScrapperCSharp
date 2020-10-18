@@ -32,7 +32,6 @@ namespace Scrapper.ScrapItems
             get => $"{_spider.MediaFolder}\\{_spider.Pid}_poster";
         }
 
-
         public ItemBase(SpiderBase spider)
         {
             _spider = spider;
@@ -194,14 +193,22 @@ namespace Scrapper.ScrapItems
         {
             UiServices.Invoke(delegate
             {
-                var item = _context.Items.FirstOrDefault(i => i.Pid == _avItem.Pid);
-                //if (_context.Items.Any(x => x.Pid == _avItem.Pid))
+                var item = _context.Items
+                    .Include("Studio")
+                    .Include("Actors")
+                    .Include("Genres")
+                    .FirstOrDefault(i => i.Pid == _avItem.Pid);
+
                 if (item != null) _avItem = item;
 
-                if (_series != null) _avItem.Series = _series;
-                if (_studio != null) _avItem.Studio = _studio;
-                if (_actors != null) _avItem.Actors = _actors;
-                if (_genres != null) _avItem.Genres = _genres;
+                //if (item == null || _series != null)
+                //    _avItem.Series = _series;
+                if (item == null || (_studio != null && item.Studio == null))
+                    _avItem.Studio = _studio;
+                if (item == null || (_actors != null && item.Actors.Count == 0))
+                    _avItem.Actors = _actors;
+                if (item == null || (_genres != null && item.Genres.Count == 0))
+                    _avItem.Genres = _genres;
 
                 try
                 {
@@ -230,7 +237,6 @@ namespace Scrapper.ScrapItems
                     _actors = null;
                     _genres = null;
                 }
-
             });
         }
     }

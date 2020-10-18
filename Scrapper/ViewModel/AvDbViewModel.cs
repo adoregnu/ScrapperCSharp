@@ -5,12 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Windows.Input;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using ICSharpCode.AvalonEdit.Snippets;
+
 using Scrapper.Model;
 using Scrapper.Spider;
 using Scrapper.ViewModel.Base;
+using Scrapper.ViewModel.MediaPlayer;
+
 namespace Scrapper.ViewModel
 {
     class AvDbViewModel : Pane, IMediaListNotifier
@@ -20,7 +23,14 @@ namespace Scrapper.ViewModel
         string _selectedType;
         string _selectedItem;
 
+        int _viewType = 1;
+        public int ViewType
+        {
+            get => _viewType;
+            set => Set(ref _viewType, value);
+        }
         public MediaListViewModel MediaList { get; set; }
+        public PlayerViewModel MediaPlayer { get; private set; }
         public List<string> SourceTypes { get; set; }
         public List<string> ItemsSource
         {
@@ -52,12 +62,21 @@ namespace Scrapper.ViewModel
             }
         }
 
+        public ICommand CmdEscPress { get; set; }
+
         public AvDbViewModel()
         {
             Title = "Db Viewer";
             _context = App.DbContext;
 
+            CmdEscPress = new RelayCommand(() =>
+            {
+                MediaPlayer.SetMediaItem(null);
+                ViewType = 1;
+            });
+
             MediaList = new MediaListViewModel(this);
+            MediaPlayer = new PlayerViewModel();
             SourceTypes = new List<string>
             {
                 "Actor",
@@ -87,6 +106,12 @@ namespace Scrapper.ViewModel
 
         void IMediaListNotifier.OnMediaItemMoved(string path)
         {
+        }
+
+        void IMediaListNotifier.OnMediaItemDoubleClicked(MediaItem mitem)
+        { 
+            ViewType = 2;
+            MediaPlayer.SetMediaItem(mitem);
         }
 
         void InitActorList()
@@ -144,6 +169,9 @@ namespace Scrapper.ViewModel
 
         void UpdateMedia()
         {
+            ViewType = 1;
+            MediaPlayer.SetMediaItem(null);
+
             MediaList.ClearMedia();
             if (SelectedType == "Actor")
             {

@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,6 +58,11 @@ namespace Scrapper.Converter
                         return ConvertBitmap(bmpTemp, parameter_ != null ?
                             int.Parse(parameter_.ToString()) : 0);
                     }
+                }
+                else
+                {
+                    return new BitmapImage(new Uri(@"pack://application:,,,/" +
+                        "Resources/default-fallback-image.png"));
                 }
             }
             catch (Exception /*e*/)

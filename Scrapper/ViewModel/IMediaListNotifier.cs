@@ -10,5 +10,6 @@ namespace Scrapper.ViewModel
     interface IMediaListNotifier
     {
         void OnMediaItemMoved(string path);
+        void OnMediaItemDoubleClicked(MediaItem mitem);
     }
 }

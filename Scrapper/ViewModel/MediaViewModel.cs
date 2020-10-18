@@ -29,6 +29,8 @@ namespace Scrapper.ViewModel
         public FileListViewModel FileList { get; private set; }
 
         //public ICommand KeyDownCommand { get; private set; }
+        public ICommand CmdEscPress { get; set; }
+
         public MediaViewModel()
         {
             Title = "Media";
@@ -37,7 +39,10 @@ namespace Scrapper.ViewModel
             MediaPlayer = new PlayerViewModel();
             MediaList = new MediaListViewModel(this);
 
-            //KeyDownCommand = new RelayCommand<EventArgs>(e => Log.Print(e.ToString()));
+            CmdEscPress = new RelayCommand(() => {
+                MediaPlayer.SetMediaItem(null);
+                ViewType = 1; 
+            });
             MessengerInstance.Register<NotificationMessage<string>>(
                 this, OnMediaUpdated);
 
@@ -60,6 +65,12 @@ namespace Scrapper.ViewModel
         {
             //FileList.RefreshCommand.Execute(null);
             FileList.RemoveItem(path);
+        }
+
+        void IMediaListNotifier.OnMediaItemDoubleClicked(MediaItem mitem)
+        {
+            ViewType = 2;
+            MediaPlayer.SetMediaItem(mitem);
         }
 
         void IFileListNotifier.OnDirectoryChanged(string path)
@@ -102,7 +113,7 @@ namespace Scrapper.ViewModel
             }
             else
             { 
-                MediaPlayer.CloseCommand.Execute(null);
+                MediaPlayer.SetMediaItem(null);
                 ViewType = 1;
             }
         }

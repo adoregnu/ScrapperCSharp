@@ -187,8 +187,10 @@ namespace Scrapper.ViewModel
             {
                 App.DbContext.SaveChanges();
                 RaisePropertyChanged("SelectedActor");
-                AllNames.Add(name);
+                //AllNames.Add(name);
                 NewName = "";
+                NamesOfActor = _actor.Names.ToList();
+
             }
             catch (Exception ex)
             {

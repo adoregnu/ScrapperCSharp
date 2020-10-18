@@ -68,11 +68,10 @@ namespace Scrapper.ViewModel
 			}
 		}
 
-		public ICommand UpCommand { get; set; }
-		public ICommand RefreshCommand { get; set; }
-		public ICommand SelectionChanged { get; set; }
-		public ICommand EscPressed { get; set; }
-		public ICommand CheckboxChanged { get; set; }
+		public ICommand CmdUpDir { get; set; }
+		public ICommand CmdRefreshDir { get; set; }
+		public ICommand CmdFileSelect { get; set; }
+		public ICommand CmdCheckChange { get; set; }
 		//public ICommand DeleteCommand { get; set; }
 
 		public FileListViewModel(IFileListNotifier notifier)
@@ -83,18 +82,16 @@ namespace Scrapper.ViewModel
 			_fileListNotifier = notifier;
 
 			FolderItemsView = FileListView.Factory.CreateFileListViewModel();
-			UpCommand = new RelayCommand<object>(p => OnUpCommand(), p => CanUpCommand());
-			RefreshCommand = new RelayCommand<object>(
+			CmdUpDir = new RelayCommand<object>(p => OnUpCommand(), p => CanUpCommand());
+			CmdRefreshDir = new RelayCommand<object>(
 				p => NavigateToFolder(PathFactory.Create(_selectedFoder)));
-			SelectionChanged = new RelayCommand<object>( p => {
+			CmdFileSelect = new RelayCommand<object>( p => {
                 if (p is ILVItemViewModel fsItem)
                 {
                     _fileListNotifier.OnFileSelected(fsItem);
                 }
 			});
-			EscPressed = new RelayCommand<object>(
-				p => _fileListNotifier.OnFileSelected(null));
-			CheckboxChanged = new RelayCommand<object>(
+			CmdCheckChange = new RelayCommand<object>(
 				p => _fileListNotifier.OnCheckboxChanged(p as ILVItemViewModel));
 			//DeleteCommand = new RelayCommand<object>(p => OnDeleteFile(p));
 

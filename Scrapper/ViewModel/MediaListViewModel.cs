@@ -61,6 +61,7 @@ namespace Scrapper.ViewModel
         public ICommand CmdMoveItem { get; set; }
         public ICommand CmdDeleteItem { get; set; }
         public ICommand CmdEditItem { get; set; }
+        public ICommand CmdDoubleClick { get; set; }
 
         IMediaListNotifier _mediaListNotifier;
         public MediaListViewModel(IMediaListNotifier notifier)
@@ -76,6 +77,7 @@ namespace Scrapper.ViewModel
             CmdMoveItem = new RelayCommand<object>(p => OnMoveItem(p));
             CmdDeleteItem = new RelayCommand<object>(p => OnDeleteItem(p));
             CmdEditItem = new RelayCommand<object>(p => OnEditItem(p));
+            CmdDoubleClick = new RelayCommand(() => OnDoubleClicked());
         }
 
         public void ClearMedia()
@@ -216,6 +218,11 @@ namespace Scrapper.ViewModel
             if (item.AvItem == null) return;
             MessengerInstance.Send(new NotificationMessage<MediaItem>(
                 item, "editAv"));
+        }
+
+        void OnDoubleClicked()
+        {
+            _mediaListNotifier.OnMediaItemDoubleClicked(SelectedMedia);
         }
 
         void OnContextMenu(MediaItem item, MediaListMenuType type)

@@ -69,7 +69,7 @@ namespace Scrapper.Spider
         void ParsePage()
         {
             string[] keys = { "pid", "date", "files", "images" };
-            var item = new ItemSehuatang(this);
+            var item = new ItemSehuatang(this) { NumItemsToScrap = keys.Length  };
             var list = _xpathDic.Where(i => keys.Contains(i.Key));
             foreach (var xpath in list)
             {

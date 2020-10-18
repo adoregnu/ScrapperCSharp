@@ -34,14 +34,14 @@
             </ToggleButton>
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                 <Button Style="{DynamicResource ModernButtonStyle2}"
-                        Command="{Binding UpCommand}">
+                        Command="{Binding CmdUpDir}">
                     <Path Stretch="Uniform"
                         Data="{Binding Source={StaticResource ArrowUpIcon}, Path=Data}"
                         Fill="{Binding Path=Foreground, RelativeSource=
                             {RelativeSource AncestorType={x:Type Button}}}" />
                 </Button>
                 <Button Style="{DynamicResource ModernButtonStyle2}"
-                        Command="{Binding RefreshCommand}">
+                        Command="{Binding CmdRefreshDir}">
                     <Path Stretch="Uniform"
                         Data="{Binding Source={StaticResource RefreshIcon}, Path=Data}"
                         Fill="{Binding Path=Foreground, RelativeSource=
@@ -58,7 +58,6 @@
             Margin="0,3,0,0"
 			DataContext="{Binding FolderItemsView}"
 			Notification="{Binding Notification}">
-
             <ListBox
 				xmlns:bindLocal="clr-namespace:FileListView.Views;assembly=FileListView"
 				fvbehav:BringIntoViewListBoxItem.ScrollSelectedIntoView="True"
@@ -70,16 +69,11 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction
-                            Command="{Binding DataContext.SelectionChanged,
+                            Command="{Binding DataContext.CmdFileSelect,
                                 RelativeSource={RelativeSource FindAncestor,
                                 AncestorType={x:Type UserControl}}}"
                             CommandParameter="{Binding SelectedItem}"/>
                     </i:EventTrigger>
-                    <iex:KeyTrigger Key="Esc">
-                        <i:InvokeCommandAction Command="{Binding DataContext.EscPressed,
-                            RelativeSource={RelativeSource FindAncestor,
-                            AncestorType={x:Type UserControl}}}" />
-                    </iex:KeyTrigger>
                 </i:Interaction.Triggers>
                 <ListBox.ItemsSource>
                     <MultiBinding Converter="{StaticResource UpdateBindingConverter}">
@@ -156,14 +150,14 @@
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Unchecked">
                                         <i:InvokeCommandAction
-                                            Command="{Binding DataContext.CheckboxChanged,
+                                            Command="{Binding DataContext.CmdCheckChange,
                                                 RelativeSource={RelativeSource FindAncestor,
                                                 AncestorType={x:Type UserControl}}}"
                                             CommandParameter="{Binding}"/>
                                     </i:EventTrigger>
                                     <i:EventTrigger EventName="Checked">
                                         <i:InvokeCommandAction
-                                            Command="{Binding DataContext.CheckboxChanged,
+                                            Command="{Binding DataContext.CmdCheckChange,
                                                 RelativeSource={RelativeSource FindAncestor,
                                                 AncestorType={x:Type UserControl}}}"
                                             CommandParameter="{Binding}"/>

@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 using CefSharp;
 
+using HtmlAgilityPack;
+
 using Scrapper.Spider;
 using Scrapper.Extension;
-using HtmlAgilityPack;
 using Scrapper.Model;
 
 namespace Scrapper.ScrapItems
@@ -48,6 +49,21 @@ namespace Scrapper.ScrapItems
                 UpdateActor2(ll);
         }
 
+        void ParseCover(string url)
+        {
+            var ext = url.Split('.').Last();
+            if (File.Exists($"{posterPath}.{ext}")) return;
+
+            Interlocked.Increment(ref NumItemsToScrap);
+            _spider.Browser.Download(url);
+        }
+
+        void ParseDate(string date)
+        {
+            _avItem.ReleaseDate = DateTime.ParseExact(
+                date.Trim(), "yyyy-MM-dd", enUS);
+        }
+
         void IScrapItem.OnJsResult(string name, List<object> items)
         {
             PrintItem(name, items);
@@ -57,18 +73,20 @@ namespace Scrapper.ScrapItems
                 if (name == "actor")
                     ParseActor(items);
                 else if (name == "cover")
+                    ParseCover(items[0] as string);
+                else if (name == "title")
                 {
-                    var url = items[0] as string;
-                    Interlocked.Increment(ref NumItemsToScrap);
-                    if (!url.StartsWith("http"))
-                    {
-                        _spider.Browser.Download(_spider.URL + url);
-                    }
-                    else
-                    {
-                        _spider.Browser.Download(url);
-                    }
+                    var title = (items[0] as string).Trim();
+                    if (title.StartsWith(_spider.Pid, StringComparison.OrdinalIgnoreCase))
+                        title = title.Substring(_spider.Pid.Length+1);
+                    _avItem.Title = title;
                 }
+                else if (name == "date")
+                    ParseDate(items[0] as string);
+                else if (name == "studio")
+                    UpdateStudio((items[0] as string).Trim());
+                else if (name == "genre")
+                    UpdateGenre(items);
             }
             CheckCompleted();
         }

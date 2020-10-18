@@ -17,6 +17,7 @@ using Scrapper.Spider;
 using Scrapper.ScrapItems;
 using Scrapper.BrowserHandler;
 using Scrapper.ViewModel.Base;
+using System.Windows.Input;
 
 namespace Scrapper.ViewModel
 {
@@ -69,10 +70,12 @@ namespace Scrapper.ViewModel
             }
         }
 
+        public ICommand CmdReloadUrl { get; private set; }
         public BrowserViewModel()
         {
             CmdStart = new RelayCommand(() => OnStartScrapping(true));
             CmdStop = new RelayCommand(() => StopScrapping(true));
+            CmdReloadUrl = new RelayCommand(() => WebBrowser.Reload());
 
             Spiders = new List<SpiderBase>
             {
@@ -104,6 +107,12 @@ namespace Scrapper.ViewModel
 
         public void StartBatchedScrapping(List<MediaItem> mediaItems = null)
         {
+            if (SelectedSpider is SpiderSehuatang)
+            {
+                Log.Print($"Not supported in this spider {SelectedSpider}");
+                return;
+            }
+
             if (mediaItems != null) _mediaToScrap = mediaItems;
             if (_mediaToScrap.Count <= _nextScrappingIndex)
             {
@@ -126,7 +135,7 @@ namespace Scrapper.ViewModel
                 return;
             }
 
-            if (!manualSearch)
+            if (SelectedSpider is SpiderSehuatang || !manualSearch)
                 _bStarted = true;
             SelectedSpider.Navigate();
         }

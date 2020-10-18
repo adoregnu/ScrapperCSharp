@@ -87,6 +87,11 @@
                     <TextBlock Text="{Binding Actors}"/>
                 </ToolTip>
             </Grid.ToolTip>
+            <Grid.InputBindings>
+                <MouseBinding Gesture="LeftDoubleClick"
+                              Command="{Binding Data.CmdDoubleClick,
+                                    Source={StaticResource VmContext}}"/>
+            </Grid.InputBindings>
 <!--
             <player:MiniPlayer MediaSource="{Binding}" Grid.Row="0"/>
 -->
@@ -144,9 +149,26 @@
     </DataTemplate>
 
     <ItemsPanelTemplate x:Key="ImagePanelTemplate">
-<!--
-        <local:VirtualizingWrapPanel/>
--->
         <WrapPanel/>
     </ItemsPanelTemplate>
+
+    <ControlTemplate x:Key="MediaListTamplate">
+        <local:MediaListView DataContext="{Binding MediaList}"/>
+    </ControlTemplate>
+    <ControlTemplate x:Key="MediaPlayerTemplate">
+        <player:PlayerView DataContext="{Binding MediaPlayer}"/>
+    </ControlTemplate>
+
+    <Style x:Key="ListPlayerStyle" TargetType="ContentControl">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ViewType, Mode=TwoWay}" Value="1">
+                <Setter Property="Template"
+                        Value="{StaticResource MediaListTamplate}"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding ViewType, Mode=TwoWay}" Value="2">
+                <Setter Property="Template"
+                        Value="{StaticResource MediaPlayerTemplate}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>

@@ -8,7 +8,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CefSharp;
+
 using Scrapper.Spider;
+using Scrapper.Extension;
 
 namespace Scrapper.ScrapItems
 {
@@ -18,7 +20,6 @@ namespace Scrapper.ScrapItems
 
         string _pid = null;
         string _outPath = null;
-        int _downloadCount = 0;
         bool _bStop = false;
         Dictionary<string, int> _images = null;
 
@@ -26,18 +27,13 @@ namespace Scrapper.ScrapItems
         {
         }
 
-        void PrepareDirectory()
+        void CheckCompleted(bool isValid)
         {
-            var di = new DirectoryInfo(_outPath);
-            if (!di.Exists)
-            {
-                Directory.CreateDirectory(_outPath);
-            }
-            else 
-            {
-                _bStop = true;
-                Log.Print($"Already downloaded! {_outPath}");
-                _spider.OnScrapCompleted(false, null);
+            Interlocked.Increment(ref _numScrapedItem);
+            Log.Print($"{_numScrapedItem}/{NumItemsToScrap}");
+            if (_numScrapedItem == NumItemsToScrap)
+            { 
+                _spider.OnScrapCompleted(isValid, isValid ? _outPath : null);
                 Clear();
             }
         }
@@ -67,14 +63,53 @@ namespace Scrapper.ScrapItems
             if (e.IsComplete)
             {
                 Log.Print($"{_pid} download completed: {e.FullPath}");
-                Interlocked.Decrement(ref _downloadCount);
                 File.SetLastWriteTime(e.FullPath, DateTime);
-                if (_downloadCount == 0)
+
+                CheckCompleted(true);
+            }
+        }
+
+        void ParsePid(string title)
+        {
+            var m = Regex.Match(title, @"[\d\w\-_]+", RegexOptions.CultureInvariant);
+            if (!m.Success)
+            {
+                Log.Print($"Could not find pid pattern in [] {title}");
+                return;
+            }
+
+            _pid = m.Groups[0].Value;
+            _outPath += _spider.MediaFolder + _pid + "\\";
+
+            var di = new DirectoryInfo(_outPath);
+            if (!di.Exists)
+            {
+                Directory.CreateDirectory(_outPath);
+            }
+            else
+            {
+                _bStop = true;
+                Log.Print($"Already downloaded! {_outPath}");
+            }
+        }
+
+        void ParseImage(List<object> items)
+        {
+            _images = new Dictionary<string, int>();
+            int i = 0;
+            foreach (string f in items)
+            {
+                _images.Add(f.Split('/').Last(), i);
+                Interlocked.Increment(ref NumItemsToScrap);
+                if (!f.StartsWith("http"))
                 {
-                    _spider.OnScrapCompleted(true,
-                        Path.GetDirectoryName(e.FullPath));
-                    Clear();
+                    _spider.Browser.Download(_spider.URL + f);
                 }
+                else
+                {
+                    _spider.Browser.Download(f);
+                }
+                i++;
             }
         }
 
@@ -82,59 +117,33 @@ namespace Scrapper.ScrapItems
         {
             PrintItem(name, items);
 
-            if (_bStop) return;
-            if (name == "pid")
+            if (!items.IsNullOrEmpty() && !_bStop)
             {
-                string title = items[0] as string;
-                var m = Regex.Match(title, @"[\d\w\-_]+", RegexOptions.CultureInvariant);
-
-                _outPath = _spider.MediaFolder;
-                if (m.Success)
+                if (name == "pid")
                 {
-                    _pid = m.Groups[0].Value;
-                    _outPath += _pid + "\\";
-                    PrepareDirectory();
+                    ParsePid(items[0] as string);
                 }
-                else
+                else if (name == "date")
                 {
-                    Log.Print($"Could not find pid pattern in [] {title}");
-                }
-            }
-            else if (name == "date")
-            {
-                try
-                {
-                    DateTime = DateTime.Parse(items[0] as string);
-                }
-                catch (Exception)
-                {
-                    DateTime = DateTime.Now;
-                }
-            }
-            else if (name == "images")
-            {
-                _images = new Dictionary<string, int>();
-                int i = 0;
-                foreach (string f in items)
-                {
-                    Log.Print(f);
-                    _images.Add(f.Split('/').Last(), i);
-                    if (!f.StartsWith("http"))
+                    try
                     {
-                        _spider.Browser.Download(_spider.URL + f);
+                        DateTime = DateTime.Parse(items[0] as string);
                     }
-                    else
+                    catch (Exception)
                     {
-                        _spider.Browser.Download(f);
+                        DateTime = DateTime.Now;
                     }
-                    i++;
-                    Interlocked.Increment(ref _downloadCount);
+                }
+                else if (name == "images")
+                {
+                    ParseImage(items);
+                }
+                else if (name == "files")
+                {
+                    Interlocked.Increment(ref NumItemsToScrap);
                 }
             }
-            else if (name == "files")
-            {
-                Interlocked.Increment(ref _downloadCount);
-            }
+            CheckCompleted(false);
         }
     }
 }

@@ -11,7 +11,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         md:DialogServiceViews.IsRegistered="True"
-        Title="ActorEditorDialog" Height="450" Width="800">
+        Title="ActorEditorDialog" Height="600" Width="1060">
     <Window.Resources>
         <DataTemplate x:Key="ActorTemplate">
             <Grid Width="125" Height="125">
