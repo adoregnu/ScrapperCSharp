@@ -46,6 +46,7 @@ namespace Scrapper.ViewModel
         public ICommand CmdSetStudio { get; private set; }
         public ICommand CmdSetSeries { get; private set; }
         public ICommand CmdAddActor { get; private set; }
+        public ICommand CmdRemoveActor { get; private set; }
         public ICommand CmdAddGenre { get; private set; }
         public ICommand CmdSave { get; private set; }
 
@@ -61,6 +62,7 @@ namespace Scrapper.ViewModel
             CmdSetStudio = new RelayCommand(() => Av.Studio = SelectedStudio);
             CmdSetSeries = new RelayCommand(() => Av.Series = SelectedSeries);
             CmdAddActor = new RelayCommand(() => OnAddActor());
+            CmdRemoveActor = new RelayCommand(() => OnRemoveActor());
             CmdAddGenre = new RelayCommand(() => OnAddGnere());
             CmdSave = new RelayCommand(() => OnSave());
 
@@ -81,6 +83,15 @@ namespace Scrapper.ViewModel
             if (!Actors.Any(a => a == SelectedActor))
             {
                 Actors.Add(SelectedActor);
+                _actorChanged = true;
+            }
+        }
+
+        void OnRemoveActor()
+        {
+            if (SelectedAvActor != null)
+            {
+                Actors.Remove(SelectedAvActor);
                 _actorChanged = true;
             }
         }

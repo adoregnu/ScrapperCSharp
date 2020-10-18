@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using CefSharp;
-
+using HtmlAgilityPack;
 using Scrapper.ScrapItems;
 using Scrapper.ViewModel;
 namespace Scrapper.Spider
@@ -29,7 +29,7 @@ namespace Scrapper.Spider
                 { "cover",  XPath("//*[@id='video_jacket_img']/@src") },
                 { "rating", XPath("//*[@id='video_review']//*[@class='score']/text()") },
                 { "genre",  XPath("//*[@id='video_genres']//*[@class='genre']//text()") },
-                { "actor",  XPath("//*[@id='video_cast']//*[@class='star']//text()") },
+                { "actor",  XPath("//*[@id='video_cast']//*[@class='cast']") },
             };
         }
         public override Cookie CreateCookie()
@@ -54,22 +54,20 @@ namespace Scrapper.Spider
                 return;
             }
 
-            Regex regex = new Regex(@"href=""\./(?<href>.+)"" title=""(?<id>[\w\d-_]+)",
-                RegexOptions.Compiled | RegexOptions.CultureInvariant);
-            Match m = null;
-            foreach (string a in list)
+            HtmlDocument doc = new HtmlDocument();
+            foreach (string url in list)
             {
-                m = regex.Match(a);
-                if (m.Success && m.Groups["id"].Value == Pid)
-                    break;
+                doc.LoadHtml(url);
+                var div = doc.DocumentNode.SelectSingleNode("//div[@class='id']").InnerText;
+                if (div.Trim().Equals(Pid, StringComparison.OrdinalIgnoreCase))
+                {
+                    var href = doc.DocumentNode.FirstChild.Attributes["href"].Value;
+                    _state = 1;
+                    Browser.Address = $"{URL}{href}";
+                    return;
+                }
             }
-            if (!m.Success)
-            {
-                Log.Print("Could not find pid matched!");
-                return;
-            }
-            _state = 1;
-            Browser.Address = $"{URL}{m.Groups["href"].Value}";
+            Browser.StopScrapping();
         }
 
         public override void Navigate()

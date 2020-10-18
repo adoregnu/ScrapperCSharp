@@ -24,8 +24,7 @@ namespace Scrapper.ScrapItems
         { 
             var ext = Path.GetExtension(e.SuggestedFileName);
             if (_numDownloadCnt == 0)
-                e.SuggestedFileName = $"{_spider.MediaFolder}\\" +
-                    $"{_spider.Pid}_poster{ext}";
+                e.SuggestedFileName = $"{posterPath}{ext}";
             else
                 e.SuggestedFileName = $"{_spider.MediaFolder}\\" +
                     $"{_spider.Pid}_screenshot{_numDownloadCnt}{ext}";

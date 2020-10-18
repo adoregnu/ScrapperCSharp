@@ -34,7 +34,8 @@ namespace Scrapper.ViewModel
             private set => Set(nameof(DialogResult), ref _dialogResult, value);
         }
 
-        ObservableCollection<AvActor> _actors;
+        ObservableCollection<AvActor> _actors
+            = new ObservableCollection<AvActor>();
         public ObservableCollection<AvActor> Actors
         {
             get => _actors;
@@ -46,7 +47,8 @@ namespace Scrapper.ViewModel
             get => _namesOfActor;
             private set => Set(ref _namesOfActor, value);
         }
-        ObservableCollection<AvActorName> _allNames;
+        ObservableCollection<AvActorName> _allNames
+            = new ObservableCollection<AvActorName>();
         public ObservableCollection<AvActorName> AllNames
         {
             get => _allNames;
@@ -85,6 +87,7 @@ namespace Scrapper.ViewModel
         }
 
         public ICommand CmdAddNewActor { get; private set; }
+        public ICommand CmdDeleteActor { get; private set; }
         public ICommand CmdBrowsePicture { get; private set; }
         public ICommand CmdAddNewName { get; private set; }
         public ICommand CmdDoubleClick { get; private set; }
@@ -96,6 +99,7 @@ namespace Scrapper.ViewModel
             _dialogService = dlgSvc;
             CmdBrowsePicture = new RelayCommand(() => OnFileBrowse());
             CmdAddNewActor = new RelayCommand(() => OnAddNewActor());
+            CmdDeleteActor = new RelayCommand(() => OnDeleteActor());
             CmdAddNewName = new RelayCommand(() => OnAddNewName());
             CmdDoubleClick = new RelayCommand(() => OnDoubleClicked());
             CmdActorAlphabet = new RelayCommand<object>((p) => OnActorAlphabet(p));
@@ -147,6 +151,23 @@ namespace Scrapper.ViewModel
             App.DbContext.SaveChanges();
 
             Actors.Add(actor);
+        }
+
+        void OnDeleteActor()
+        {
+            if (SelectedActor == null) return;
+
+            var names = SelectedActor.Names.ToList();
+            foreach (var name in names)
+            {
+                App.DbContext.ActorNames.Remove(name);
+            }
+            App.DbContext.Actors.Remove(SelectedActor);
+            App.DbContext.SaveChanges();
+            Actors.Remove(SelectedActor);
+
+            SelectedActor = null;
+            NamesOfActor = null;
         }
 
         void OnAddNewName()

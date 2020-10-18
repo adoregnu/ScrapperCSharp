@@ -71,7 +71,7 @@ namespace Scrapper.ViewModel
 
         public BrowserViewModel()
         {
-            CmdStart = new RelayCommand(() => OnStartScrapping());
+            CmdStart = new RelayCommand(() => OnStartScrapping(true));
             CmdStop = new RelayCommand(() => StopScrapping(true));
 
             Spiders = new List<SpiderBase>
@@ -92,7 +92,11 @@ namespace Scrapper.ViewModel
                         return;
 
                     SelectedMedia = msg.Content;
-                    if (SelectedMedia != null) Pid = SelectedMedia.Pid;
+                    if (SelectedMedia != null)
+                    {
+                        Pid = SelectedMedia.Pid;
+                        //_bStarted = false;
+                    }
                 });
             MessengerInstance.Register<NotificationMessage<List<MediaItem>>>(
                 this, (msg) => StartBatchedScrapping(msg.Content));
@@ -113,7 +117,7 @@ namespace Scrapper.ViewModel
             OnStartScrapping();
         }
 
-        public void OnStartScrapping()
+        public void OnStartScrapping(bool manualSearch = false)
         {
             if (!(SelectedSpider is SpiderSehuatang) &&
                 string.IsNullOrEmpty(Pid))
@@ -122,7 +126,8 @@ namespace Scrapper.ViewModel
                 return;
             }
 
-            _bStarted = true;
+            if (!manualSearch)
+                _bStarted = true;
             SelectedSpider.Navigate();
         }
 

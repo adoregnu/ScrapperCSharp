@@ -121,7 +121,7 @@ namespace Scrapper.ViewModel
         void UpdateMediaListInternal(string path)
         {
             var fsEntries = Directory.GetDirectories(path);
-            if (fsEntries.Length == 0)
+            if (fsEntries.Length == 0 || fsEntries[0].EndsWith(".actors"))
             {
                 InsertMedia(path);
             }
@@ -150,13 +150,20 @@ namespace Scrapper.ViewModel
             var item = GetMedia(path);
             if (item == null) return;
 
-            var idx = MediaList.FindItem(item, i => i.DownloadDt);
+            int idx = -1;
+            if (item.IsImage)
+            {
+                idx = MediaList.FindItem(item, i => i.DownloadDt);
+            }
             UiServices.Invoke(delegate
             {
                 //MediaList.InsertInPlace(item, i => i.DownloadDt);
-                MediaList.Insert(idx, item);
+                if (idx >= 0)
+                    MediaList.Insert(idx, item);
+                else
+                    MediaList.Add(item);
             }, true);
-            Thread.Sleep(10);
+            //Thread.Sleep(10);
         }
 
         void OnScrap(object param)

@@ -26,6 +26,13 @@ namespace Scrapper.ScrapItems
         protected int _numScrapedItem = 0;
         protected int _numValidItems = 0;
         protected AvItem _avItem;
+
+        protected string posterPath
+        {
+            get => $"{_spider.MediaFolder}\\{_spider.Pid}_poster";
+        }
+
+
         public ItemBase(SpiderBase spider)
         {
             _spider = spider;
@@ -113,6 +120,7 @@ namespace Scrapper.ScrapItems
 
             UiServices.Invoke(delegate
             {
+                studio = NameMap.StudioName(studio);
                 _studio = _context.Studios.FirstOrDefault(x => x.Name == studio);
                 if (_studio == null)
                     _studio = _context.Studios.Add(new AvStudio { Name = studio });
@@ -132,34 +140,53 @@ namespace Scrapper.ScrapItems
         }
 
         List<AvActor> _actors;
-        protected void UpdateActor(Dictionary<string, List<AvActorName>> nameDic)
+        void UpdateActorInternal(List<List<AvActorName>> listOfNameList)
         {
-            _actors = new List<AvActor>();
-            UiServices.Invoke(delegate
+            foreach (var list in listOfNameList)
             {
-                foreach (var namePair in nameDic)
+                AvActorName aan = null;
+                foreach (var aname in list)
                 {
-                    var dbName = _context.ActorNames
-                        .Where(n => n.Name == namePair.Key)
+                    aan = _context.ActorNames
+                        .Where(n => n.Name.Equals(aname.Name,
+                                StringComparison.OrdinalIgnoreCase))
                         .Include("Actor")
                         .FirstOrDefault();
+                    if (aan != null) break;
 
-                    if (dbName != null)
+                }
+
+                if (aan != null)
+                {
+                    var dbActor = aan.Actor;
+                    foreach (var aname in list)
                     {
-                        _actors.Add(dbName.Actor);
-                        continue;
+                        if (!dbActor.Names.Any(n => n.Name.Equals(aname.Name,
+                            StringComparison.OrdinalIgnoreCase)))
+                        {
+                            dbActor.Names.Add(aname);
+                        }
                     }
-
-                    var actor = new AvActor
-                    {
-                        Names = namePair.Value
-                    };
-                    foreach (var name in namePair.Value)
-                        name.Actor = actor;
+                    _actors.Add(dbActor);
+                }
+                else
+                {
+                    var actor = new AvActor();
+                    list.ForEach(i => i.Actor = actor);
+                    actor.Names = list;
 
                     _context.Actors.Add(actor);
                     _actors.Add(actor);
                 }
+            }
+        }
+
+        protected void UpdateActor2(List<List<AvActorName>> listOfNameList)
+        {
+            _actors = new List<AvActor>();
+            UiServices.Invoke(delegate
+            {
+                UpdateActorInternal(listOfNameList);
             });
         }
 
@@ -167,25 +194,27 @@ namespace Scrapper.ScrapItems
         {
             UiServices.Invoke(delegate
             {
-                if (_context.Items.Any(x => x.Pid == _avItem.Pid))
-                    return;
+                var item = _context.Items.FirstOrDefault(i => i.Pid == _avItem.Pid);
+                //if (_context.Items.Any(x => x.Pid == _avItem.Pid))
+                if (item != null) _avItem = item;
 
-                _avItem.Series = _series;
-                _avItem.Studio = _studio;
-                _avItem.Actors = _actors;
-                _avItem.Genres = _genres;
+                if (_series != null) _avItem.Series = _series;
+                if (_studio != null) _avItem.Studio = _studio;
+                if (_actors != null) _avItem.Actors = _actors;
+                if (_genres != null) _avItem.Genres = _genres;
 
                 try
                 {
-                    _context.Items.Add(_avItem);
+                    if (item == null)
+                        _context.Items.Add(_avItem);
                     _context.SaveChanges();
                 }
                 catch (DbEntityValidationException e)
                 {
                     foreach (var eve in e.EntityValidationErrors)
                     {
-                        Log.Print("Entity of type \"{0}\" in state \"{1}\" has " +
-                            "the following validation errors:",
+                        Log.Print("Entity of type \"{0}\" in state \"{1}\"" +
+                            " has the following validation errors:",
                             eve.Entry.Entity.GetType().Name, eve.Entry.State);
                         foreach (var ve in eve.ValidationErrors)
                         {

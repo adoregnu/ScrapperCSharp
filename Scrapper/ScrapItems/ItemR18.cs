@@ -26,11 +26,6 @@ namespace Scrapper.ScrapItems
         readonly Dictionary<string, string> _actorPicturs;
         readonly List<AvActorName> _actorNames;
 
-        string posterPath
-        {
-            get => $"{_spider.MediaFolder}\\{_spider.Pid}_poster";
-        }
-
         public ItemR18(SpiderBase spider) : base(spider)
         { 
             _downloadUrls = new ConcurrentDictionary<string, string>();
@@ -95,8 +90,7 @@ namespace Scrapper.ScrapItems
         /// <param name="items"></param>
         void ParseActorName(List<object> items)
         {
-            Dictionary<string, List<AvActorName>> nameDic
-                = new Dictionary<string, List<AvActorName>>();
+            List<List<AvActorName>> ll = new List<List<AvActorName>>();
             foreach (string item in items)
             {
                 var name = item.Trim();
@@ -110,15 +104,16 @@ namespace Scrapper.ScrapItems
                     name = m.Groups[1].Value.Trim();
                     var regex = new Regex(@"([\w\s]+),?");
                     foreach (Match mm in regex.Matches(m.Groups[2].Value))
-                        list.Add(new AvActorName {
+                        list.Add(new AvActorName
+                        {
                             Name = mm.Groups[1].Value.Trim()
                         });
                 }
-                list.Insert(0, new AvActorName { Name = name});
-                nameDic.Add(name, list);
+                list.Insert(0, new AvActorName { Name = name });
+                ll.Add(list);
                 _actorNames.AddRange(list);
             }
-            UpdateActor(nameDic);
+            UpdateActor2(ll);
         }
 
         void ParseActorThumb(List<object> items)
@@ -134,11 +129,11 @@ namespace Scrapper.ScrapItems
                 var file = $"{_actorPicturePath}\\{url.Split('/').Last()}";
                 if (File.Exists(file)) continue;
 
-                Interlocked.Increment(ref NumItemsToScrap);
                 var name = m.Groups[1].Value.Trim();
                 //Log.Print($"ParseActorThumb: name:{name}, url:{url}");
                 if (!url.EndsWith("nowprinting.gif"))
                 {
+                    Interlocked.Increment(ref NumItemsToScrap);
                     _downloadUrls.TryAdd(url, name);
                     _spider.Browser.Download(url);
                 }

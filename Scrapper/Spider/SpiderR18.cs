@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using HtmlAgilityPack;
+using System.Runtime.InteropServices;
 
 namespace Scrapper.Spider
 {
@@ -47,35 +49,37 @@ namespace Scrapper.Spider
         void OnMultiResult(List<object> list)
         {
             Log.Print($"OnMultiResult : {list.Count} items found!");
-            if (list == null || list.Count == 0) goto NotFound;
-
-            string exactUrl = null;
-            if (list.Count == 1)
+            if (list == null || list.Count == 0)
             {
-                exactUrl = list[0] as string;
-                goto Found;
+                Browser.StopScrapping();
+                return;
             }
-            var tmp = Pid.Split('-', '_');
-            if (tmp.Length < 2) goto NotFound;
 
-            var pattern = tmp[0].ToLower() + @"\d+";
+            HtmlDocument doc = new HtmlDocument();
+            HtmlNode a = null;
+            int matchCount = 0;
             foreach (string url in list)
             {
-                Log.Print(url);
-                var m = Regex.Match(url, pattern);
-                if (m.Success)
+                doc.LoadHtml(url);
+
+                a = doc.DocumentNode.FirstChild;
+                var node = doc.DocumentNode.SelectSingleNode("//img");
+                var alt = node.Attributes["alt"].Value;
+                if (alt.Equals(Pid, StringComparison.OrdinalIgnoreCase))
                 {
-                    exactUrl = url;
-                    goto Found;
+                    _state = 1;
+                    matchCount++;
                 }
             }
-            if (string.IsNullOrEmpty(exactUrl)) goto NotFound;
-        Found:
-            _state = 1;
-            Browser.Address = exactUrl;
-            return;
-        NotFound:
-            Browser.StopScrapping();
+            if (matchCount == 1)
+                Browser.Address = a.Attributes["href"].Value;
+            else if (matchCount > 1)
+                Log.Print("Ambiguous match! Select manually!");
+            else
+            {
+                _state = 1;
+                Log.Print($"No exact matched ID in {a.Attributes["href"].Value}");
+            }
         }
 
         public override void Navigate()
@@ -90,7 +94,7 @@ namespace Scrapper.Spider
             {
             case 0:
                 Browser.ExecJavaScript(
-                    XPath("//li[starts-with(@class,'item-list')]/a/@href"),
+                    XPath("//li[starts-with(@class,'item-list')]/a"),
                     OnMultiResult);
                 break;
             case 1:
