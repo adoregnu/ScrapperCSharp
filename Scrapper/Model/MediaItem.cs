@@ -142,6 +142,7 @@ namespace Scrapper.Model
                 .FirstOrDefault(i => i.Pid == Pid);
             RaisePropertyChanged("Info");
             RaisePropertyChanged("Actors");
+            RaisePropertyChanged("BgImagePath");
         }
 
         public void UpdateFields()

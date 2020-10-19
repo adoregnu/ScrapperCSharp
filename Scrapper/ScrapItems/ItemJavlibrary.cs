@@ -52,8 +52,8 @@ namespace Scrapper.ScrapItems
 
         void ParseCover(string url)
         {
-            var ext = url.Split('.').Last();
-            if (File.Exists($"{posterPath}.{ext}")) return;
+            //var ext = url.Split('.').Last();
+            //if (File.Exists($"{posterPath}.{ext}")) return;
 
             Interlocked.Increment(ref NumItemsToScrap);
             _spider.Browser.Download(url);

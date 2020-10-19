@@ -40,7 +40,7 @@ namespace Scrapper.Spider
         public override void Navigate()
         {
             base.Navigate();
-            Browser.Address = $"{URL}product/product_detail/{Pid}/";
+            Browser.Address = $"{URL}product/product_detail/{Pid.ToUpper()}/";
         }
 
         public override void Scrap()

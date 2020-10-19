@@ -54,31 +54,38 @@ namespace Scrapper.Spider
                 Browser.StopScrapping();
                 return;
             }
+            var apid = Pid.Split('-');
 
+            var regex = new Regex($@"{apid[0].ToLower()}\d+{apid[1]}");
             HtmlDocument doc = new HtmlDocument();
-            HtmlNode a = null;
             int matchCount = 0;
+            HtmlNode exactNode = null;
             foreach (string url in list)
             {
                 doc.LoadHtml(url);
 
-                a = doc.DocumentNode.FirstChild;
                 var node = doc.DocumentNode.SelectSingleNode("//img");
                 var alt = node.Attributes["alt"].Value;
-                if (alt.Equals(Pid, StringComparison.OrdinalIgnoreCase))
+                var a = doc.DocumentNode.SelectSingleNode("//a");
+                var m = regex.Match(a.Attributes["href"].Value);
+                //if (alt.Equals(Pid, StringComparison.OrdinalIgnoreCase))
+                if (m.Success)
                 {
+                    exactNode = a;
                     _state = 1;
                     matchCount++;
                 }
             }
             if (matchCount == 1)
-                Browser.Address = a.Attributes["href"].Value;
+            {
+                Browser.Address = exactNode.Attributes["href"].Value;
+            }
             else if (matchCount > 1)
                 Log.Print("Ambiguous match! Select manually!");
             else
             {
                 _state = 1;
-                Log.Print($"No exact matched ID in {a.Attributes["href"].Value}");
+                Log.Print($"No exact matched ID");
             }
         }
 

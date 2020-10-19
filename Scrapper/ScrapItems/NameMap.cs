@@ -26,7 +26,8 @@ namespace Scrapper.ScrapItems
         static Dictionary<string, string> _actorMap
             = new Dictionary<string, string>
             {
-                {"Oohashi Miku", "Ohashi Miku" }
+                { "Oohashi Miku", "Ohashi Miku" },
+                { "Mariya Nagai", "Maria Nagai" }
             };
 
         public static string ActorName(string name)
