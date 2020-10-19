@@ -104,7 +104,8 @@ namespace Scrapper.ScrapItems
 
                 UiServices.Invoke(delegate
                 {
-                    var entity = _context.Genres.FirstOrDefault(x => x.Name == genre);
+                    var entity = _context.Genres.FirstOrDefault(
+                        x => x.Name.Equals(genre, StringComparison.OrdinalIgnoreCase));
                     if (entity == null)
                         entity = _context.Genres.Add(new AvGenre { Name = genre });
                     _genres.Add(entity);
@@ -120,7 +121,8 @@ namespace Scrapper.ScrapItems
             UiServices.Invoke(delegate
             {
                 studio = NameMap.StudioName(studio);
-                _studio = _context.Studios.FirstOrDefault(x => x.Name == studio);
+                _studio = _context.Studios.FirstOrDefault(
+                    x => x.Name.Equals(studio, StringComparison.OrdinalIgnoreCase));
                 if (_studio == null)
                     _studio = _context.Studios.Add(new AvStudio { Name = studio });
             });

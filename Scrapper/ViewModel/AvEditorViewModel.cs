@@ -20,6 +20,32 @@ namespace Scrapper.ViewModel
         bool? _dialogResult;
 
         public AvItem Av { get; private set; }
+        AvStudio _studio;
+        public AvStudio Studio
+        {
+            get => _studio;
+            set
+            {
+                if (value != null)
+                {
+                    Set(ref _studio, value);
+                    Av.Studio = value;
+                }
+            }
+        }
+        AvSeries _series;
+        public AvSeries Series
+        {
+            get => _series;
+            set
+            {
+                if (value != null)
+                {
+                    Set(ref _series, value);
+                    Av.Series = value;
+                }
+            }
+        }
         public ObservableCollection<AvActor> Actors { get; set; }
         public ObservableCollection<AvGenre> Genres { get; set; }
 
@@ -58,9 +84,11 @@ namespace Scrapper.ViewModel
             Av = mediaItem.AvItem;
             Actors = new ObservableCollection<AvActor>(Av.Actors);
             Genres = new ObservableCollection<AvGenre>(Av.Genres);
+            Studio = Av.Studio;
+            Series = Av.Series;
 
-            CmdSetStudio = new RelayCommand(() => Av.Studio = SelectedStudio);
-            CmdSetSeries = new RelayCommand(() => Av.Series = SelectedSeries);
+            CmdSetStudio = new RelayCommand(() => Studio = SelectedStudio);
+            CmdSetSeries = new RelayCommand(() => Series = SelectedSeries);
             CmdAddActor = new RelayCommand(() => OnAddActor());
             CmdRemoveActor = new RelayCommand(() => OnRemoveActor());
             CmdAddGenre = new RelayCommand(() => OnAddGnere());

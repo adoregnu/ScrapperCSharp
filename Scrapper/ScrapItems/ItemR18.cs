@@ -143,7 +143,7 @@ namespace Scrapper.ScrapItems
         void ParseCover(string name, string url)
         {
             var ext = url.Split('.').Last();
-            if (File.Exists($"{posterPath}.{ext}")) return;
+            //if (File.Exists($"{posterPath}.{ext}")) return;
 
             Interlocked.Increment(ref NumItemsToScrap);
             _downloadUrls.TryAdd(url, name);

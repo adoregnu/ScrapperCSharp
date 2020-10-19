@@ -23,10 +23,12 @@
                 </Grid.Resources>
                 <Grid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem
-                            Header="Delete"
-                            Command="{Binding Data.CmdDeleteActor,
-                                Source={StaticResource ViewModel}}"/>
+                        <MenuItem Header="Delete"
+                                  Command="{Binding Data.CmdDeleteActor,
+                                    Source={StaticResource ViewModel}}"/>
+                        <MenuItem Header="Change Pciture"
+                                  Command="{Binding Data.CmdChangePicture,
+                                    Source={StaticResource ViewModel}}"/>
                     </ContextMenu>
                 </Grid.ContextMenu>
                 <Image HorizontalAlignment="Center" Source="{Binding .,

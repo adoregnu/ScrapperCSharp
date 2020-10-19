@@ -88,18 +88,21 @@ namespace Scrapper.ViewModel
 
         public ICommand CmdAddNewActor { get; private set; }
         public ICommand CmdDeleteActor { get; private set; }
+        public ICommand CmdChangePicture { get; private set; }
         public ICommand CmdBrowsePicture { get; private set; }
         public ICommand CmdAddNewName { get; private set; }
         public ICommand CmdDoubleClick { get; private set; }
         public ICommand CmdActorAlphabet { get; private set; }
+
         readonly IDialogService _dialogService;
 
         public ActorEditorViewModel(IDialogService dlgSvc)
         {
             _dialogService = dlgSvc;
-            CmdBrowsePicture = new RelayCommand(() => OnFileBrowse());
+            CmdBrowsePicture = new RelayCommand(() => PicturePath = ChoosePicture());
             CmdAddNewActor = new RelayCommand(() => OnAddNewActor());
             CmdDeleteActor = new RelayCommand(() => OnDeleteActor());
+            CmdChangePicture = new RelayCommand(() => OnChangePicture());
             CmdAddNewName = new RelayCommand(() => OnAddNewName());
             CmdDoubleClick = new RelayCommand(() => OnDoubleClicked());
             CmdActorAlphabet = new RelayCommand<object>((p) => OnActorAlphabet(p));
@@ -107,8 +110,8 @@ namespace Scrapper.ViewModel
             OnActorAlphabet('A');
         }
 
-        void OnFileBrowse()
-        {
+        string ChoosePicture()
+        { 
             var settings = new OpenFileDialogSettings
             {
                 Title = "Select Actor Pciture",
@@ -118,26 +121,36 @@ namespace Scrapper.ViewModel
             };
 
             bool? success = _dialogService.ShowOpenFileDialog(this, settings);
-            if (success == true)
+            if (success != true)
+                return null;
+
+            try
             {
-                try
-                {
-                    var fileName = Path.GetFileName(settings.FileName);
-                    File.Copy(settings.FileName,
-                        $"{App.CurrentPath}\\db\\{fileName}", true);
-                    PicturePath = settings.FileName;
-                }
-                catch (Exception ex)
-                {
-                    Log.Print(ex.Message);
-                }
+                var fileName = Path.GetFileName(settings.FileName);
+                File.Copy(settings.FileName, $"{App.CurrentPath}\\db\\{fileName}", true);
+                return settings.FileName;
             }
+            catch (Exception ex)
+            {
+                Log.Print(ex.Message);
+            }
+            return null;
         }
 
         void OnAddNewActor()
         {
-            if (string.IsNullOrEmpty(ActorName))
+            if (string.IsNullOrEmpty(ActorName) ||
+                string.IsNullOrEmpty(PicturePath))
+            {
+                Log.Print("Actor name or picture path is empty!");
                 return;
+            }
+
+            if (App.DbContext.ActorNames.Any(i => i.Name == ActorName))
+            {
+                Log.Print($"{NewName} is already exists.");
+                return;
+            }
 
             var actor = new AvActor
             {
@@ -168,6 +181,17 @@ namespace Scrapper.ViewModel
 
             SelectedActor = null;
             NamesOfActor = null;
+        }
+
+        void OnChangePicture()
+        {
+            var file = ChoosePicture();
+            if (file == null)
+                return;
+
+            SelectedActor.PicturePath = Path.GetFileName(file);
+            App.DbContext.SaveChanges();
+            RaisePropertyChanged("Actors");
         }
 
         void OnAddNewName()

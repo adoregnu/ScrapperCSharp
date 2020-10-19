@@ -169,8 +169,19 @@ namespace Scrapper.Model
             {
                 BgImagePath = fname;
             }
+            else if (fname.Contains("-fanart."))
+            {
+                var ext = Path.GetExtension(fname);
+                var head = path.Substring(0, path.LastIndexOf('-'));
+                var target = $"{head}_poster{ext}";
+                if (!File.Exists(target))
+                {
+                    File.Move(path, target);
+                    BgImagePath = Path.GetFileName(target);
+                }
+            }
             else if (string.IsNullOrEmpty(BgImagePath) && fname.Contains("_thumbnail."))
-            { 
+            {
                 BgImagePath = fname;
             }
             else if (fname.EndsWith(".downloaded"))

@@ -41,7 +41,8 @@ namespace Scrapper.ScrapItems
                 {
                     if (span.Attributes["class"].Value.Contains("icn_")) continue;
                     var name = span.InnerText.Trim().Split(' ').Reverse();
-                    l.Add(new AvActorName { Name = string.Join(" ", name)});
+                    var aname = NameMap.ActorName(string.Join(" ", name));
+                    l.Add(new AvActorName { Name = aname});
                 }
                 if (l.Count > 0) ll.Add(l);
             }
