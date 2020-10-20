@@ -56,29 +56,22 @@ namespace Scrapper.Spider
             }
             var apid = Pid.Split('-');
 
-            var regex = new Regex($@"{apid[0].ToLower()}\d+{apid[1]}");
-            HtmlDocument doc = new HtmlDocument();
+            var regex = new Regex($@"{apid[0].ToLower()}\d*{apid[1]}");
             int matchCount = 0;
-            HtmlNode exactNode = null;
+            string exactUrl = null;
             foreach (string url in list)
             {
-                doc.LoadHtml(url);
-
-                var node = doc.DocumentNode.SelectSingleNode("//img");
-                var alt = node.Attributes["alt"].Value;
-                var a = doc.DocumentNode.SelectSingleNode("//a");
-                var m = regex.Match(a.Attributes["href"].Value);
-                //if (alt.Equals(Pid, StringComparison.OrdinalIgnoreCase))
+                var m = regex.Match(url);
                 if (m.Success)
                 {
-                    exactNode = a;
+                    exactUrl = url;
                     _state = 1;
                     matchCount++;
                 }
             }
             if (matchCount == 1)
             {
-                Browser.Address = exactNode.Attributes["href"].Value;
+                Browser.Address = exactUrl;
             }
             else if (matchCount > 1)
                 Log.Print("Ambiguous match! Select manually!");
@@ -101,7 +94,7 @@ namespace Scrapper.Spider
             {
             case 0:
                 Browser.ExecJavaScript(
-                    XPath("//li[starts-with(@class,'item-list')]/a"),
+                    XPath("//li[starts-with(@class,'item-list')]/a/@href"),
                     OnMultiResult);
                 break;
             case 1:

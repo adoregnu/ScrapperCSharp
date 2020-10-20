@@ -167,6 +167,7 @@ namespace Scrapper.ScrapItems
                         {
                             dbActor.Names.Add(aname);
                         }
+                        aname.Actor = dbActor;
                     }
                     _actors.Add(dbActor);
                 }
