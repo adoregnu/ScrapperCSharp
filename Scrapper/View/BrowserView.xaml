@@ -27,6 +27,13 @@
                     Fill="{Binding Path=Foreground, RelativeSource=
                         {RelativeSource AncestorType={x:Type Button}}}" />
             </Button>
+            <Button Style="{DynamicResource ModernButtonStyle2}"
+                    Command="{Binding CmdBack}">
+                <Path Stretch="Uniform"
+                    Data="{Binding Source={StaticResource PreviousIcon}, Path=Data}"
+                    Fill="{Binding Path=Foreground, RelativeSource=
+                        {RelativeSource AncestorType={x:Type Button}}}" />
+            </Button>
             <StackPanel Orientation="Horizontal" Visibility="{Binding SelectedSpider,
                     Converter={StaticResource BoardVisibilityConverter},
                     ConverterParameter=sehuatang}">

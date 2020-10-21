@@ -140,6 +140,7 @@ namespace Scrapper.ViewModel
 
         void UpdateList()
         {
+            MediaList.ClearMedia();
             if (SelectedType == "Actor")
             {
                 InitActorList();

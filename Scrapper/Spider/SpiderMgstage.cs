@@ -26,14 +26,16 @@ namespace Scrapper.Spider
             };
         }
 
-        public override Cookie CreateCookie()
+        public override List<Cookie> CreateCookie()
         {
-            return new Cookie
-            {
-                Name = "adc",
-                Value = "1",
-                Domain = "mgstage.com",
-                Path = "/"
+            return new List<Cookie> {
+                new Cookie
+                {
+                    Name = "adc",
+                    Value = "1",
+                    Domain = "mgstage.com",
+                    Path = "/"
+                }
             };
         }
 

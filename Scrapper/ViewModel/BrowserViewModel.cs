@@ -71,18 +71,21 @@ namespace Scrapper.ViewModel
         }
 
         public ICommand CmdReloadUrl { get; private set; }
+        public ICommand CmdBack { get; private set; }
         public BrowserViewModel()
         {
             CmdStart = new RelayCommand(() => OnStartScrapping(true));
             CmdStop = new RelayCommand(() => StopScrapping(true));
             CmdReloadUrl = new RelayCommand(() => WebBrowser.Reload());
+            CmdBack = new RelayCommand(() => WebBrowser.Back());
 
             Spiders = new List<SpiderBase>
             {
                 new SpiderSehuatang(this),
                 new SpiderR18(this),
                 new SpiderJavlibrary(this),
-                new SpiderMgstage(this)
+                new SpiderMgstage(this),
+                new SpiderJavDb(this)
             };
             _selectedSpider = Spiders[0];
             Title = Address = _selectedSpider.URL;

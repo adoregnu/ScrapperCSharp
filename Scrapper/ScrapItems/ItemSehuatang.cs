@@ -21,6 +21,7 @@ namespace Scrapper.ScrapItems
         string _pid = null;
         string _outPath = null;
         bool _bStop = false;
+        bool _bOverwrite = false;
         Dictionary<string, int> _images = null;
 
         public ItemSehuatang(SpiderBase spider) : base(spider)
@@ -86,11 +87,13 @@ namespace Scrapper.ScrapItems
             {
                 Directory.CreateDirectory(_outPath);
             }
-            else
+            else if (!_bOverwrite)
             {
                 _bStop = true;
                 Log.Print($"Already downloaded! {_outPath}");
+                return;
             }
+            Interlocked.Increment(ref NumItemsToScrap);
         }
 
         void ParseImage(List<object> items)
@@ -140,7 +143,7 @@ namespace Scrapper.ScrapItems
                 }
                 else if (name == "files")
                 {
-                    Interlocked.Increment(ref NumItemsToScrap);
+                    //Interlocked.Increment(ref NumItemsToScrap);
                 }
             }
             CheckCompleted(false);

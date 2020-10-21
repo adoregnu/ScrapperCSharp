@@ -154,7 +154,6 @@ namespace Scrapper.ScrapItems
                         .Include("Actor")
                         .FirstOrDefault();
                     if (aan != null) break;
-
                 }
 
                 if (aan != null)

@@ -19,7 +19,6 @@ using FileSystemModels.Models.FSItems.Base;
 using Scrapper.Extension;
 using Scrapper.Model;
 using Scrapper.Tasks;
-using Scrapper.ViewModel.MediaPlayer;
 
 namespace Scrapper.ViewModel
 {
@@ -63,7 +62,7 @@ namespace Scrapper.ViewModel
         public ICommand CmdEditItem { get; set; }
         public ICommand CmdDoubleClick { get; set; }
 
-        IMediaListNotifier _mediaListNotifier;
+        readonly IMediaListNotifier _mediaListNotifier;
         public MediaListViewModel(IMediaListNotifier notifier)
         {
             _mediaListNotifier = notifier;

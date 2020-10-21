@@ -32,14 +32,17 @@ namespace Scrapper.Spider
                 { "actor",  XPath("//*[@id='video_cast']//*[@class='cast']") },
             };
         }
-        public override Cookie CreateCookie()
+        public override List<Cookie> CreateCookie()
         {
-            return new Cookie
+            return new List<Cookie>
             {
-                Name = "over18",
-                Value = "18",
-                Domain = "www.javlibrary.com",
-                Path = "/"
+                new Cookie
+                {
+                    Name = "over18",
+                    Value = "18",
+                    Domain = "www.javlibrary.com",
+                    Path = "/"
+                }
             };
         }
 

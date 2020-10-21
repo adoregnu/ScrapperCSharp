@@ -59,17 +59,20 @@ namespace Scrapper.Spider
             _state = 0;
         }
 
-        public virtual Cookie CreateCookie() { return null; }
+        public virtual List<Cookie> CreateCookie() { return null; }
 
         bool _isCookieSet = false;
         public void SetCookies()
         {
             if (_isCookieSet) return;
-            var cookie = CreateCookie();
-            if (cookie == null) return;
+            var cookies = CreateCookie();
+            if (cookies == null) return;
 
             var cookieManager = Cef.GetGlobalCookieManager();
-            cookieManager.SetCookieAsync(URL, cookie);
+            foreach (var cookie in cookies)
+            {
+                cookieManager.SetCookieAsync(URL, cookie);
+            }
             _isCookieSet = true;
         }
 
