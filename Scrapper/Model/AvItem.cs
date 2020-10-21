@@ -104,9 +104,9 @@ namespace Scrapper.Model
         [Required]
         public string Pid { get; set; }
 
-        [MaxLength(512)]
+        [MaxLength(1024)]
         public string Title { get; set; }
-        [MaxLength(512)]
+        [MaxLength(1024)]
         public string OrigTitle { get; set; }
 
         public bool IsCensored { get; set; }
@@ -118,7 +118,7 @@ namespace Scrapper.Model
         [Required]
         public string Path { get; set; }
 
-        [MaxLength(1024)]
+        [MaxLength(2048)]
         public string Plot { get; set; }
         public float Rating { get; set; }
         public virtual ICollection<AvGenre> Genres { get; set; }

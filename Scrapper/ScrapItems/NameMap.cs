@@ -13,7 +13,8 @@ namespace Scrapper.ScrapItems
             {
                 { "scute", "S-Cute"},
                 { "sodcreate", "SOD Create"},
-                { "Tameike Goro-", "Tameike Goro" }
+                { "Tameike Goro-", "Tameike Goro" },
+                { "Das !", "Das"}
             };
         public static string StudioName(string name)
         {
@@ -27,7 +28,9 @@ namespace Scrapper.ScrapItems
             = new Dictionary<string, string>
             {
                 { "Oohashi Miku", "Ohashi Miku" },
-                { "Mariya Nagai", "Maria Nagai" }
+                { "Mariya Nagai", "Maria Nagai" },
+                { "Yui Ooba", "Yui Oba" },
+                { "Hibiki Ootsuki", "Hibiki Otsuki"}
             };
 
         public static string ActorName(string name)
