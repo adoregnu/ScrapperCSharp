@@ -58,7 +58,7 @@ namespace Scrapper.Spider
             }
             var apid = Pid.Split('-');
 
-            var regex = new Regex($@"{apid[0].ToLower()}\d*{apid[1]}");
+            var regex = new Regex($@"id=(h_)?(\d+)?{apid[0].ToLower()}\d*{apid[1]}");
             int matchCount = 0;
             string exactUrl = null;
             foreach (string url in list)
@@ -79,7 +79,7 @@ namespace Scrapper.Spider
                 Log.Print("Ambiguous match! Select manually!");
             else
             {
-                _state = 1;
+                Browser.StopScrapping();
                 Log.Print($"No exact matched ID");
             }
         }

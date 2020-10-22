@@ -184,7 +184,7 @@ namespace Scrapper.ScrapItems
                 }
                 else if (name == "title")
                 {
-                    _avItem.Title = (items[0] as string).Trim();
+                     UpdateTitle(items[0] as string);
                 }
                 else if (name == "set")
                 {

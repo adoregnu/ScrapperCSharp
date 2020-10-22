@@ -12,6 +12,8 @@ using CefSharp;
 
 using Scrapper.Model;
 using Scrapper.Spider;
+using HtmlAgilityPack;
+
 namespace Scrapper.ScrapItems
 {
     abstract class ItemBase
@@ -93,15 +95,21 @@ namespace Scrapper.ScrapItems
             }
         }
 
+        protected void UpdateTitle(string title)
+        {
+            title = HtmlEntity.DeEntitize(title.Trim());
+            _avItem.Title = title;
+        }
+
         List<AvGenre> _genres;
         protected void UpdateGenre(List<object> items)
         {
             _genres = new List<AvGenre>();
             foreach (string item in items)
             {
-                var genre = item.Trim();
-                if (string.IsNullOrEmpty(genre)) continue;
+                if (string.IsNullOrEmpty(item)) continue;
 
+                var genre = HtmlEntity.DeEntitize(item.Trim());
                 UiServices.Invoke(delegate
                 {
                     var entity = _context.Genres.FirstOrDefault(

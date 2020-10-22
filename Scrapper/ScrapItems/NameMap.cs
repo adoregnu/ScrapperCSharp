@@ -14,7 +14,8 @@ namespace Scrapper.ScrapItems
                 { "scute", "S-Cute"},
                 { "sodcreate", "SOD Create"},
                 { "Tameike Goro-", "Tameike Goro" },
-                { "Das !", "Das"}
+                { "Das !", "Das"},
+                { "Bi", "Chijo Heaven"}
             };
         public static string StudioName(string name)
         {
@@ -30,6 +31,7 @@ namespace Scrapper.ScrapItems
                 { "Oohashi Miku", "Ohashi Miku" },
                 { "Mariya Nagai", "Maria Nagai" },
                 { "Yui Ooba", "Yui Oba" },
+                { "Yuu Shinoda", "Yu Shinoda" },
                 { "Hibiki Ootsuki", "Hibiki Otsuki"}
             };
 

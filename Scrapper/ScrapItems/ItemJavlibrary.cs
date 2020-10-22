@@ -80,7 +80,8 @@ namespace Scrapper.ScrapItems
                     var title = (items[0] as string).Trim();
                     if (title.StartsWith(_spider.Pid, StringComparison.OrdinalIgnoreCase))
                         title = title.Substring(_spider.Pid.Length+1);
-                    _avItem.Title = title;
+
+                    UpdateTitle(title);
                 }
                 else if (name == "date")
                     ParseDate(items[0] as string);
