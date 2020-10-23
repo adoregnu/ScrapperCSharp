@@ -12,6 +12,7 @@ namespace Scrapper.Spider
 {
     class SpiderJavDb : SpiderBase
     {
+        Dictionary<string, string> _xpathDic;
         public SpiderJavDb(BrowserViewModel browser) : base(browser)
         { 
             Name = "JavDB";
@@ -96,7 +97,7 @@ namespace Scrapper.Spider
                     ParsePage(new ItemJavDb(this)
                     {
                         NumItemsToScrap = _xpathDic.Count
-                    });
+                    }, _xpathDic);
                     _state = 2;
                     break;
             }

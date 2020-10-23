@@ -88,6 +88,7 @@ namespace Scrapper.Model
         [Key]
         [Autoincrement]
         public int Id { get; set; }
+        [MaxLength(512)]
         public string Name { get; set; }
         public override string ToString()
         {

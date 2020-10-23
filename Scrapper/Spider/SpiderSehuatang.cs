@@ -23,6 +23,7 @@ namespace Scrapper.Spider
         string _currentPage = null;
         string _selectedBoard = "censored";
         List<object> _articlesInPage = null;
+        Dictionary<string, string> _xpathDic;
 
         public int NumPage = 1;
         public List<string> Boards;

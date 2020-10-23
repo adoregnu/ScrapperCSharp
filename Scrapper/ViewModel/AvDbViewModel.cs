@@ -81,6 +81,7 @@ namespace Scrapper.ViewModel
             {
                 "Actor",
                 "Studio",
+                "Series",
                 "Genre",
                 "NoActor"
             };
@@ -138,6 +139,14 @@ namespace Scrapper.ViewModel
                 .ToList();
         }
 
+        void InitSeriesList()
+        {
+            ItemsSource = _context.Series
+                .OrderBy(s => s.Name)
+                .Select(s => s.Name)
+                .ToList();
+        }
+
         void UpdateList()
         {
             MediaList.ClearMedia();
@@ -148,6 +157,10 @@ namespace Scrapper.ViewModel
             else if (SelectedType == "Studio")
             {
                 InitStudioList();
+            }
+            else if (SelectedType == "Series")
+            {
+                InitSeriesList();
             }
             else if (SelectedType == "Genre")
             {
@@ -191,6 +204,16 @@ namespace Scrapper.ViewModel
             {
                 var items = _context.Items
                     .Where(x => x.Studio.Name == SelectedItem)
+                    .ToList();
+                foreach (var item in items)
+                {
+                    MediaList.AddMedia(item.Path);
+                }
+            }
+            else if (SelectedType == "Series")
+            {
+                var items = _context.Items
+                    .Where(x => x.Series.Name == SelectedItem)
                     .ToList();
                 foreach (var item in items)
                 {

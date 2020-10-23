@@ -14,6 +14,7 @@ namespace Scrapper.Spider
 {
     class SpiderR18 : SpiderBase
     {
+        Dictionary<string, string> _xpathDic;
         public SpiderR18(BrowserViewModel browser) : base(browser)
         {
             Name = "R18";
@@ -24,7 +25,7 @@ namespace Scrapper.Spider
                 { "releasedate", XPath("//dt[contains(.,'Release Date:')]/following-sibling::dd[1]/text()") },
                 { "runtime",  XPath("//dt[contains(.,'Runtime:')]/following-sibling::dd[1]/text()") },
                 { "director", XPath("//dt[contains(.,'Director:')]/following-sibling::dd[1]/text()") },
-                { "set",      XPath("//dt[contains(.,'Series:')]/following-sibling::dd[1]/a") },
+                { "set_url",  XPath("//dt[contains(.,'Series:')]/following-sibling::dd[1]/a/@href") },
                 { "studio",   XPath("//dt[contains(.,'Studio:')]/following-sibling::dd[1]/a/text()") },
                 { "label",    XPath("//dt[contains(.,'Label:')]/following-sibling::dd[1]/text()") },
                 { "actor",    XPath("//label[contains(.,'Actress(es):')]/following-sibling::div[1]/span/a/span/text()") },
@@ -90,22 +91,35 @@ namespace Scrapper.Spider
             Browser.Address = $"{URL}common/search/searchword={Pid}/";
         }
 
+        ItemR18 _item = null;
         public override void Scrap()
         {
             switch (_state)
             {
-            case 0:
-                Browser.ExecJavaScript(
-                    XPath("//li[starts-with(@class,'item-list')]/a/@href"),
-                    OnMultiResult);
-                break;
-            case 1:
-                ParsePage(new ItemR18(this)
-                {
-                    NumItemsToScrap = _xpathDic.Count
-                });
-                _state = 2;
-                break;
+                case 0:
+                    Browser.ExecJavaScript(
+                        XPath("//li[starts-with(@class,'item-list')]/a/@href"),
+                        OnMultiResult);
+                    break;
+                case 1:
+                    _item = new ItemR18(this)
+                    {
+                        NumItemsToScrap = _xpathDic.Count
+                    };
+                    ParsePage(_item, _xpathDic);
+                    _state = 2;
+                    break;
+                case 2:
+                    if (_linkName != "series") break;
+                    Dictionary<string, string> seriesXpath = new Dictionary<string, string>
+                    {
+                        { "series", XPath("//div[@class='cmn-ttl-tabMain01']/h1/text()") } 
+                    };
+
+                    _item.NumItemsToScrap = seriesXpath.Count; 
+                    ParsePage(_item, seriesXpath);
+                    _state = 3;
+                    break;
             }
         }
     }

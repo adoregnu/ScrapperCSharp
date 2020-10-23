@@ -13,6 +13,7 @@ using CefSharp;
 using Scrapper.Model;
 using Scrapper.Spider;
 using HtmlAgilityPack;
+using FFmpeg.AutoGen;
 
 namespace Scrapper.ScrapItems
 {
@@ -23,7 +24,17 @@ namespace Scrapper.ScrapItems
         readonly protected SpiderBase _spider;
         readonly protected AvDbContext _context;
 
-        public int NumItemsToScrap;
+        protected int _numItemsToScrap = 0;
+        public int NumItemsToScrap
+        {
+            get => _numItemsToScrap;
+            set
+            {
+                _numItemsToScrap = value;
+                _numScrapedItem = 0;
+                _numValidItems = 0;
+            }
+        }
 
         protected int _numScrapedItem = 0;
         protected int _numValidItems = 0;
@@ -33,6 +44,9 @@ namespace Scrapper.ScrapItems
         {
             get => $"{_spider.MediaFolder}\\{_spider.Pid}_poster";
         }
+
+        protected List<Tuple<string, string>> _links
+            = new List<Tuple<string, string>>();
 
         public ItemBase(SpiderBase spider)
         {
@@ -50,7 +64,7 @@ namespace Scrapper.ScrapItems
             dh.OnDownloadUpdatedFired += OnDownloadUpdated;
         }
 
-        protected abstract void OnBeforeDownload(object sender, DownloadItem e);
+        protected virtual void OnBeforeDownload(object sender, DownloadItem e) { }
         protected virtual void OnDownloadUpdated(object sender, DownloadItem e)
         {
             if (e.IsComplete)
@@ -71,16 +85,27 @@ namespace Scrapper.ScrapItems
         protected void CheckCompleted()
         {
             Interlocked.Increment(ref _numScrapedItem);
-            Log.Print($"{_numScrapedItem}/{NumItemsToScrap}");
-            if (_numScrapedItem == NumItemsToScrap)
+            Log.Print($"items : {_numScrapedItem}/{NumItemsToScrap}" +
+                $", Link Count:{_links.Count}");
+            if (_numScrapedItem != NumItemsToScrap)
+                return;
+
+            lock (_links)
             {
-                Log.Print($"Num valid items {_numValidItems}");
-                if (_numValidItems > 0) lock (_context)
+                Log.Print($"Num valid items: {_numValidItems}");
+                if (_links.Count > 0)
                 {
-                    UdpateAvItem();
+                    var link = _links[0];
+                    _links.RemoveAt(0);
+                    _spider.Navigate(link.Item1, link.Item2);
                 }
-                _spider.OnScrapCompleted(_numValidItems > 0);
-                Clear();
+                else
+                {
+                    if (_numValidItems > 0)
+                        UdpateAvItem();
+                    _spider.OnScrapCompleted(_numValidItems > 0);
+                    Clear();
+                }
             }
         }
 
@@ -142,6 +167,7 @@ namespace Scrapper.ScrapItems
             if (string.IsNullOrEmpty(series)) return;
             UiServices.Invoke(delegate
             {
+                var seires = HtmlEntity.DeEntitize(series);
                 _series = _context.Series.FirstOrDefault(x => x.Name == series);
                 if (_series == null)
                     _series = _context.Series.Add(new AvSeries { Name = series });
@@ -207,12 +233,13 @@ namespace Scrapper.ScrapItems
                     .Include("Studio")
                     .Include("Actors")
                     .Include("Genres")
+                    .Include("Series")
                     .FirstOrDefault(i => i.Pid == _avItem.Pid);
 
                 if (item != null) _avItem = item;
 
-                //if (item == null || _series != null)
-                //    _avItem.Series = _series;
+                if (item == null || (_series != null && item.Series == null))
+                    _avItem.Series = _series;
                 if (item == null || (_studio != null && item.Studio == null))
                     _avItem.Studio = _studio;
                 if (item == null || (_actors != null && item.Actors.Count == 0))

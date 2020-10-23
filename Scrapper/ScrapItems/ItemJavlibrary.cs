@@ -55,7 +55,7 @@ namespace Scrapper.ScrapItems
             //var ext = url.Split('.').Last();
             //if (File.Exists($"{posterPath}.{ext}")) return;
 
-            Interlocked.Increment(ref NumItemsToScrap);
+            Interlocked.Increment(ref _numItemsToScrap);
             _spider.Browser.Download(url);
         }
 

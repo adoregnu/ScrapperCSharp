@@ -93,7 +93,7 @@ namespace Scrapper.ScrapItems
                 Log.Print($"Already downloaded! {_outPath}");
                 return;
             }
-            Interlocked.Increment(ref NumItemsToScrap);
+            Interlocked.Increment(ref _numItemsToScrap);
         }
 
         void ParseImage(List<object> items)
@@ -103,7 +103,7 @@ namespace Scrapper.ScrapItems
             foreach (string f in items)
             {
                 _images.Add(f.Split('/').Last(), i);
-                Interlocked.Increment(ref NumItemsToScrap);
+                Interlocked.Increment(ref _numItemsToScrap);
                 if (!f.StartsWith("http"))
                 {
                     _spider.Browser.Download(_spider.URL + f);

@@ -28,9 +28,8 @@ namespace Scrapper.Spider
             get => Browser.SelectedMedia.MediaFolder;
             protected set { _ = value; }
         }
-
-        protected Dictionary<string, string> _xpathDic;
         protected int _state = -1;
+        protected string _linkName;
 
         public SpiderBase(BrowserViewModel br)
         {
@@ -59,6 +58,13 @@ namespace Scrapper.Spider
             _state = 0;
         }
 
+        public virtual void Navigate(string name, string url)
+        {
+            _linkName = name;
+            Browser.Address = url;
+        }
+
+
         public virtual List<Cookie> CreateCookie() { return null; }
 
         bool _isCookieSet = false;
@@ -81,13 +87,13 @@ namespace Scrapper.Spider
             Browser.StopScrapping();
         }
 
-        protected void ParsePage(IScrapItem item)
+        protected void ParsePage(IScrapItem item, Dictionary<string, string> dic)
         {
-            foreach (var xpath in _xpathDic)
+            foreach (var xpath in dic )
             {
                 Browser.ExecJavaScript(xpath.Value, item, xpath.Key);
             }
-            _state = -1;
+            _linkName = null;
         }
 
         public abstract void Scrap();

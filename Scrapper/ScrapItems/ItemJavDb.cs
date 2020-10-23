@@ -36,7 +36,7 @@ namespace Scrapper.ScrapItems
                 if (name == "cover")
                 {
                     var url = items[0] as string;
-                    Interlocked.Increment(ref NumItemsToScrap);
+                    Interlocked.Increment(ref _numItemsToScrap);
                     _spider.Browser.Download(url);
                 }
             }

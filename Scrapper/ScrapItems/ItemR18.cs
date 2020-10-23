@@ -133,7 +133,7 @@ namespace Scrapper.ScrapItems
                 //Log.Print($"ParseActorThumb: name:{name}, url:{url}");
                 if (!url.EndsWith("nowprinting.gif"))
                 {
-                    Interlocked.Increment(ref NumItemsToScrap);
+                    Interlocked.Increment(ref _numItemsToScrap);
                     _downloadUrls.TryAdd(url, name);
                     _spider.Browser.Download(url);
                 }
@@ -143,9 +143,9 @@ namespace Scrapper.ScrapItems
         void ParseCover(string name, string url)
         {
             var ext = url.Split('.').Last();
-            //if (File.Exists($"{posterPath}.{ext}")) return;
+            if (File.Exists($"{posterPath}.{ext}")) return;
 
-            Interlocked.Increment(ref NumItemsToScrap);
+            Interlocked.Increment(ref _numItemsToScrap);
             _downloadUrls.TryAdd(url, name);
             _spider.Browser.Download(url);
         }
@@ -184,12 +184,17 @@ namespace Scrapper.ScrapItems
                 }
                 else if (name == "title")
                 {
-                     UpdateTitle(items[0] as string);
+                    UpdateTitle(items[0] as string);
                 }
-                else if (name == "set")
+                else if (name == "set_url")
                 {
-                    //var series = (items[0] as string).Trim();
-                    //UpdateSeries(series);
+                    var url = (items[0] as string).Trim();
+                    if (!string.IsNullOrEmpty(url))
+                        _links.Add(new Tuple<string, string>("series", url));
+                }
+                else if (name == "series")
+                {
+                    UpdateSeries((items[0] as string).Trim());
                 }
                 else if (name == "plot")
                 {

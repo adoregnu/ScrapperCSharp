@@ -44,7 +44,7 @@ namespace Scrapper.ScrapItems
                 {
                     _spider.Browser.Download(url);
                 }
-                Interlocked.Increment(ref NumItemsToScrap);
+                Interlocked.Increment(ref _numItemsToScrap);
             }
             else if (name == "studio")
             {
