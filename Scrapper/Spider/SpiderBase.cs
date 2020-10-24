@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 using Scriban;
 
@@ -12,6 +13,8 @@ using Scrapper.ViewModel;
 using Scrapper.ScrapItems;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.CommandWpf;
+using Scrapper.Model;
 
 namespace Scrapper.Spider
 {
@@ -31,9 +34,19 @@ namespace Scrapper.Spider
         protected int _state = -1;
         protected string _linkName;
 
+        public ICommand CmdScrap { get; set; }
+
         public SpiderBase(BrowserViewModel br)
         {
             Browser = br;
+            CmdScrap = new RelayCommand<object>((p) => {
+                Browser.SelectedSpider = this;
+                if (p is IList<object> items && items.Count > 0)
+                {
+                    Browser.StartBatchedScrapping(
+                        items.Cast<MediaItem>().ToList());
+                }
+            });
         }
 
         string XPath(string xpath, string jsPath)

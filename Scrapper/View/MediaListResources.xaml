@@ -59,13 +59,23 @@
                     Data="{Binding RelativeSource={RelativeSource FindAncestor,
                         AncestorType={x:Type ListBox}}}"/>
             </Grid.Resources>
+
             <Grid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Scrap" 
-                        Command="{Binding Data.CmdScrapItem,
-                            Source={StaticResource VmContext}}"
-                        CommandParameter="{Binding Data.SelectedItems,
-                            Source={StaticResource CtrlContext}}">
+                    <MenuItem
+                        Header="Scrap"
+                        ItemsSource="{Binding Data.SpiderList,
+                            Source={StaticResource VmContext}}">
+                        <MenuItem.ItemTemplate>
+                            <DataTemplate>
+                                <MenuItem
+                                    Header="{Binding Name}"
+                                    Command="{Binding CmdScrap}"
+                                    CommandParameter="{Binding Data.SelectedItems,
+                                        Source={StaticResource CtrlContext}}">
+                                </MenuItem>
+                            </DataTemplate>
+                        </MenuItem.ItemTemplate>
                     </MenuItem>
 
                     <MenuItem Header="Move" 

@@ -20,6 +20,7 @@ namespace Scrapper.ScrapItems
                 { "scute", "S-Cute"},
                 { "sodcreate", "SOD Create"},
                 { "Tameike Goro-", "Tameike Goro" },
+                { "Kira ★ Kira", "kira*kira"},
                 { "Das !", "Das"},
                 { "Bi", "Chijo Heaven"},
             };

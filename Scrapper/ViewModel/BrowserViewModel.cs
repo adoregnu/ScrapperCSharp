@@ -21,6 +21,10 @@ using System.Windows.Input;
 
 namespace Scrapper.ViewModel
 {
+    using SpiderEnum = IEnumerable<SpiderBase>;
+    using CefConsoleMsg = NotificationMessage<ConsoleMessageEventArgs>;
+    using CefStatusMsg = NotificationMessage<StatusMessageEventArgs>;
+
     partial class BrowserViewModel : Pane
     {
         bool _bStarted = false;
@@ -105,8 +109,8 @@ namespace Scrapper.ViewModel
                         //_bStarted = false;
                     }
                 });
-            MessengerInstance.Register<NotificationMessage<List<MediaItem>>>(
-                this, (msg) => StartBatchedScrapping(msg.Content));
+ 
+            MessengerInstance.Send(new NotificationMessage<SpiderEnum>(Spiders, ""));
         }
 
         public void StartBatchedScrapping(List<MediaItem> mediaItems = null)
@@ -170,11 +174,11 @@ namespace Scrapper.ViewModel
 
             WebBrowser.ConsoleMessage += (s, e) =>
             {
-                MessengerInstance.Send(new NotificationMessage<ConsoleMessageEventArgs>(e, "log"));
+                MessengerInstance.Send(new CefConsoleMsg(e, "log"));
             };
             WebBrowser.StatusMessage += (s, e) =>
             { 
-                MessengerInstance.Send(new NotificationMessage<StatusMessageEventArgs>(e, "log"));
+                MessengerInstance.Send(new CefStatusMsg(e, "log"));
             };
 
             WebBrowser.LoadingStateChanged += OnStateChanged;

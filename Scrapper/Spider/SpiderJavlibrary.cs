@@ -18,7 +18,7 @@ namespace Scrapper.Spider
         Dictionary<string, string> _xpathDic;
         public SpiderJavlibrary(BrowserViewModel browser) : base(browser)
         {
-            Name = "javlibrary";
+            Name = "Javlibrary";
             URL = "https://www.javlibrary.com/en/";
             _xpathDic = new Dictionary<string, string>
             {

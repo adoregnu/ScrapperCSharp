@@ -19,9 +19,12 @@ using FileSystemModels.Models.FSItems.Base;
 using Scrapper.Extension;
 using Scrapper.Model;
 using Scrapper.Tasks;
+using Scrapper.Spider;
 
 namespace Scrapper.ViewModel
 {
+    using SpiderEnum = IEnumerable<SpiderBase>;
+
     enum MediaListMenuType
     { 
         excluded, downloaded, scrap
@@ -52,11 +55,11 @@ namespace Scrapper.ViewModel
             set => Set(ref _isBrowsing, value);
         }
         public ObservableCollection<MediaItem> MediaList { get; private set; }
+        public SpiderEnum SpiderList { get; private set; }
         public string CurrentFolder { get; set; }
 
         public ICommand CmdExclude { get; set; }
         public ICommand CmdDownload { get; set; }
-        public ICommand CmdScrapItem { get; set; }
         public ICommand CmdMoveItem { get; set; }
         public ICommand CmdDeleteItem { get; set; }
         public ICommand CmdEditItem { get; set; }
@@ -72,11 +75,13 @@ namespace Scrapper.ViewModel
                 p => OnContextMenu(p, MediaListMenuType.excluded));
             CmdDownload = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.downloaded));
-            CmdScrapItem = new RelayCommand<object>(p => OnScrap(p));
             CmdMoveItem = new RelayCommand<object>(p => OnMoveItem(p));
             CmdDeleteItem = new RelayCommand<object>(p => OnDeleteItem(p));
             CmdEditItem = new RelayCommand<object>(p => OnEditItem(p));
             CmdDoubleClick = new RelayCommand(() => OnDoubleClicked());
+
+            MessengerInstance.Register<NotificationMessage<SpiderEnum>>(this,
+                (msg) => SpiderList = msg.Content.Where(i => i.Name != "sehuatang"));
         }
 
         public void ClearMedia()
@@ -166,16 +171,6 @@ namespace Scrapper.ViewModel
            }, true);
             //Thread.Sleep(10);
         }
-
-        void OnScrap(object param)
-        {
-            if (param is IList<object> items && items.Count > 0)
-            {
-                MessengerInstance.Send(new NotificationMessage<List<MediaItem>>(
-                    items.Cast<MediaItem>().ToList(), "scrap"));
-            }
-        }
-
         void OnMoveItem(object param)
         {
             if (!(param is IList<object> items) || items.Count == 0)

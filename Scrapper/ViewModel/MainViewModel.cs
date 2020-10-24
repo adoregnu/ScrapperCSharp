@@ -45,6 +45,7 @@ namespace Scrapper.ViewModel
 
         public MainViewModel(IDialogService dialogService)
         {
+            // Order of VieModel creation is important.
             Docs.Add(new MediaViewModel());
             Docs.Add(new AvDbViewModel());
             Docs.Add(new BrowserViewModel());
