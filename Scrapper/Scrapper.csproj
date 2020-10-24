@@ -205,6 +205,7 @@
     <Compile Include="ScrapItems\IScrapItem.cs" />
     <Compile Include="ScrapItems\NameMap.cs" />
     <Compile Include="Spider\SpiderBase.cs" />
+    <Compile Include="Spider\SpiderDmm.cs" />
     <Compile Include="Spider\SpiderJavDb.cs" />
     <Compile Include="Spider\SpiderJavlibrary.cs" />
     <Compile Include="Spider\SpiderMgstage.cs" />

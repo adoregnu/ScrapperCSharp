@@ -65,7 +65,9 @@
                         Command="{Binding Data.CmdScrapItem,
                             Source={StaticResource VmContext}}"
                         CommandParameter="{Binding Data.SelectedItems,
-                            Source={StaticResource CtrlContext}}"/>
+                            Source={StaticResource CtrlContext}}">
+                    </MenuItem>
+
                     <MenuItem Header="Move" 
                         Command="{Binding Data.CmdMoveItem,
                             Source={StaticResource VmContext}}"

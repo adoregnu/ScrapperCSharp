@@ -22,8 +22,6 @@ namespace Scrapper.ScrapItems
         {
         }
 
-        //protected override void UdpateAvItem() { }
-
         protected override void OnBeforeDownload(object sender, DownloadItem e)
         {
             if (!e.SuggestedFileName.Contains("now_printing"))

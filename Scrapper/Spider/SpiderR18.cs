@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
 using System.Runtime.InteropServices;
 
+using Scrapper.Extension;
 namespace Scrapper.Spider
 {
     class SpiderR18 : SpiderBase
@@ -52,13 +52,12 @@ namespace Scrapper.Spider
         void OnMultiResult(List<object> list)
         {
             Log.Print($"OnMultiResult : {list.Count} items found!");
-            if (list == null || list.Count == 0)
+            if (list.IsNullOrEmpty())
             {
                 Browser.StopScrapping();
                 return;
             }
             var apid = Pid.Split('-');
-
             var regex = new Regex($@"id=(h_)?(\d+)?{apid[0].ToLower()}\d*{apid[1]}");
             int matchCount = 0;
             string exactUrl = null;

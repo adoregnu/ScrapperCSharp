@@ -12,15 +12,16 @@ namespace Scrapper.ScrapItems
         static Dictionary<string, string> _studioMap
             = new Dictionary<string, string>
             {
+                { "Emmanuelle", "Emmanuelle"},
+                { "h.m.p", "h.m.p"},
+                { "Daydream", "Mousouzoku"},
+                { "Daydreamers", "Mousouzoku"},
+                { "Mousouzoku", "Mousouzoku"},
                 { "scute", "S-Cute"},
                 { "sodcreate", "SOD Create"},
                 { "Tameike Goro-", "Tameike Goro" },
                 { "Das !", "Das"},
                 { "Bi", "Chijo Heaven"},
-                { "Emmanuelle", "Emmanuelle"},
-                { "h.m.p", "h.m.p"},
-                { "Daydreams", "Mousouzoku"},
-                { "Mousouzoku", "Mousouzoku"}
             };
         public static string StudioName(string name)
         {

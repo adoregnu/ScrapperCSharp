@@ -84,6 +84,7 @@ namespace Scrapper.ViewModel
                 new SpiderSehuatang(this),
                 new SpiderR18(this),
                 new SpiderJavlibrary(this),
+                new SpiderDmm(this),
                 new SpiderMgstage(this),
                 new SpiderJavDb(this)
             };
