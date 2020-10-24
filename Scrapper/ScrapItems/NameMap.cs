@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FFmpeg.AutoGen;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,12 +16,19 @@ namespace Scrapper.ScrapItems
                 { "sodcreate", "SOD Create"},
                 { "Tameike Goro-", "Tameike Goro" },
                 { "Das !", "Das"},
-                { "Bi", "Chijo Heaven"}
+                { "Bi", "Chijo Heaven"},
+                { "Emmanuelle", "Emmanuelle"},
+                { "h.m.p", "h.m.p"},
+                { "Daydreams", "Mousouzoku"},
+                { "Mousouzoku", "Mousouzoku"}
             };
         public static string StudioName(string name)
         {
-            if (_studioMap.ContainsKey(name))
-                return _studioMap[name];
+            if (_studioMap.Any(i => name.Contains(i.Key)))
+            {
+                var found = _studioMap.First(i => name.Contains(i.Key));
+                return found.Value;
+            }
             else
                 return name;
         }

@@ -148,22 +148,22 @@ namespace Scrapper.ViewModel
 
         public void InsertMedia(string path)
         {
-            var item = GetMedia(path);
-            if (item == null) return;
-
-            int idx = -1;
-            if (item.IsImage)
-            {
-                idx = MediaList.FindItem(item, i => i.DownloadDt);
-            }
             UiServices.Invoke(delegate
-            {
+           {
+               var item = GetMedia(path);
+               if (item == null) return;
+
+               int idx = -1;
+               if (item.IsImage)
+               {
+                   idx = MediaList.FindItem(item, i => i.DownloadDt);
+               }
                 //MediaList.InsertInPlace(item, i => i.DownloadDt);
                 if (idx >= 0)
-                    MediaList.Insert(idx, item);
-                else
-                    MediaList.Add(item);
-            }, true);
+                   MediaList.Insert(idx, item);
+               else
+                   MediaList.Add(item);
+           }, true);
             //Thread.Sleep(10);
         }
 

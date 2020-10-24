@@ -153,6 +153,7 @@ namespace Scrapper.ScrapItems
 
             UiServices.Invoke(delegate
             {
+                studio = HtmlEntity.DeEntitize(studio);
                 studio = NameMap.StudioName(studio);
                 _studio = _context.Studios.FirstOrDefault(
                     x => x.Name.Equals(studio, StringComparison.OrdinalIgnoreCase));

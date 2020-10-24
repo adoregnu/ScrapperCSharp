@@ -26,8 +26,15 @@ namespace Scrapper.ScrapItems
 
         protected override void OnBeforeDownload(object sender, DownloadItem e)
         {
-            var ext = Path.GetExtension(e.SuggestedFileName);
-            e.SuggestedFileName = $"{posterPath}{ext}";
+            if (!e.SuggestedFileName.Contains("now_printing"))
+            {
+                var ext = Path.GetExtension(e.SuggestedFileName);
+                e.SuggestedFileName = $"{posterPath}{ext}";
+            }
+            else
+            {
+                e.SuggestedFileName = "";
+            }
         }
         void ParseActor(List<object> items)
         {
