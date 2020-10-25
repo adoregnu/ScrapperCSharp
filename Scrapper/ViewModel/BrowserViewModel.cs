@@ -64,7 +64,7 @@ namespace Scrapper.ViewModel
                 if (value != null)
                 {
                     value.SetCookies();
-                    Address = value.URL;
+                    if (!value.FromCommand) Address = value.URL;
                     if (value is SpiderSehuatang ss)
                     { 
                         SelectedBoard = ss.Boards[0];

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CefSharp;
@@ -20,8 +21,6 @@ namespace Scrapper.ScrapItems
         { 
             _avItem.IsCensored = false;
         }
-
-        protected override void UdpateAvItem() { }
 
         protected override void OnBeforeDownload(object sender, DownloadItem e)
         {
@@ -61,6 +60,7 @@ namespace Scrapper.ScrapItems
                 doc.LoadHtml(item);
                 var tnode = doc.DocumentNode
                     .SelectSingleNode("//span[@class='title']");
+
                 if (tnode.InnerText.Contains("Starring"))
                 {
                     ParseActorName(doc.DocumentNode
@@ -79,8 +79,12 @@ namespace Scrapper.ScrapItems
                 {
                     var node = doc.DocumentNode
                         .SelectSingleNode("//span[@class='value']");
-                    _avItem.ReleaseDate = DateTime.ParseExact(
-                        node.InnerText, "MM/dd/yyyy", enUS);
+                    var m = Regex.Match(node.InnerText, @"[\d/]+");
+                    if (m.Success)
+                    {
+                        _avItem.ReleaseDate = DateTime.ParseExact(
+                            m.Value, "M/d/yyyy", enUS);
+                    }
                 }
             }
         }
@@ -92,11 +96,16 @@ namespace Scrapper.ScrapItems
 
             if (!items.IsNullOrEmpty())
             {
+                Interlocked.Increment(ref _numValidItems);
                 if (name == "cover")
                 {
                     var url = HtmlEntity.DeEntitize(items[0] as string);
                     Interlocked.Increment(ref _numItemsToScrap);
                     _spider.Browser.Download(url);
+                }
+                else if (name == "title")
+                {
+                    UpdateTitle(items[0] as string);
                 }
                 else if (name == "product-info")
                 {

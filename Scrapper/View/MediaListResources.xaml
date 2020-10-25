@@ -3,6 +3,7 @@
                     xmlns:conv="clr-namespace:Scrapper.Converter"
                     xmlns:local="clr-namespace:Scrapper.View"
                     xmlns:bindLocal="clr-namespace:FileListView.Views;assembly=FileListView"
+                    xmlns:vwp="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:player="clr-namespace:Scrapper.View.MediaPlayer" >
     <conv:ScreenshotsToVisibilityConverter x:Key="ScreenshotsToVisConverter"/>
     <ControlTemplate x:Key="ImageItem">
@@ -161,7 +162,10 @@
     </DataTemplate>
 
     <ItemsPanelTemplate x:Key="ImagePanelTemplate">
+        <vwp:VirtualizingWrapPanel />
+  <!--
         <WrapPanel/>
+-->
     </ItemsPanelTemplate>
 
     <ControlTemplate x:Key="MediaListTamplate">

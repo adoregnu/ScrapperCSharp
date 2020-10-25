@@ -31,6 +31,7 @@ namespace Scrapper.Spider
             get => Browser.SelectedMedia.MediaFolder;
             protected set { _ = value; }
         }
+        public bool FromCommand { get; private set; } = false;
         protected int _state = -1;
         protected string _linkName;
 
@@ -40,12 +41,14 @@ namespace Scrapper.Spider
         {
             Browser = br;
             CmdScrap = new RelayCommand<object>((p) => {
+                FromCommand = true;
                 Browser.SelectedSpider = this;
                 if (p is IList<object> items && items.Count > 0)
                 {
                     Browser.StartBatchedScrapping(
                         items.Cast<MediaItem>().ToList());
                 }
+                FromCommand = false;
             });
         }
 
