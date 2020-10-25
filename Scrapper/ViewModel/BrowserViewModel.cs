@@ -90,7 +90,9 @@ namespace Scrapper.ViewModel
                 new SpiderJavlibrary(this),
                 new SpiderDmm(this),
                 new SpiderMgstage(this),
-                new SpiderJavDb(this)
+                new SpiderAVE(this),
+                new SpiderJavDb(this),
+                new SpiderJavfree(this)
             };
             _selectedSpider = Spiders[0];
             Title = Address = _selectedSpider.URL;

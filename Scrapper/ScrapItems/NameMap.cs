@@ -21,6 +21,7 @@ namespace Scrapper.ScrapItems
                 { "sodcreate", "SOD Create"},
                 { "Tameike Goro-", "Tameike Goro" },
                 { "Kira ★ Kira", "kira*kira"},
+                { "JUICY HONEY", "Orustak Pictures" },
                 { "Das !", "Das"},
                 { "Bi", "Chijo Heaven"},
             };

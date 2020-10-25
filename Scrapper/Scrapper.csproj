@@ -196,6 +196,7 @@
     <Compile Include="Model\MiscDbContext.cs" />
     <Compile Include="Model\MiscItem.cs" />
     <Compile Include="Model\MiscModelConfig.cs" />
+    <Compile Include="ScrapItems\ItemAVE.cs" />
     <Compile Include="ScrapItems\ItemBase.cs" />
     <Compile Include="ScrapItems\ItemJavDb.cs" />
     <Compile Include="ScrapItems\ItemJavlibrary.cs" />
@@ -204,9 +205,11 @@
     <Compile Include="ScrapItems\ItemSehuatang.cs" />
     <Compile Include="ScrapItems\IScrapItem.cs" />
     <Compile Include="ScrapItems\NameMap.cs" />
+    <Compile Include="Spider\SpiderAVE.cs" />
     <Compile Include="Spider\SpiderBase.cs" />
     <Compile Include="Spider\SpiderDmm.cs" />
     <Compile Include="Spider\SpiderJavDb.cs" />
+    <Compile Include="Spider\SpiderJavfree.cs" />
     <Compile Include="Spider\SpiderJavlibrary.cs" />
     <Compile Include="Spider\SpiderMgstage.cs" />
     <Compile Include="Spider\SpiderR18.cs" />
