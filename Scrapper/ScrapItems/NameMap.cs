@@ -22,6 +22,9 @@ namespace Scrapper.ScrapItems
                 { "Tameike Goro-", "Tameike Goro" },
                 { "Kira ★ Kira", "kira*kira"},
                 { "JUICY HONEY", "Orustak Pictures" },
+                { "Honnaka", "Hon Naka" },
+                { "K.M.Produce", "K M Produce" },
+                { "Uchu Kikaku", "K M Produce" },
                 { "Das !", "Das"},
                 { "Bi", "Chijo Heaven"},
             };

@@ -63,7 +63,7 @@ namespace Scrapper.Spider
                 doc.LoadHtml(it);
                 var node = doc.DocumentNode.SelectSingleNode("//div[@class='uid']");
                 var pid = node.InnerText.Trim();
-                if (pid.Equals(Pid))
+                if (pid.Equals(Pid, StringComparison.OrdinalIgnoreCase))
                 {
                     a = doc.DocumentNode.FirstChild;
                     break;

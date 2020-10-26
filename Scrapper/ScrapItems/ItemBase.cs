@@ -138,7 +138,7 @@ namespace Scrapper.ScrapItems
                 UiServices.Invoke(delegate
                 {
                     var entity = _context.Genres.FirstOrDefault(
-                        x => x.Name.Equals(genre, StringComparison.OrdinalIgnoreCase));
+                        x => x.Name.ToLower() == genre.ToLower());
                     if (entity == null)
                         entity = _context.Genres.Add(new AvGenre { Name = genre });
                     _genres.Add(entity);
@@ -156,7 +156,7 @@ namespace Scrapper.ScrapItems
                 studio = HtmlEntity.DeEntitize(studio);
                 studio = NameMap.StudioName(studio);
                 _studio = _context.Studios.FirstOrDefault(
-                    x => x.Name.Equals(studio, StringComparison.OrdinalIgnoreCase));
+                    x => x.Name.ToLower() == studio.ToLower());
                 if (_studio == null)
                     _studio = _context.Studios.Add(new AvStudio { Name = studio });
             });
@@ -184,8 +184,7 @@ namespace Scrapper.ScrapItems
                 foreach (var aname in list)
                 {
                     aan = _context.ActorNames
-                        .Where(n => n.Name.Equals(aname.Name,
-                                StringComparison.OrdinalIgnoreCase))
+                        .Where(n => n.Name.ToLower() == aname.Name.ToLower())
                         .Include("Actor")
                         .FirstOrDefault();
                     if (aan != null) break;
@@ -196,8 +195,8 @@ namespace Scrapper.ScrapItems
                     var dbActor = aan.Actor;
                     foreach (var aname in list)
                     {
-                        if (!dbActor.Names.Any(n => n.Name.Equals(aname.Name,
-                            StringComparison.OrdinalIgnoreCase)))
+                        if (!dbActor.Names
+                            .Any(n => n.Name.ToLower() == aname.Name.ToLower()))
                         {
                             dbActor.Names.Add(aname);
                         }
