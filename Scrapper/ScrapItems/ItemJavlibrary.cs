@@ -16,7 +16,7 @@ using Scrapper.Model;
 
 namespace Scrapper.ScrapItems
 {
-    class ItemJavlibrary : ItemBase, IScrapItem
+    class ItemJavlibrary : AvItemBase, IScrapItem
     {
         public ItemJavlibrary(SpiderBase spider) :base(spider)
         {

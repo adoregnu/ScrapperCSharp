@@ -11,7 +11,7 @@ using CefSharp;
 using Scrapper.Spider;
 namespace Scrapper.ScrapItems
 {
-    class ItemMgstage : ItemBase, IScrapItem
+    class ItemMgstage : AvItemBase, IScrapItem
     {
         int _numDownloadCnt = 0;
         public ItemMgstage(SpiderBase spider) : base(spider)

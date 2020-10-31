@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Scrapper.ScrapItems
 {
-    class ItemJavDb : ItemBase, IScrapItem
+    class ItemJavDb : AvItemBase, IScrapItem
     {
         public ItemJavDb(SpiderBase spider) : base(spider)
         {

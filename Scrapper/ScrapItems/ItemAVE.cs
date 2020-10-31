@@ -15,7 +15,7 @@ using Scrapper.Spider;
 
 namespace Scrapper.ScrapItems
 {
-    class ItemAVE : ItemBase, IScrapItem
+    class ItemAVE : AvItemBase, IScrapItem
     {
         public ItemAVE(SpiderBase spider) : base(spider)
         { 

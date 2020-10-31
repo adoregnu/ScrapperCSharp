@@ -19,7 +19,7 @@ using System.Text.RegularExpressions;
 
 namespace Scrapper.ScrapItems
 {
-    class ItemR18 : ItemBase, IScrapItem
+    class ItemR18 : AvItemBase, IScrapItem
     {
         readonly string _actorPicturePath = $"{App.CurrentPath}\\db";
         readonly ConcurrentDictionary<string, string> _downloadUrls;

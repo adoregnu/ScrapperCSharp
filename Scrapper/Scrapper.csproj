@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\CefSharp.OffScreen.85.3.130\build\CefSharp.OffScreen.props" Condition="Exists('..\packages\CefSharp.OffScreen.85.3.130\build\CefSharp.OffScreen.props')" />
   <Import Project="..\packages\CefSharp.Wpf.85.3.130\build\CefSharp.Wpf.props" Condition="Exists('..\packages\CefSharp.Wpf.85.3.130\build\CefSharp.Wpf.props')" />
   <Import Project="..\packages\CefSharp.Common.85.3.130\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.85.3.130\build\CefSharp.Common.props')" />
   <Import Project="..\packages\cef.redist.x86.85.3.13\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.85.3.13\build\cef.redist.x86.props')" />
@@ -59,18 +60,6 @@
     </Reference>
     <Reference Include="AvalonDock.Themes.VS2013, Version=4.40.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\packages\Dirkster.AvalonDock.Themes.VS2013.4.40.0\lib\net40\AvalonDock.Themes.VS2013.dll</HintPath>
-    </Reference>
-    <Reference Include="CefSharp, Version=84.4.10.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CefSharp.Common.84.4.10\CefSharp\x64\CefSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="CefSharp.Core, Version=84.4.10.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CefSharp.Common.84.4.10\CefSharp\x64\CefSharp.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="CefSharp.Wpf, Version=84.4.10.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CefSharp.Wpf.84.4.10\CefSharp\x64\CefSharp.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.5.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.5\lib\net47\CommonServiceLocator.dll</HintPath>
@@ -199,6 +188,7 @@
     <Compile Include="Model\MiscDbContext.cs" />
     <Compile Include="Model\MiscItem.cs" />
     <Compile Include="Model\MiscModelConfig.cs" />
+    <Compile Include="ScrapItems\AvItemBase.cs" />
     <Compile Include="ScrapItems\ItemAVE.cs" />
     <Compile Include="ScrapItems\ItemBase.cs" />
     <Compile Include="ScrapItems\ItemJavDb.cs" />
@@ -438,8 +428,11 @@
     <Error Condition="!Exists('..\packages\CefSharp.Common.85.3.130\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.85.3.130\build\CefSharp.Common.targets'))" />
     <Error Condition="!Exists('..\packages\CefSharp.Wpf.85.3.130\build\CefSharp.Wpf.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Wpf.85.3.130\build\CefSharp.Wpf.props'))" />
     <Error Condition="!Exists('..\packages\CefSharp.Wpf.85.3.130\build\CefSharp.Wpf.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Wpf.85.3.130\build\CefSharp.Wpf.targets'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.OffScreen.85.3.130\build\CefSharp.OffScreen.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.OffScreen.85.3.130\build\CefSharp.OffScreen.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.OffScreen.85.3.130\build\CefSharp.OffScreen.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.OffScreen.85.3.130\build\CefSharp.OffScreen.targets'))" />
   </Target>
   <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
   <Import Project="..\packages\CefSharp.Common.85.3.130\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.85.3.130\build\CefSharp.Common.targets')" />
   <Import Project="..\packages\CefSharp.Wpf.85.3.130\build\CefSharp.Wpf.targets" Condition="Exists('..\packages\CefSharp.Wpf.85.3.130\build\CefSharp.Wpf.targets')" />
+  <Import Project="..\packages\CefSharp.OffScreen.85.3.130\build\CefSharp.OffScreen.targets" Condition="Exists('..\packages\CefSharp.OffScreen.85.3.130\build\CefSharp.OffScreen.targets')" />
 </Project>
