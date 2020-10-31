@@ -142,13 +142,17 @@ namespace Scrapper.ViewModel
 
         public MediaItem GetMedia(string path)
         {
-            var item = new MediaItem(path);
-            if (item.IsExcluded || item.IsDownload || !item.IsMediaFolder)
+            try
             {
-                return null;
+                var item = new MediaItem(path);
+                if (!item.IsExcluded && !item.IsDownload && item.IsMediaFolder)
+                    return item;
             }
-
-            return item;
+            catch (Exception ex)
+            {
+                Log.Print(ex.Message);
+            }
+            return null;
         }
 
         public void InsertMedia(string path)

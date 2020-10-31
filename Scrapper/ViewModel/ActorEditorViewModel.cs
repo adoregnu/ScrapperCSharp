@@ -68,6 +68,17 @@ namespace Scrapper.ViewModel
             }
         }
 
+        AvActorName _selectedActorName;
+        public AvActorName SelectedActorName
+        {
+            get => _selectedActorName;
+            set
+            {
+                Set(ref _selectedActorName, value);
+                SelectedActor = value.Actor;
+            }
+        }
+
         public string ActorName
         {
             get => _actorName;
@@ -191,7 +202,6 @@ namespace Scrapper.ViewModel
 
             SelectedActor.PicturePath = Path.GetFileName(file);
             App.DbContext.SaveChanges();
-            RaisePropertyChanged("Actors");
         }
 
         void OnAddNewName()

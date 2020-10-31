@@ -24,7 +24,9 @@ namespace Scrapper.ScrapItems
 
         protected override void OnBeforeDownload(object sender, DownloadItem e)
         {
-            if (!e.SuggestedFileName.Contains("now_printing"))
+            if (e.TotalBytes > 1024*10)
+                //!e.SuggestedFileName.Contains("now_printing"))
+                //!e.SuggestedFileName.Contains("removed"))
             {
                 var ext = Path.GetExtension(e.SuggestedFileName);
                 e.SuggestedFileName = $"{posterPath}{ext}";

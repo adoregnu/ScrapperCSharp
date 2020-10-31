@@ -133,9 +133,11 @@ namespace Scrapper.ScrapItems
                 //Log.Print($"ParseActorThumb: name:{name}, url:{url}");
                 if (!url.EndsWith("nowprinting.gif"))
                 {
-                    Interlocked.Increment(ref _numItemsToScrap);
-                    _downloadUrls.TryAdd(url, name);
-                    _spider.Browser.Download(url);
+                    if (_downloadUrls.TryAdd(url, name))
+                    {
+                        Interlocked.Increment(ref _numItemsToScrap);
+                        _spider.Browser.Download(url);
+                    }
                 }
             }
         }
@@ -145,9 +147,11 @@ namespace Scrapper.ScrapItems
             var ext = url.Split('.').Last();
             //if (File.Exists($"{posterPath}.{ext}")) return;
 
-            Interlocked.Increment(ref _numItemsToScrap);
-            _downloadUrls.TryAdd(url, name);
-            _spider.Browser.Download(url);
+            if (_downloadUrls.TryAdd(url, name))
+            {
+                Interlocked.Increment(ref _numItemsToScrap);
+                _spider.Browser.Download(url);
+            }
         }
 
         void IScrapItem.OnJsResult(string name, List<object> items)

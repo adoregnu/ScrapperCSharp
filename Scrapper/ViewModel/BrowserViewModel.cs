@@ -18,6 +18,7 @@ using Scrapper.ScrapItems;
 using Scrapper.BrowserHandler;
 using Scrapper.ViewModel.Base;
 using System.Windows.Input;
+using Scrapper.Tasks;
 
 namespace Scrapper.ViewModel
 {
@@ -242,7 +243,6 @@ namespace Scrapper.ViewModel
                 }
             });
         }
-
         public void ExecJavaScript(string s, IScrapItem item, string name)
         {
             webBrowser.EvaluateScriptAsync(s).ContinueWith(x =>

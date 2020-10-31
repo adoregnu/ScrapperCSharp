@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 using Scrapper.Extension;
+using HtmlAgilityPack;
+
 namespace Scrapper.Spider
 {
     class SpiderR18 : SpiderBase
@@ -73,7 +75,8 @@ namespace Scrapper.Spider
             }
             if (matchCount == 1)
             {
-                Browser.Address = exactUrl;
+                var url = HtmlEntity.DeEntitize(exactUrl);
+                Browser.Address = url;
             }
             else if (matchCount > 1)
                 Log.Print("Ambiguous match! Select manually!");

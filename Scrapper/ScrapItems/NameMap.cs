@@ -17,6 +17,7 @@ namespace Scrapper.ScrapItems
                 { "Daydream", "Mousouzoku"},
                 { "Daydreamers", "Mousouzoku"},
                 { "Mousouzoku", "Mousouzoku"},
+                { "Mousozoku", "Mousouzoku"},
                 { "scute", "S-Cute"},
                 { "sodcreate", "SOD Create"},
                 { "Tameike Goro-", "Tameike Goro" },
@@ -46,7 +47,12 @@ namespace Scrapper.ScrapItems
                 { "Mariya Nagai", "Maria Nagai" },
                 { "Yui Ooba", "Yui Oba" },
                 { "Yuu Shinoda", "Yu Shinoda" },
-                { "Hibiki Ootsuki", "Hibiki Otsuki"}
+                { "Hibiki Ootsuki", "Hibiki Otsuki"},
+                { "Haruki Satou", "Haruki Sato"},
+                { "Erika Momodani", "Erika Momotani" },
+                { "Sari Kousaka", "Sari Kosaka"},
+                { "Miyuu Amano", "Miyu Amano"},
+                { "Yuuri Arakawa", "Yuri Arakawa"}
             };
 
         public static string ActorName(string name)

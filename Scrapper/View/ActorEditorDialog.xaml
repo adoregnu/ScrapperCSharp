@@ -35,6 +35,24 @@
                     Converter={StaticResource PathToImageConverter}}"/>
             </Grid>
         </DataTemplate>
+        <Style x:Key="_ListBoxItemStyle" TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Name="_Border"
+                                Padding="2"
+                                SnapsToDevicePixels="true">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="_Border" Property="Background" Value="Blue"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <converter:MultiParamConverter x:Key="ParamConverter"/>
     </Window.Resources>
     <DockPanel>
@@ -125,6 +143,7 @@
                  <ListBox Margin="5,0,0,5" Grid.Row="1"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     ItemTemplate="{StaticResource ActorTemplate}"
+                    ItemContainerStyle="{StaticResource _ListBoxItemStyle}"
                     ItemsPanel="{StaticResource ImagePanelTemplate}"
                     ItemsSource="{Binding Actors}"
                     SelectedItem="{Binding SelectedActor}">
@@ -154,7 +173,8 @@
                     <ListBox  Height="100" Margin="5,0,5,0"
                               ItemsSource="{Binding NamesOfActor}" />
                 </DockPanel>
-                <ListBox ItemsSource="{Binding AllNames}" Margin="5"/>
+                <ListBox ItemsSource="{Binding AllNames}" Margin="5"
+                         SelectedItem="{Binding SelectedActorName}"/>
             </DockPanel>
         </Grid>
     </DockPanel>
