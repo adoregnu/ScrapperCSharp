@@ -26,6 +26,8 @@ namespace Scrapper.ScrapItems
                 { "Honnaka", "Hon Naka" },
                 { "K.M.Produce", "K M Produce" },
                 { "Uchu Kikaku", "K M Produce" },
+                { "Crystal Eizou", "Crystal Eizo"},
+                { "Deeps", "Deep's"},
                 { "Das !", "Das"},
                 { "Bi", "Chijo Heaven"},
             };
@@ -52,7 +54,8 @@ namespace Scrapper.ScrapItems
                 { "Erika Momodani", "Erika Momotani" },
                 { "Sari Kousaka", "Sari Kosaka"},
                 { "Miyuu Amano", "Miyu Amano"},
-                { "Yuuri Arakawa", "Yuri Arakawa"}
+                { "Yuuri Arakawa", "Yuri Arakawa"},
+                { "Maasa Matsushima", "Masa Matsushima"}
             };
 
         public static string ActorName(string name)

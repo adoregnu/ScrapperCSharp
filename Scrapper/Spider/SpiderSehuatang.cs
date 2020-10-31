@@ -7,11 +7,14 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Interop;
 
+using GalaSoft.MvvmLight.Messaging;
+
 using CefSharp;
+using FFmpeg.AutoGen;
+
 using Scrapper.ViewModel;
 using Scrapper.ScrapItems;
-using GalaSoft.MvvmLight.Messaging;
-using FFmpeg.AutoGen;
+using Scrapper.Model;
 
 namespace Scrapper.Spider
 {
@@ -27,7 +30,7 @@ namespace Scrapper.Spider
 
         public int NumPage = 1;
         public List<string> Boards;
-        public override string MediaFolder { get; protected set; }
+        public string MediaFolder { get; protected set; }
 
         public string SelectedBoard
         {
@@ -113,7 +116,7 @@ namespace Scrapper.Spider
             }
             else
             {
-                Browser.StopScrapping();
+                Browser.StopScrapping(null);
             }
         }
 
@@ -144,7 +147,7 @@ namespace Scrapper.Spider
         {
             if (!isValid && Browser.StopOnExistingId)
             {
-                Browser.StopScrapping();
+                Browser.StopScrapping(null);
             }
             else
             {
@@ -157,7 +160,7 @@ namespace Scrapper.Spider
             }
         }
 
-        public override void Navigate()
+        public override void Navigate(MediaItem _)
         {
             _state = 0;
             Browser.Address = URL;

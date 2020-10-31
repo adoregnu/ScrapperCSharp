@@ -24,10 +24,10 @@ namespace Scrapper.ScrapItems
         { 
             var ext = Path.GetExtension(e.SuggestedFileName);
             if (_numDownloadCnt == 0)
-                e.SuggestedFileName = $"{posterPath}{ext}";
+                e.SuggestedFileName = $"{PosterPath}{ext}";
             else
-                e.SuggestedFileName = $"{_spider.MediaFolder}\\" +
-                    $"{_spider.Pid}_screenshot{_numDownloadCnt}{ext}";
+                e.SuggestedFileName = $"{_spider.Media.MediaFolder}\\" +
+                    $"{_spider.Media.Pid}_screenshot{_numDownloadCnt}{ext}";
             Interlocked.Increment(ref _numDownloadCnt);
         }
 

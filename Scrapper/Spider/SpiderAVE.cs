@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CefSharp;
 using HtmlAgilityPack;
 using Scrapper.Extension;
+using Scrapper.Model;
 using Scrapper.ScrapItems;
 using Scrapper.ViewModel;
 
@@ -39,7 +40,7 @@ namespace Scrapper.Spider
             Log.Print($"OnMultiResult : {list.Count} items found!");
             if (list.IsNullOrEmpty())
             {
-                Browser.StopScrapping();
+                Browser.StopScrapping(Media);
                 return;
             }
 
@@ -55,11 +56,11 @@ namespace Scrapper.Spider
             }
         }
 
-        public override void Navigate()
+        public override void Navigate(MediaItem mitem)
         {
-            base.Navigate();
+            base.Navigate(mitem);
             Browser.Address = $"{URL}search_Products.aspx?languageID=1" +
-                $"&dept_id=29&keyword={Pid}&searchby=keyword";
+                $"&dept_id=29&keyword={Media.Pid}&searchby=keyword";
         }
 
         public override void Scrap()

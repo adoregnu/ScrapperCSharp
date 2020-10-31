@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 
 using Scrapper.Extension;
 using HtmlAgilityPack;
+using Scrapper.Model;
 
 namespace Scrapper.Spider
 {
@@ -56,10 +57,10 @@ namespace Scrapper.Spider
             Log.Print($"OnMultiResult : {list.Count} items found!");
             if (list.IsNullOrEmpty())
             {
-                Browser.StopScrapping();
+                Browser.StopScrapping(Media);
                 return;
             }
-            var apid = Pid.Split('-');
+            var apid = Media.Pid.Split('-');
             var regex = new Regex($@"id=(h_)?(\d+)?{apid[0].ToLower()}\d*{apid[1]}");
             int matchCount = 0;
             string exactUrl = null;
@@ -82,15 +83,15 @@ namespace Scrapper.Spider
                 Log.Print("Ambiguous match! Select manually!");
             else
             {
-                Browser.StopScrapping();
+                Browser.StopScrapping(Media);
                 Log.Print($"No exact matched ID");
             }
         }
 
-        public override void Navigate()
+        public override void Navigate(MediaItem mitem)
         {
-            base.Navigate();
-            Browser.Address = $"{URL}common/search/searchword={Pid}/";
+            base.Navigate(mitem);
+            Browser.Address = $"{URL}common/search/searchword={Media.Pid}/";
         }
 
         ItemR18 _item = null;

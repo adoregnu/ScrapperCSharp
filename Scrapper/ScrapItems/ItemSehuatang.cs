@@ -80,7 +80,7 @@ namespace Scrapper.ScrapItems
             }
 
             _pid = m.Groups[0].Value;
-            _outPath += _spider.MediaFolder + _pid + "\\";
+            _outPath += (_spider as SpiderSehuatang).MediaFolder + _pid + "\\";
 
             var di = new DirectoryInfo(_outPath);
             if (!di.Exists)

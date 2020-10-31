@@ -52,7 +52,7 @@ namespace Scrapper.ScrapItems
             var ext = Path.GetExtension(e.SuggestedFileName);
             if (_downloadUrls[e.OriginalUrl] == "cover")
             {
-                e.SuggestedFileName = $"{posterPath}{ext}";
+                e.SuggestedFileName = $"{PosterPath}{ext}";
             }
             else
             {

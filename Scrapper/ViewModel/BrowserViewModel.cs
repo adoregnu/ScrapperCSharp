@@ -79,8 +79,8 @@ namespace Scrapper.ViewModel
         public ICommand CmdBack { get; private set; }
         public BrowserViewModel()
         {
-            CmdStart = new RelayCommand(() => OnStartScrapping(true));
-            CmdStop = new RelayCommand(() => StopScrapping(true));
+            CmdStart = new RelayCommand(() => OnStartScrapping(SelectedMedia,true));
+            CmdStop = new RelayCommand(() => StopScrapping(null, true));
             CmdReloadUrl = new RelayCommand(() => WebBrowser.Reload());
             CmdBack = new RelayCommand(() => WebBrowser.Back());
 
@@ -133,11 +133,11 @@ namespace Scrapper.ViewModel
             }
             var media = _mediaToScrap[_nextScrappingIndex++];
             Pid = media.Pid;
-            SelectedMedia = media;
-            OnStartScrapping();
+            //SelectedMedia = media;
+            OnStartScrapping(media);
         }
 
-        public void OnStartScrapping(bool manualSearch = false)
+        public void OnStartScrapping(MediaItem mitem, bool manualSearch = false)
         {
             if (!(SelectedSpider is SpiderSehuatang) &&
                 string.IsNullOrEmpty(Pid))
@@ -148,16 +148,22 @@ namespace Scrapper.ViewModel
 
             if (SelectedSpider is SpiderSehuatang || !manualSearch)
                 _bStarted = true;
-            SelectedSpider.Navigate();
+            SelectedSpider.Navigate(mitem);
         }
 
-        public void StopScrapping(bool forceStop = false)
+        public void StopScrapping(MediaItem mitem, bool forceStop = false)
         {
             webBrowser.Stop();
             _bStarted = false;
+            if (SelectedSpider is SpiderSehuatang) return;
 
-            if (!(SelectedSpider is SpiderSehuatang) && SelectedMedia != null)
-                SelectedMedia.UpdateFields();
+            if (mitem != null)
+            {
+                UiServices.Invoke(delegate
+                {
+                    mitem.UpdateFields();
+                });
+            }
 
             if (!forceStop && _nextScrappingIndex > 0)
                 StartBatchedScrapping();

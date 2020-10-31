@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 using CefSharp;
 using HtmlAgilityPack;
+using Scrapper.Model;
 using Scrapper.ScrapItems;
 using Scrapper.ViewModel;
 namespace Scrapper.Spider
@@ -63,7 +64,7 @@ namespace Scrapper.Spider
             {
                 doc.LoadHtml(url);
                 var div = doc.DocumentNode.SelectSingleNode("//div[@class='id']").InnerText;
-                if (div.Trim().Equals(Pid, StringComparison.OrdinalIgnoreCase))
+                if (div.Trim().Equals(Media.Pid, StringComparison.OrdinalIgnoreCase))
                 {
                     var href = doc.DocumentNode.FirstChild.Attributes["href"].Value;
                     _state = 1;
@@ -71,13 +72,13 @@ namespace Scrapper.Spider
                     return;
                 }
             }
-            Browser.StopScrapping();
+            Browser.StopScrapping(Media);
         }
 
-        public override void Navigate()
+        public override void Navigate(MediaItem mitem)
         {
-            base.Navigate();
-            Browser.Address = $"{URL}vl_searchbyid.php?keyword={Pid}";
+            base.Navigate(mitem);
+            Browser.Address = $"{URL}vl_searchbyid.php?keyword={Media.Pid}";
         }
 
         public override void Scrap()

@@ -23,14 +23,9 @@ namespace Scrapper.Spider
     abstract class SpiderBase : ViewModelBase
     {
         public BrowserViewModel Browser { get; private set; }
+        public MediaItem Media = null;
         public string URL = null;
         public string Name { get; protected set; } = "";
-        public string Pid { get => Browser.Pid; }
-        public virtual string MediaFolder
-        {
-            get => Browser.SelectedMedia.MediaFolder;
-            protected set { _ = value; }
-        }
         public bool FromCommand { get; private set; } = false;
         protected int _state = -1;
         protected string _linkName;
@@ -69,9 +64,10 @@ namespace Scrapper.Spider
             return XPath(xpath, @"XPathClick.sbn.js");
         }
 
-        public virtual void Navigate()
+        public virtual void Navigate(MediaItem mitem)
         {
             _state = 0;
+            Media = mitem;
         }
 
         public virtual void Navigate(string name, string url)
@@ -79,7 +75,6 @@ namespace Scrapper.Spider
             _linkName = name;
             Browser.Address = url;
         }
-
 
         public virtual List<Cookie> CreateCookie() { return null; }
 
@@ -100,7 +95,7 @@ namespace Scrapper.Spider
 
         public virtual void OnScrapCompleted(bool isValid, string path = null)
         {
-            Browser.StopScrapping();
+            Browser.StopScrapping(Media);
         }
 
         protected void ParsePage(IScrapItem item, Dictionary<string, string> dic)

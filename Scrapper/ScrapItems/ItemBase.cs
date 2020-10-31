@@ -40,9 +40,9 @@ namespace Scrapper.ScrapItems
         protected int _numValidItems = 0;
         protected AvItem _avItem;
 
-        protected string posterPath
+        protected string PosterPath
         {
-            get => $"{_spider.MediaFolder}\\{_spider.Pid}_poster";
+            get => $"{_spider.Media.MediaFolder}\\{_spider.Media.Pid}_poster";
         }
 
         protected List<Tuple<string, string>> _links
@@ -53,8 +53,8 @@ namespace Scrapper.ScrapItems
             _spider = spider;
             _avItem = new AvItem
             {
-                Pid = spider.Pid,
-                Path = spider.MediaFolder,
+                Pid = spider.Media.Pid,
+                Path = spider.Media.MediaFolder,
                 IsCensored = true,
             };
             _context = App.DbContext;
@@ -69,7 +69,7 @@ namespace Scrapper.ScrapItems
         {
             if (e.IsComplete)
             {
-                Log.Print($"{_spider.Pid} download completed: {e.FullPath}");
+                Log.Print($"{_spider.Media.Pid} download completed: {e.FullPath}");
                 CheckCompleted();
             };
         }

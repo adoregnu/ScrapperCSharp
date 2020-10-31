@@ -1,5 +1,6 @@
 ﻿using CefSharp;
 using HtmlAgilityPack;
+using Scrapper.Model;
 using Scrapper.ScrapItems;
 using Scrapper.ViewModel;
 using System;
@@ -53,7 +54,7 @@ namespace Scrapper.Spider
             Log.Print($"OnMultiResult : {list.Count} items found!");
             if (list == null || list.Count == 0)
             {
-                Browser.StopScrapping();
+                Browser.StopScrapping(Media);
                 return;
             }
             HtmlDocument doc = new HtmlDocument();
@@ -63,7 +64,7 @@ namespace Scrapper.Spider
                 doc.LoadHtml(it);
                 var node = doc.DocumentNode.SelectSingleNode("//div[@class='uid']");
                 var pid = node.InnerText.Trim();
-                if (pid.Equals(Pid, StringComparison.OrdinalIgnoreCase))
+                if (pid.Equals(Media.Pid, StringComparison.OrdinalIgnoreCase))
                 {
                     a = doc.DocumentNode.FirstChild;
                     break;
@@ -71,17 +72,17 @@ namespace Scrapper.Spider
             }
             if (a == null)
             {
-                Browser.StopScrapping();
+                Browser.StopScrapping(Media);
                 return;
             }
             _state = 1;
             Browser.Address = $"{URL}{a.Attributes["href"].Value.Substring(1)}";
         }
 
-        public override void Navigate()
+        public override void Navigate(MediaItem mitem)
         {
-            base.Navigate();
-            Browser.Address = $"{URL}search?q={Pid}&f=all";
+            base.Navigate(mitem);
+            Browser.Address = $"{URL}search?q={Media.Pid}&f=all";
         }
 
         public override void Scrap()

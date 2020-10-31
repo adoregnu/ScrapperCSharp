@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 using CefSharp;
 using Scrapper.Extension;
+using Scrapper.Model;
 using Scrapper.ViewModel;
 namespace Scrapper.Spider
 {
@@ -45,10 +46,10 @@ namespace Scrapper.Spider
             Log.Print($"OnMultiResult : {list.Count} items found!");
             if (list.IsNullOrEmpty())
             {
-                Browser.StopScrapping();
+                Browser.StopScrapping(Media);
                 return;
             }
-            var apid = Pid.Split('-');
+            var apid = Media.Pid.Split('-');
             var regex = new Regex($@"cid=(h_)?(\d+)?{apid[0].ToLower()}");
             int matchCount = 0;
             string exactUrl = null;
@@ -73,15 +74,15 @@ namespace Scrapper.Spider
             }
             else
             {
-                Browser.StopScrapping();
+                Browser.StopScrapping(Media);
                 Log.Print("No Exact match ID");
             }
         }
 
-        public override void Navigate()
+        public override void Navigate(MediaItem mitem)
         {
-            base.Navigate();
-            Browser.Address = $"{URL}mono/-/search/=/searchstr={Pid}/";
+            base.Navigate(mitem);
+            Browser.Address = $"{URL}mono/-/search/=/searchstr={Media.Pid}/";
         }
 
         public override void Scrap()
@@ -92,7 +93,7 @@ namespace Scrapper.Spider
                     Browser.ExecJavaScript(XPath("//p[@class='tmb']/a/@href"), OnMultiResult);
                     break;
                 case 1:
-                    Browser.StopScrapping();
+                    Browser.StopScrapping(Media);
                     break;
             }
         }

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Scrapper.Extension;
+using Scrapper.Model;
 using Scrapper.ViewModel;
 
 namespace Scrapper.Spider
@@ -23,10 +24,10 @@ namespace Scrapper.Spider
             Log.Print($"OnMultiResult : {list.Count} items found!");
             if (list.IsNullOrEmpty())
             {
-                Browser.StopScrapping();
+                Browser.StopScrapping(Media);
                 return;
             }
-            var regex = new Regex($@"/{Pid.ToLower()}");
+            var regex = new Regex($@"/{Media.Pid.ToLower()}");
             string exactUrl = null;
             foreach (string url in list)
             {
@@ -45,14 +46,14 @@ namespace Scrapper.Spider
             else
             {
                 Log.Print("No matched Pid!");
-                Browser.StopScrapping();
+                Browser.StopScrapping(Media);
             }
         }
 
-        public override void Navigate()
+        public override void Navigate(MediaItem mitem)
         {
-            base.Navigate();
-            Browser.Address = $"{URL}?s={Pid}";
+            base.Navigate(mitem);
+            Browser.Address = $"{URL}?s={Media.Pid}";
         }
 
         public override void Scrap()
@@ -65,7 +66,7 @@ namespace Scrapper.Spider
                         OnMultiResult);
                     break;
                 case 1:
-                    Browser.StopScrapping();
+                    Browser.StopScrapping(Media);
                     break;
             }
         }

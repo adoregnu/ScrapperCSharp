@@ -23,7 +23,7 @@ namespace Scrapper.ScrapItems
         protected override void OnBeforeDownload(object sender, DownloadItem e)
         {
             var ext = Path.GetExtension(e.SuggestedFileName);
-            e.SuggestedFileName = $"{posterPath}{ext}";
+            e.SuggestedFileName = $"{PosterPath}{ext}";
         }
 
         void IScrapItem.OnJsResult(string name, List<object> items)

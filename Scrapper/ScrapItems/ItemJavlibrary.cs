@@ -29,7 +29,7 @@ namespace Scrapper.ScrapItems
                 //!e.SuggestedFileName.Contains("removed"))
             {
                 var ext = Path.GetExtension(e.SuggestedFileName);
-                e.SuggestedFileName = $"{posterPath}{ext}";
+                e.SuggestedFileName = $"{PosterPath}{ext}";
             }
             else
             {
@@ -85,8 +85,8 @@ namespace Scrapper.ScrapItems
                 else if (name == "title")
                 {
                     var title = (items[0] as string).Trim();
-                    if (title.StartsWith(_spider.Pid, StringComparison.OrdinalIgnoreCase))
-                        title = title.Substring(_spider.Pid.Length+1);
+                    if (title.StartsWith(_spider.Media.Pid, StringComparison.OrdinalIgnoreCase))
+                        title = title.Substring(_spider.Media.Pid.Length+1);
 
                     UpdateTitle(title);
                 }

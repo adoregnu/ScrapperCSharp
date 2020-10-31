@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using CefSharp;
+using Scrapper.Model;
 using Scrapper.ScrapItems;
 using Scrapper.ViewModel;
 namespace Scrapper.Spider
@@ -29,10 +30,10 @@ namespace Scrapper.Spider
             };
         }
 
-        public override void Navigate()
+        public override void Navigate(MediaItem mitem)
         {
-            base.Navigate();
-            Browser.Address = $"{URL}product/product_detail/{Pid.ToUpper()}/";
+            base.Navigate(mitem);
+            Browser.Address = $"{URL}product/product_detail/{Media.Pid.ToUpper()}/";
         }
 
         public override void Scrap()
