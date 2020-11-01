@@ -55,6 +55,7 @@ namespace Scrapper.ScrapItems
                 { "Sari Kousaka", "Sari Kosaka"},
                 { "Miyuu Amano", "Miyu Amano"},
                 { "Yuuri Arakawa", "Yuri Arakawa"},
+                { "Nozomi Asou", "Nozomi Aso"},
                 { "Maasa Matsushima", "Masa Matsushima"}
             };
 

@@ -115,9 +115,15 @@
                 <Button Content="&gt;" Margin="2"
                         Command="{Binding CmdRemoveActor}"/>
             </StackPanel>
-            <ListBox Grid.Column="2" MaxHeight="300" ItemsSource="{Binding AllActors}"
+            <DockPanel Grid.Column="2" >
+                <ComboBox DockPanel.Dock="Top"
+                          ItemsSource="{Binding ActorNameInitials}"
+                          SelectedItem="{Binding SelectedActorInitial}"/>
+                <ListBox MaxHeight="300" ItemsSource="{Binding AllActors}"
                      ItemTemplate="{StaticResource ActorMiniTemplate}"
                      SelectedItem="{Binding SelectedActor}"/>
+               
+            </DockPanel>
         </Grid>
         <Grid Grid.Row="6" Margin="5">
             <Grid.ColumnDefinitions>

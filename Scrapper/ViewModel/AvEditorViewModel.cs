@@ -53,6 +53,7 @@ namespace Scrapper.ViewModel
         public IEnumerable<AvGenre> AllGenres { get; private set; }
         public IEnumerable<AvActor> AllActors { get; private set; }
         public IEnumerable<AvStudio> AllStudios { get; private set; }
+        public List<string> ActorNameInitials { get; private set; }
 
         public bool? DialogResult
         {
@@ -68,6 +69,16 @@ namespace Scrapper.ViewModel
 
         public AvActor SelectedAvActor { get; set; }
         public AvGenre SelectedAvGenre { get; set; }
+        string _selectedActorInitial;
+        public string SelectedActorInitial
+        {
+            get => _selectedActorInitial;
+            set
+            {
+                _selectedActorInitial = value;
+                OnActorNameInitialChanged(value);
+            }
+        }
 
         public ICommand CmdSetStudio { get; private set; }
         public ICommand CmdSetSeries { get; private set; }
@@ -103,6 +114,8 @@ namespace Scrapper.ViewModel
                 .ToList();
             AllActors = names.Select(n => n.Actor).Distinct();
             AllStudios = App.DbContext.Studios.ToList();
+            ActorNameInitials = Enumerable.Range('A', 'Z' - 'A' + 1).
+                      Select(c => ((char)c).ToString()).ToList();
         }
 
         bool _actorChanged = false;
@@ -140,6 +153,16 @@ namespace Scrapper.ViewModel
             App.DbContext.SaveChanges();
 
             _mediaItem.ReloadAvItem();
+        }
+        void OnActorNameInitialChanged(string initial)
+        {
+            var names = App.DbContext.ActorNames
+                .Include("Actor")
+                .Where(n => n.Name.StartsWith(initial))
+                .OrderBy(n => n.Name)
+                .ToList();
+            AllActors = names.Select(n => n.Actor).Distinct();
+            RaisePropertyChanged("AllActors");
         }
     }
 }
