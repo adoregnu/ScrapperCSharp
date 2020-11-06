@@ -6,54 +6,45 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:Scrapper.View"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-        xmlns:bindLocal="clr-namespace:FileListView.Views;assembly=FileListView"
         xmlns:converter="clr-namespace:Scrapper.Converter"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         md:DialogServiceViews.IsRegistered="True"
         Title="ActorEditorDialog" Height="600" Width="1060">
     <Window.Resources>
-        <DataTemplate x:Key="ActorTemplate">
-            <Grid Width="125" Height="125">
-                <Grid.Resources>
-                    <bindLocal:BindingProxy
-                        x:Key="ViewModel"
-                        Data="{Binding RelativeSource={RelativeSource FindAncestor,
-                            AncestorType={x:Type local:ActorEditorDialog}}, Path=DataContext}"/>
-                </Grid.Resources>
-                <Grid.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Delete"
-                                  Command="{Binding Data.CmdDeleteActor,
-                                    Source={StaticResource ViewModel}}"/>
-                        <MenuItem Header="Change Pciture"
-                                  Command="{Binding Data.CmdChangePicture,
-                                    Source={StaticResource ViewModel}}"/>
-                    </ContextMenu>
-                </Grid.ContextMenu>
-                <Image HorizontalAlignment="Center" Source="{Binding .,
-                    Converter={StaticResource PathToImageConverter}}"/>
-            </Grid>
-        </DataTemplate>
-        <Style x:Key="_ListBoxItemStyle" TargetType="ListBoxItem">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListBoxItem">
-                        <Border Name="_Border"
-                                Padding="2"
-                                SnapsToDevicePixels="true">
-                            <ContentPresenter />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="_Border" Property="Background" Value="Blue"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <converter:MultiParamConverter x:Key="ParamConverter"/>
+        <converter:SelectedItem2Visibility x:Key="SelectedCount2Visibility"/>
+
+        <ControlTemplate x:Key="_controlTpl" TargetType="ListBoxItem">
+            <Border Name="_Border" Padding="2" SnapsToDevicePixels="true" Width="128">
+                <Image HorizontalAlignment="Center"
+                       Source="{Binding ., Converter={StaticResource PathToImageConverter}}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsSelected" Value="true">
+                    <Setter TargetName="_Border" Property="Background" Value="Blue"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ContextMenu x:Key="_contextMenu">
+            <MenuItem
+                Header="Merge Actors"
+                CommandParameter="{Binding PlacementTarget.Tag.SelectedItems,
+                    RelativeSource={RelativeSource FindAncestor,
+                    AncestorType=ContextMenu}}"
+                Command="{Binding PlacementTarget.Tag.DataContext.CmdMergeActors,
+                    RelativeSource={RelativeSource FindAncestor,
+                    AncestorType=ContextMenu}}"/>
+            <MenuItem
+                Header="Delete"
+                Command="{Binding PlacementTarget.Tag.DataContext.CmdDeleteActor,
+                    RelativeSource={RelativeSource FindAncestor,
+                    AncestorType=ContextMenu}}"/>
+            <MenuItem
+                Header="Change Pciture"
+                Command="{Binding PlacementTarget.Tag.DataContext.CmdChangePicture,
+                    RelativeSource={RelativeSource FindAncestor,
+                    AncestorType=ContextMenu}}"/>
+        </ContextMenu>
     </Window.Resources>
     <DockPanel>
         <Grid DockPanel.Dock="Top" Margin="5">
@@ -65,8 +56,7 @@
                 <ColumnDefinition Width="165"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Picture : "
-                       VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="Picture : " VerticalAlignment="Center"/>
             <TextBox Grid.Column="1" Text="{Binding PicturePath}"/>
             <Button Grid.Column="2" Margin="5,0,5,0"
                     Style="{StaticResource ModernButtonStyle2}"
@@ -106,13 +96,7 @@
                 </Grid.RowDefinitions>
                 <WrapPanel Grid.Row="0" Orientation="Horizontal"
                            HorizontalAlignment="Center">
-                    <ItemsControl Grid.Row="1" x:Name="numberButtonItems">
-                        <ItemsControl.Resources>
-                            <bindLocal:BindingProxy
-                                x:Key="VmContext"
-                                Data="{Binding RelativeSource={RelativeSource FindAncestor,
-                                    AncestorType={x:Type local:ActorEditorDialog}}, Path=DataContext}"/>
-                        </ItemsControl.Resources>
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding ActorInitials}">
                         <ItemsControl.ItemsPanel>
                             <!-- specify the panel that is the container for your items -->
                             <ItemsPanelTemplate>
@@ -122,28 +106,19 @@
                         <!-- specify the template used to render each item -->
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button
-                                    Content="{Binding}" Margin="5,0,0,5"
-                                    Command="{Binding Data.CmdActorAlphabet,
-                                        Source={StaticResource VmContext}}"
-                                    CommandParameter="{Binding}">
-<!--
-                                    <ToggleButton.CommandParameter>
-                                        <MultiBinding Converter="{StaticResource ParamConverter}">
-                                            <Binding Path="IsChecked" RelativeSource="{RelativeSource Self}"/>
-                                            <Binding Path="."/>
-                                        </MultiBinding>    
-                                    </ToggleButton.CommandParameter>
--->
-                                </Button>
+                                <ToggleButton
+                                    Margin="5,0,0,5"
+                                    Content="{Binding Initial}"
+                                    IsChecked="{Binding IsChecked}">
+                                </ToggleButton>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </WrapPanel>
+
                  <ListBox Margin="5,0,0,5" Grid.Row="1"
+                    SelectionMode="Extended" x:Name="_actorListbox"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    ItemTemplate="{StaticResource ActorTemplate}"
-                    ItemContainerStyle="{StaticResource _ListBoxItemStyle}"
                     ItemsPanel="{StaticResource ImagePanelTemplate}"
                     ItemsSource="{Binding Actors}"
                     SelectedItem="{Binding SelectedActor}">
@@ -152,6 +127,16 @@
                             <i:InvokeCommandAction Command="{Binding CmdDoubleClick}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
+                    <ListBox.Resources>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="Tag"
+                                    Value="{Binding ElementName=_actorListbox}"/>
+                            <Setter Property="ContextMenu"
+                                    Value="{StaticResource _contextMenu}"/>
+                            <Setter Property="Template"
+                                    Value="{StaticResource _controlTpl}"/>
+                        </Style>
+                    </ListBox.Resources>
                 </ListBox>
             </Grid>
             <DockPanel Grid.Column="1" Width="200">
