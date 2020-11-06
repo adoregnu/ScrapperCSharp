@@ -15,7 +15,8 @@
         <converter:SelectedItem2Visibility x:Key="SelectedCount2Visibility"/>
 
         <ControlTemplate x:Key="_controlTpl" TargetType="ListBoxItem">
-            <Border Name="_Border" Padding="2" SnapsToDevicePixels="true" Width="128">
+            <Border Name="_Border" Padding="2" SnapsToDevicePixels="true"
+                    Width="128" Height="128">
                 <Image HorizontalAlignment="Center"
                        Source="{Binding ., Converter={StaticResource PathToImageConverter}}"/>
             </Border>
@@ -25,7 +26,7 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
-        <ContextMenu x:Key="_contextMenu">
+        <ContextMenu x:Key="_actorListCMenu">
             <MenuItem
                 Header="Merge Actors"
                 CommandParameter="{Binding PlacementTarget.Tag.SelectedItems,
@@ -44,6 +45,13 @@
                 Command="{Binding PlacementTarget.Tag.DataContext.CmdChangePicture,
                     RelativeSource={RelativeSource FindAncestor,
                     AncestorType=ContextMenu}}"/>
+        </ContextMenu>
+        <ContextMenu x:Key="_namesOfActorCMenu">
+            <MenuItem
+                Header="Delete"
+                Command="{Binding PlacementTarget.Tag.CmdDelNameOfActor,
+                    RelativeSource={RelativeSource FindAncestor,
+                    AncestorType=ContextMenu}}" />
         </ContextMenu>
     </Window.Resources>
     <DockPanel>
@@ -84,6 +92,12 @@
                 </Button.ToolTip>
             </Button>
         </Grid>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Button Content="Save" Margin="0,0,5,5" Padding="2" Click="Close"
+                    Command="{Binding CmdSave}"/>
+            <Button Content="Close" Margin="0,0,5,5" Padding="2" IsCancel="True"/>
+        </StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -132,7 +146,7 @@
                             <Setter Property="Tag"
                                     Value="{Binding ElementName=_actorListbox}"/>
                             <Setter Property="ContextMenu"
-                                    Value="{StaticResource _contextMenu}"/>
+                                    Value="{StaticResource _actorListCMenu}"/>
                             <Setter Property="Template"
                                     Value="{StaticResource _controlTpl}"/>
                         </Style>
@@ -155,8 +169,19 @@
                         </Button>
                         <TextBox Text="{Binding NewName}"/>
                     </DockPanel>
-                    <ListBox  Height="100" Margin="5,0,5,0"
-                              ItemsSource="{Binding NamesOfActor}" />
+                    <ListBox  Height="100" Margin="5,0,5,0" x:Name="_namesOfActor"
+                              ItemsSource="{Binding NamesOfActor}"
+                              SelectedItem="{Binding SelectedNameOfActor}">
+                        <ListBox.Resources>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="Tag"
+                                    Value="{Binding ElementName=_namesOfActor,
+                                        Path=DataContext}"/>
+                                <Setter Property="ContextMenu"
+                                    Value="{StaticResource _namesOfActorCMenu}"/>
+                            </Style>
+                        </ListBox.Resources>
+                    </ListBox>
                 </DockPanel>
                 <ListBox ItemsSource="{Binding AllNames}" Margin="5"
                          SelectedItem="{Binding SelectedActorName}"/>

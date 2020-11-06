@@ -46,7 +46,6 @@ namespace Scrapper.ViewModel
         string _picturePath;
         string _actorName;
         string _newName;
-        IEnumerable<AvActorName> _namesOfActor;
 
         bool? _dialogResult;
         public bool? DialogResult
@@ -63,11 +62,15 @@ namespace Scrapper.ViewModel
             private set => Set(ref _actors, value);
         }
 
-        public IEnumerable<AvActorName> NamesOfActor
+        public AvActorName SelectedNameOfActor { get; set; }
+
+        ObservableCollection<AvActorName> _namesOfActor = null;
+        public ObservableCollection<AvActorName> NamesOfActor
         {
             get => _namesOfActor;
-            private set => Set(ref _namesOfActor, value);
+            set => Set(ref _namesOfActor, value);
         }
+
         ObservableCollection<AvActorName> _allNames
             = new ObservableCollection<AvActorName>();
         public ObservableCollection<AvActorName> AllNames
@@ -86,7 +89,7 @@ namespace Scrapper.ViewModel
                 Set(ref _actor, value);
                 if (value != null)
                 {
-                    NamesOfActor = _actor.Names.ToList();
+                    NamesOfActor = new ObservableCollection<AvActorName>(_actor.Names);
                 }
             }
         }
@@ -128,6 +131,8 @@ namespace Scrapper.ViewModel
         public ICommand CmdAddNewName { get; private set; }
         public ICommand CmdDoubleClick { get; private set; }
         public ICommand CmdMergeActors { get; private set; }
+        public ICommand CmdDelNameOfActor { get; private set; }
+        public ICommand CmdSave { get; private set; }
 
         readonly IDialogService _dialogService;
 
@@ -143,21 +148,26 @@ namespace Scrapper.ViewModel
             CmdMergeActors = new RelayCommand<object>(
                 p => OnMergeActors(p), 
                 p => p is IList<object> list && list.Count > 1);
+            CmdDelNameOfActor = new RelayCommand(() =>
+            {
+                App.DbContext.ActorNames.Remove(SelectedNameOfActor);
+                NamesOfActor.Remove(SelectedNameOfActor);
+                SelectedNameOfActor = null;
+            });
+            CmdSave = new RelayCommand(() => App.DbContext.SaveChanges());
 
-            ActorInitials = Enumerable.Range('A', 'Z' - 'A' + 1).
-                      Select(c => new ActorInitial
-                      {
-                          ActorEditor = this,
-                          Initial = ((char)c).ToString(),
-                      }).ToList();
+            ActorInitials = Enumerable.Range('A', 'Z' - 'A' + 1)
+                .Select(c => new ActorInitial
+                {
+                    ActorEditor = this,
+                    Initial = ((char)c).ToString(),
+                }).ToList();
             ActorInitials.Insert(0, new ActorInitial
             {
                 ActorEditor = this,
                 Initial = "All",
             });
-            ActorInitials[1].IsChecked = true;
-
-            //OnActorAlphabet("A", true);
+            //ActorInitials[1].IsChecked = true;
         }
 
         string ChoosePicture()
@@ -262,8 +272,8 @@ namespace Scrapper.ViewModel
                 RaisePropertyChanged("SelectedActor");
                 //AllNames.Add(name);
                 NewName = "";
-                NamesOfActor = _actor.Names.ToList();
-
+                NamesOfActor.Clear();
+                NamesOfActor.Concat(_actor.Names);
             }
             catch (Exception ex)
             {
@@ -338,7 +348,9 @@ namespace Scrapper.ViewModel
         void OnMergeActors(object p)
         {
             AvActor tgtActor = null;
-            foreach (AvActor actor in p as IList<object>)
+            List<AvActor> selectedActors =
+                (p as IList<object>).Select(o => o as AvActor).ToList();
+            foreach (var actor in selectedActors)
             {
                 if (tgtActor == null)
                 {
@@ -359,7 +371,7 @@ namespace Scrapper.ViewModel
                 App.DbContext.Actors.Remove(actor);
                 Actors.Remove(actor);
             }
-            App.DbContext.SaveChanges();
+            //App.DbContext.SaveChanges();
         }
     }
 }
