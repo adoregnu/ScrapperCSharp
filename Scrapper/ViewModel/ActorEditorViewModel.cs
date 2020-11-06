@@ -75,7 +75,8 @@ namespace Scrapper.ViewModel
             set
             {
                 Set(ref _selectedActorName, value);
-                SelectedActor = value.Actor;
+                if  (value != null)
+                    SelectedActor = value.Actor;
             }
         }
 
