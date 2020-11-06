@@ -7,14 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using FileListView.Interfaces;
+
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using log4net.Config;
+
 using MvvmDialogs;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
-using Scrapper.Extension;
+
 using Scrapper.Model;
 
 namespace Scrapper.ViewModel
@@ -336,15 +336,29 @@ namespace Scrapper.ViewModel
 
         void OnMergeActors(object p)
         {
-            foreach (AvActor actor in (p as IList<object>))
+            AvActor tgtActor = null;
+            foreach (AvActor actor in p as IList<object>)
             {
-                var avs = actor.Items.ToList();
-                Log.Print($"{actor}");
-                foreach (var av in avs)
+                if (tgtActor == null)
                 {
-                    Log.Print($"\t{av.Pid}");
+                    tgtActor = actor;
+                    continue;
                 }
+
+                var avItems = actor.Items.ToList();
+                foreach (var item in avItems)
+                {
+                    item.Actors.Remove(actor);
+                    item.Actors.Add(tgtActor);
+                }
+                foreach (var name in actor.Names)
+                {
+                    tgtActor.Names.Add(name);
+                }
+                App.DbContext.Actors.Remove(actor);
+                Actors.Remove(actor);
             }
+            App.DbContext.SaveChanges();
         }
     }
 }

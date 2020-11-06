@@ -6,7 +6,6 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:Scrapper.View"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-        xmlns:bindLocal="clr-namespace:FileListView.Views;assembly=FileListView"
         xmlns:converter="clr-namespace:Scrapper.Converter"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
@@ -14,7 +13,7 @@
         Title="ActorEditorDialog" Height="600" Width="1060">
     <Window.Resources>
         <converter:SelectedItem2Visibility x:Key="SelectedCount2Visibility"/>
-        <converter:MultiParamConverter x:Key="ParamConverter"/>
+
         <ControlTemplate x:Key="_controlTpl" TargetType="ListBoxItem">
             <Border Name="_Border" Padding="2" SnapsToDevicePixels="true" Width="128">
                 <Image HorizontalAlignment="Center"
@@ -57,8 +56,7 @@
                 <ColumnDefinition Width="165"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Picture : "
-                       VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="Picture : " VerticalAlignment="Center"/>
             <TextBox Grid.Column="1" Text="{Binding PicturePath}"/>
             <Button Grid.Column="2" Margin="5,0,5,0"
                     Style="{StaticResource ModernButtonStyle2}"
