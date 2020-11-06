@@ -171,6 +171,7 @@
     <Compile Include="Converter\BoardTypeVisibilityConverter.cs" />
     <Compile Include="Converter\FileToImageConverter.cs" />
     <Compile Include="Converter\ScreenshotsToVisibilityConverter.cs" />
+    <Compile Include="Converter\SelectedItem2Visibility.cs" />
     <Compile Include="Converter\SetParamConverter.cs" />
     <Compile Include="Converter\ValueConverters.cs" />
     <Compile Include="Event\ViewEvent.cs" />

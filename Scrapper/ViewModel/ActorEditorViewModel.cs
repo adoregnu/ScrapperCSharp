@@ -7,18 +7,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-
+using FileListView.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using log4net.Config;
 using MvvmDialogs;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
-
+using Scrapper.Extension;
 using Scrapper.Model;
 
 namespace Scrapper.ViewModel
 {
+    class ActorInitial : ViewModelBase
+    {
+        bool _isChecked = false;
+        public ActorEditorViewModel ActorEditor;
+        public string Initial { get; set; }
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set
+            {
+                _isChecked = value;
+                ActorEditor.OnActorAlphabet(Initial, value);
+            }
+        }
+        public void UnCheck()
+        {
+            _isChecked = false; 
+            RaisePropertyChanged("IsChecked");
+        }
+    }
+
     class ActorEditorViewModel : ViewModelBase, IModalDialogViewModel
     {
         AvActor _actor;
@@ -54,6 +75,8 @@ namespace Scrapper.ViewModel
             get => _allNames;
             private set => Set(ref _allNames, value);
         }
+
+        public List<ActorInitial> ActorInitials { get; private set; }
 
         public AvActor SelectedActor
         {
@@ -103,7 +126,7 @@ namespace Scrapper.ViewModel
         public ICommand CmdBrowsePicture { get; private set; }
         public ICommand CmdAddNewName { get; private set; }
         public ICommand CmdDoubleClick { get; private set; }
-        public ICommand CmdActorAlphabet { get; private set; }
+        public ICommand CmdMergeActors { get; private set; }
 
         readonly IDialogService _dialogService;
 
@@ -116,9 +139,24 @@ namespace Scrapper.ViewModel
             CmdChangePicture = new RelayCommand(() => OnChangePicture());
             CmdAddNewName = new RelayCommand(() => OnAddNewName());
             CmdDoubleClick = new RelayCommand(() => OnDoubleClicked());
-            CmdActorAlphabet = new RelayCommand<object>((p) => OnActorAlphabet(p));
+            CmdMergeActors = new RelayCommand<object>(
+                p => OnMergeActors(p), 
+                p => p is IList<object> list && list.Count > 1);
 
-            OnActorAlphabet('A');
+            ActorInitials = Enumerable.Range('A', 'Z' - 'A' + 1).
+                      Select(c => new ActorInitial
+                      {
+                          ActorEditor = this,
+                          Initial = ((char)c).ToString(),
+                      }).ToList();
+            ActorInitials.Insert(0, new ActorInitial
+            {
+                ActorEditor = this,
+                Initial = "All",
+            });
+            ActorInitials[1].IsChecked = true;
+
+            //OnActorAlphabet("A", true);
         }
 
         string ChoosePicture()
@@ -232,30 +270,61 @@ namespace Scrapper.ViewModel
             }
         }
 
-        void OnActorAlphabet(object p)
+        public void OnActorAlphabet(string p, bool isSelected)
         {
-            string searcStr = $"{p}%";
-
-            //Log.Print($"{searcStr}");
             NamesOfActor = null;
             SelectedActor = null;
+            List<AvActorName> names = null;
+            if (p == "All")
+            {
+                foreach (var initial in ActorInitials)
+                {
+                    if (initial.Initial != "All") initial.UnCheck();
+                }
+                if (isSelected)
+                {
+                    names = App.DbContext.ActorNames
+                        .Include("Actor")
+                        .OrderBy(n => n.Name)
+                        .ToList();
+                    AllNames = new ObservableCollection<AvActorName>(names);
+                    Actors = new ObservableCollection<AvActor>(
+                        names.Select(n => n.Actor).Distinct());
+                }
+                else
+                {
+                    AllNames.Clear();
+                    Actors.Clear();
+                }
+                return;
+            }
 
-            var names = App.DbContext.ActorNames
+            string searcStr = $"{p}%";
+            names = App.DbContext.ActorNames
                 .Include("Actor")
                 .Where(n => DbFunctions.Like(n.Name, searcStr))
                 .OrderBy(n => n.Name)
                 .ToList();
 
-            if (names != null && names.Count > 0)
+            if (names == null || names.Count == 0)
+                return;
+
+            foreach (var name in names)
             {
-                AllNames = new ObservableCollection<AvActorName>(names);
-                Actors = new ObservableCollection<AvActor>(
-                    names.Select(n => n.Actor).Distinct());
+                if (isSelected)
+                    AllNames.Add(name);
+                    //AllNames.InsertInPlace(name, n => n.Name);
+                else
+                    AllNames.Remove(name);
             }
-            else
-            { 
-                Actors.Clear();
-                AllNames.Clear();
+            var actors = names.Select(n => n.Actor).Distinct();
+            foreach (var actor in actors)
+            {
+                if (isSelected)
+                    Actors.Add(actor);
+                    //Actors.InsertInPlace(actor, a => a.ToString());
+                else
+                    Actors.Remove(actor);
             }
         }
 
@@ -263,6 +332,19 @@ namespace Scrapper.ViewModel
         {
             MessengerInstance.Send(new NotificationMessage<AvActor>(
                 SelectedActor, "doubleClicked"));
+        }
+
+        void OnMergeActors(object p)
+        {
+            foreach (AvActor actor in (p as IList<object>))
+            {
+                var avs = actor.Items.ToList();
+                Log.Print($"{actor}");
+                foreach (var av in avs)
+                {
+                    Log.Print($"\t{av.Pid}");
+                }
+            }
         }
     }
 }
