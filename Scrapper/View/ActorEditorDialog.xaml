@@ -94,9 +94,10 @@
         </Grid>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
                     HorizontalAlignment="Center">
-            <Button Content="Save" Margin="0,0,5,5" Padding="2" Click="Close"
+            <Button Content="Save" Margin="0,0,5,5" Padding="2"
                     Command="{Binding CmdSave}"/>
-            <Button Content="Close" Margin="0,0,5,5" Padding="2" IsCancel="True"/>
+            <Button Content="Close" Margin="0,0,5,5" Padding="2"
+                    IsCancel="True"  Click="Close"/>
         </StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>

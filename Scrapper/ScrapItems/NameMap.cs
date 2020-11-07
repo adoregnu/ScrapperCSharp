@@ -28,6 +28,7 @@ namespace Scrapper.ScrapItems
                 { "Uchu Kikaku", "K M Produce" },
                 { "Crystal Eizou", "Crystal Eizo"},
                 { "Deeps", "Deep's"},
+                { "Kyandei", "Candy"},
                 { "Das !", "Das"},
                 { "Bi", "Chijo Heaven"},
             };

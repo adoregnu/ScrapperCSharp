@@ -83,7 +83,7 @@ namespace Scrapper.ViewModel
         void OnActorEditor()
         { 
             var dialog = new ActorEditorViewModel(_dialogService);
-             _dialogService.ShowDialog<ActorEditorDialog>(this, dialog);
+            _dialogService.Show<ActorEditorDialog>(this, dialog);
         }
 #if false
         void OnKeyDown(EventArgs e)
