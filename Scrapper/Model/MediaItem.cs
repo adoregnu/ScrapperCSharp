@@ -55,7 +55,18 @@ namespace Scrapper.Model
             }
         }
 
-        public AvItem AvItem { get; private set; } = null;
+        AvItem _avItem = null;
+        public AvItem AvItem
+        {
+            get => _avItem;
+            set
+            {
+                Set(ref _avItem, value);
+                RaisePropertyChanged("Info");
+                RaisePropertyChanged("Actors");
+                RaisePropertyChanged("BgImagePath");
+            }
+        }
 
         public MediaItem(string path = null)
         {
@@ -140,9 +151,6 @@ namespace Scrapper.Model
                 .Include("Genres")
                 .Include("Actors")
                 .FirstOrDefault(i => i.Pid == Pid);
-            RaisePropertyChanged("Info");
-            RaisePropertyChanged("Actors");
-            RaisePropertyChanged("BgImagePath");
         }
 
         public void UpdateFields()
@@ -197,8 +205,7 @@ namespace Scrapper.Model
             {
                 UpdateMediaField(path);
             }
-            else if (VideoExts.Any(s => fname.EndsWith(s,
-                StringComparison.CurrentCultureIgnoreCase)))
+            else if (VideoExts.Any(s => fname.EndsWith(s, StringComparison.CurrentCultureIgnoreCase)))
             {
                 IsImage = false;
                 UpdateMediaField(path);

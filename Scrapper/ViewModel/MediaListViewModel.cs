@@ -62,6 +62,7 @@ namespace Scrapper.ViewModel
         public ICommand CmdDownload { get; set; }
         public ICommand CmdMoveItem { get; set; }
         public ICommand CmdDeleteItem { get; set; }
+        public ICommand CmdClearDb { get; set; }
         public ICommand CmdEditItem { get; set; }
         public ICommand CmdDoubleClick { get; set; }
 
@@ -77,6 +78,7 @@ namespace Scrapper.ViewModel
                 p => OnContextMenu(p, MediaListMenuType.downloaded));
             CmdMoveItem = new RelayCommand<object>(p => OnMoveItem(p));
             CmdDeleteItem = new RelayCommand<object>(p => OnDeleteItem(p));
+            CmdClearDb = new RelayCommand<object>(p => OnClearDb(p));
             CmdEditItem = new RelayCommand<object>(p => OnEditItem(p));
             CmdDoubleClick = new RelayCommand(() => OnDoubleClicked());
 
@@ -207,15 +209,23 @@ namespace Scrapper.ViewModel
             }
         }
 
+        void OnClearDb(object param)
+        {
+            if (param is MediaItem item && item.AvItem != null)
+            {
+                App.DbContext.Items.Remove(item.AvItem);
+                App.DbContext.SaveChanges();
+                item.AvItem = null;
+            }
+        }
+
         void OnEditItem(object param)
         {
-            if (param == null)
-                return;
-
-            var item = param as MediaItem;
-            if (item.AvItem == null) return;
-            MessengerInstance.Send(new NotificationMessage<MediaItem>(
-                item, "editAv"));
+            if (param is MediaItem item && item.AvItem != null)
+            {
+                MessengerInstance.Send(new NotificationMessage<MediaItem>(
+                    item, "editAv"));
+            }
         }
 
         void OnDoubleClicked()
