@@ -89,6 +89,11 @@
                             Source={StaticResource VmContext}}"
                         CommandParameter="{Binding Data.SelectedItems,
                             Source={StaticResource CtrlContext}}"/>
+                    <MenuItem Header="Clear DB"
+                        Command="{Binding Data.CmdClearDb,
+                            Source={StaticResource VmContext}}"
+                        CommandParameter="{Binding Data.SelectedItems,
+                            Source={StaticResource CtrlContext}}"/>
                     <MenuItem Header="Edit" 
                         Command="{Binding Data.CmdEditItem,
                             Source={StaticResource VmContext}}"

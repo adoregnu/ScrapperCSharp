@@ -97,6 +97,8 @@ namespace Scrapper.ViewModel
             var actor = msg.Content;
             if (actor == null) return;
 
+            if (actor.Items == null) return;
+
             IsSelected = true;
             MediaList.ClearMedia();
             foreach (var item in actor.Items.ToList())
