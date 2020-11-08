@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:Scrapper.View"
+        xmlns:bh="clr-namespace:Scrapper.View.Behavior"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
         xmlns:converter="clr-namespace:Scrapper.Converter"
         mc:Ignorable="d"
@@ -142,6 +143,9 @@
                             <i:InvokeCommandAction Command="{Binding CmdDoubleClick}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
+                    <i:Interaction.Behaviors>
+                        <bh:ListboxBehavior/>
+                    </i:Interaction.Behaviors>
                     <ListBox.Resources>
                         <Style TargetType="{x:Type ListBoxItem}">
                             <Setter Property="Tag"
@@ -184,8 +188,12 @@
                         </ListBox.Resources>
                     </ListBox>
                 </DockPanel>
-                <ListBox ItemsSource="{Binding AllNames}" Margin="5"
-                         SelectedItem="{Binding SelectedActorName}"/>
+                <ListBox ItemsSource="{Binding Actors}" Margin="5"
+                         SelectedItem="{Binding SelectedActor}">
+                    <i:Interaction.Behaviors>
+                        <bh:ListboxBehavior/>
+                    </i:Interaction.Behaviors>
+                </ListBox>
             </DockPanel>
         </Grid>
     </DockPanel>

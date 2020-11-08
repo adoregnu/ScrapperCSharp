@@ -71,14 +71,6 @@ namespace Scrapper.ViewModel
             set => Set(ref _namesOfActor, value);
         }
 
-        ObservableCollection<AvActorName> _allNames
-            = new ObservableCollection<AvActorName>();
-        public ObservableCollection<AvActorName> AllNames
-        {
-            get => _allNames;
-            private set => Set(ref _allNames, value);
-        }
-
         public List<ActorInitial> ActorInitials { get; private set; }
 
         public AvActor SelectedActor
@@ -270,7 +262,6 @@ namespace Scrapper.ViewModel
             {
                 App.DbContext.SaveChanges();
                 RaisePropertyChanged("SelectedActor");
-                //AllNames.Add(name);
                 NewName = "";
                 NamesOfActor.Clear();
                 NamesOfActor.Concat(_actor.Names);
@@ -298,13 +289,11 @@ namespace Scrapper.ViewModel
                         .Include("Actor")
                         .OrderBy(n => n.Name)
                         .ToList();
-                    AllNames = new ObservableCollection<AvActorName>(names);
                     Actors = new ObservableCollection<AvActor>(
                         names.Select(n => n.Actor).Distinct());
                 }
                 else
                 {
-                    AllNames.Clear();
                     Actors.Clear();
                 }
                 return;
@@ -320,14 +309,6 @@ namespace Scrapper.ViewModel
             if (names == null || names.Count == 0)
                 return;
 
-            foreach (var name in names)
-            {
-                if (isSelected)
-                    AllNames.Add(name);
-                    //AllNames.InsertInPlace(name, n => n.Name);
-                else
-                    AllNames.Remove(name);
-            }
             var actors = names.Select(n => n.Actor).Distinct();
             foreach (var actor in actors)
             {

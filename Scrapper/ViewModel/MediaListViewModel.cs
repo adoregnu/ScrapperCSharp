@@ -211,12 +211,15 @@ namespace Scrapper.ViewModel
 
         void OnClearDb(object param)
         {
-            if (param is MediaItem item && item.AvItem != null)
+            if (!(param is IList<object> items) || items.Count == 0)
+                return;
+
+            foreach (var item in items.Cast<MediaItem>().ToList())
             {
                 App.DbContext.Items.Remove(item.AvItem);
-                App.DbContext.SaveChanges();
                 item.AvItem = null;
             }
+            App.DbContext.SaveChanges();
         }
 
         void OnEditItem(object param)

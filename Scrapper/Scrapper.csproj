@@ -243,6 +243,7 @@
     </Compile>
     <Compile Include="View\Behavior\AvalonEditBehavior.cs" />
     <Compile Include="View\Behavior\GridLengthAnimation.cs" />
+    <Compile Include="View\Behavior\ListboxBehavior.cs" />
     <Compile Include="View\Behavior\TextboxBehavior.cs" />
     <Compile Include="View\BrowserView.xaml.cs">
       <DependentUpon>BrowserView.xaml</DependentUpon>
