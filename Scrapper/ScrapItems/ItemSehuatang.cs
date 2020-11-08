@@ -29,12 +29,15 @@ namespace Scrapper.ScrapItems
 
         void CheckCompleted(bool isValid)
         {
-            Interlocked.Increment(ref _numScrapedItem);
-            Log.Print($"{_numScrapedItem}/{NumItemsToScrap}");
-            if (_numScrapedItem == NumItemsToScrap)
-            { 
-                _spider.OnScrapCompleted(isValid, isValid ? _outPath : null);
-                Clear();
+            lock (_spider)
+            {
+                Interlocked.Increment(ref _numScrapedItem);
+                Log.Print($"{_numScrapedItem}/{NumItemsToScrap}");
+                if (_numScrapedItem == NumItemsToScrap)
+                {
+                    _spider.OnScrapCompleted(isValid, isValid ? _outPath : null);
+                    Clear();
+                }
             }
         }
 
