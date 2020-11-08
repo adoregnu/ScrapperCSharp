@@ -135,6 +135,16 @@ namespace Scrapper.Model
             return true;
         }
 
+        public void ClearDb()
+        {
+            if (AvItem != null)
+            {
+                App.DbContext.Items.Remove(AvItem);
+                App.DbContext.SaveChanges();
+                AvItem = null;
+            }
+        }
+
         void UpdateMediaField(string path)
         {
             MediaFile = path;

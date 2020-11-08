@@ -216,10 +216,8 @@ namespace Scrapper.ViewModel
 
             foreach (var item in items.Cast<MediaItem>().ToList())
             {
-                App.DbContext.Items.Remove(item.AvItem);
-                item.AvItem = null;
+                item.ClearDb();
             }
-            App.DbContext.SaveChanges();
         }
 
         void OnEditItem(object param)
