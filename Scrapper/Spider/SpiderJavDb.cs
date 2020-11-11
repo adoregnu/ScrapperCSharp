@@ -45,7 +45,7 @@ namespace Scrapper.Spider
                     Value = "en",
                     Domain = "javdb.com",
                     Path = "/"
-                }
+                },
             };
         }
 

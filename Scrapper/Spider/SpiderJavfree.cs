@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using Scrapper.Extension;
 using Scrapper.Model;
+using Scrapper.ScrapItems;
 using Scrapper.ViewModel;
 
 namespace Scrapper.Spider
@@ -58,6 +59,10 @@ namespace Scrapper.Spider
 
         public override void Scrap()
         {
+            Dictionary<string, string> xpathDic = new Dictionary<string, string>
+            {
+                { "cover", XPath("//div[@class='entry-content']//img[1]/@src") }
+            };
             switch (_state)
             {
                 case 0:
@@ -66,7 +71,12 @@ namespace Scrapper.Spider
                         OnMultiResult);
                     break;
                 case 1:
-                    Browser.StopScrapping(Media);
+                    //Browser.StopScrapping(Media);
+                    ParsePage(new ItemJavfree(this)
+                    {
+                        NumItemsToScrap = xpathDic.Count
+                    }, xpathDic);
+                    _state = 2;
                     break;
             }
         }

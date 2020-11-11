@@ -192,6 +192,7 @@
     <Compile Include="ScrapItems\ItemAVE.cs" />
     <Compile Include="ScrapItems\ItemBase.cs" />
     <Compile Include="ScrapItems\ItemJavDb.cs" />
+    <Compile Include="ScrapItems\ItemJavfree.cs" />
     <Compile Include="ScrapItems\ItemJavlibrary.cs" />
     <Compile Include="ScrapItems\ItemMgstage.cs" />
     <Compile Include="ScrapItems\ItemR18.cs" />
