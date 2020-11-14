@@ -19,7 +19,7 @@ namespace Scrapper.Tasks
 
         public Task<T> Enqueue<T>(Func<T> function)
         {
-            lock (_locker)
+            //lock (_locker)
             {
                 Task lastTask;
                 Task<T> resultTask;
@@ -42,7 +42,7 @@ namespace Scrapper.Tasks
 
         public Task Enqueue(Func<Task> asyncAction)
         {
-            lock (_locker)
+            //lock (_locker)
             {
                 Task lastTask;
                 Task resultTask;
@@ -65,7 +65,7 @@ namespace Scrapper.Tasks
 
         public Task<T> Enqueue<T>(Func<Task<T>> asyncFunction)
         {
-            lock (_locker)
+            //lock (_locker)
             {
                 Task lastTask;
                 Task<T> resultTask;

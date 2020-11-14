@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using FFmpeg.AutoGen;
 using GalaSoft.MvvmLight;
+using IOExtensions;
+using Scrapper.Tasks;
 
 namespace Scrapper.Model
 {
@@ -77,7 +79,43 @@ namespace Scrapper.Model
             }
         }
 
-        public bool MoveItem()
+        static readonly SerialQueue _serialQueue = new SerialQueue();
+        void OnMoveDone(string newPath, Action<MediaItem> OnComplete)
+        {
+            MediaFolder = newPath;
+            UiServices.Invoke(delegate
+            {
+                AvItem.Path = MediaFolder;
+                App.DbContext.SaveChanges();
+                OnComplete?.Invoke(this);
+            });
+        }
+
+        void CopyFolder(string targetPath, Action<MediaItem> OnComplete)
+        {
+            int prev = 0;
+
+            Log.Print($"move {MediaFolder} => {targetPath}");
+            var ret = FileTransferManager.CopyWithProgress(
+                MediaFolder, targetPath, p =>
+                {
+                    var curr = (int)p.Percentage;
+                    if (prev != curr && curr % 1 == 0)
+                    {
+                        Log.Print(string.Format("{0}%, {1:f2}Mb/sec",
+                            curr, p.BytesPerSecond / (1024 * 1024)));
+                        prev = (int)p.Percentage;
+                    }
+                }, false);
+
+            Log.Print(ret.ToString());
+            if (ret == TransferResult.Success)
+            {
+                Directory.Delete(MediaFolder, true);
+                OnMoveDone(targetPath + "\\" + Pid, OnComplete);
+            }
+        }
+        public bool MoveItem(string target = null, Action<MediaItem> OnComplete = null)
         {
             if (AvItem == null)
             {
@@ -85,27 +123,37 @@ namespace Scrapper.Model
                 return false;
             }
             var studio = AvItem.Studio.Name;
-            var targetPath = $"{App.JavPath}{studio}";
-
-            if (MediaFolder.Equals(targetPath + "\\" + Pid,
-                StringComparison.OrdinalIgnoreCase))
+            string targetPath = null;
+            if (target != null)
             {
-                Log.Print($"{Pid} already moved!");
-                return false;
+                targetPath = target;// $"{target}\\{studio}";
             }
-
-            try
+            else
             {
+                targetPath = $"{MediaFolder.Split('\\')[0]}\\JAV\\{studio}";
                 if (!new DirectoryInfo(targetPath).Exists)
                 {
                     Directory.CreateDirectory(targetPath);
                 }
-
                 targetPath += "\\" + Pid;
-                Directory.Move(MediaFolder, targetPath);
-                MediaFolder = targetPath;
-                AvItem.Path = MediaFolder;
-                App.DbContext.SaveChanges();
+                if (MediaFolder.Equals(targetPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    Log.Print($"{Pid} already moved!");
+                    return false;
+                }
+            }
+            try
+            {
+                if (char.ToUpper(MediaFolder[0]) == char.ToUpper(targetPath[0]))
+                {
+                    if (target != null) targetPath += "\\" + Pid;
+                    Directory.Move(MediaFolder, targetPath);
+                    OnMoveDone(targetPath, OnComplete);
+                }
+                else
+                {
+                    _serialQueue.Enqueue(() => CopyFolder(targetPath, OnComplete));
+                }
                 return true;
             }
             catch (Exception ex)

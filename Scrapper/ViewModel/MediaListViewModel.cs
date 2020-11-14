@@ -20,6 +20,8 @@ using Scrapper.Extension;
 using Scrapper.Model;
 using Scrapper.Tasks;
 using Scrapper.Spider;
+using MvvmDialogs;
+using MvvmDialogs.FrameworkDialogs.FolderBrowser;
 
 namespace Scrapper.ViewModel
 {
@@ -61,6 +63,7 @@ namespace Scrapper.ViewModel
         public ICommand CmdExclude { get; set; }
         public ICommand CmdDownload { get; set; }
         public ICommand CmdMoveItem { get; set; }
+        public ICommand CmdMoveItemTo { get; set; }
         public ICommand CmdDeleteItem { get; set; }
         public ICommand CmdClearDb { get; set; }
         public ICommand CmdEditItem { get; set; }
@@ -77,6 +80,7 @@ namespace Scrapper.ViewModel
             CmdDownload = new RelayCommand<MediaItem>(
                 p => OnContextMenu(p, MediaListMenuType.downloaded));
             CmdMoveItem = new RelayCommand<object>(p => OnMoveItem(p));
+            CmdMoveItemTo = new RelayCommand<object>(p => OnMoveItemTo(p));
             CmdDeleteItem = new RelayCommand<object>(p => OnDeleteItem(p));
             CmdClearDb = new RelayCommand<object>(p => OnClearDb(p));
             CmdEditItem = new RelayCommand<object>(p => OnEditItem(p));
@@ -190,6 +194,43 @@ namespace Scrapper.ViewModel
                     MediaList.Remove(item);
                     _mediaListNotifier.OnMediaItemMoved(path);
                 }
+            }
+        }
+        void OnMoveItemTo(object param)
+        {
+            if (!(param is IList<object> items) || items.Count == 0)
+                    return;
+
+            IDialogService dlgSvc = null;
+            MessengerInstance.Send(new NotificationMessageAction<IDialogService>(
+                "queryDialogService", p => { dlgSvc = p; }));
+
+            if (dlgSvc == null)
+            {
+                Log.Print("Could not find dialog service!");
+                return;
+            }
+            var settings = new FolderBrowserDialogSettings
+            { 
+                Description = "Select Target folder"
+            };
+            bool? success = dlgSvc.ShowFolderBrowserDialog(this, settings);
+            if (success == null || success == false)
+            {
+                Log.Print("Target folder is not selected!");
+                return;
+            }
+            Log.Print(settings.SelectedPath);
+            foreach (var item in items.Cast<MediaItem>().ToList())
+            {
+                var path = item.MediaFolder;
+                item.MoveItem(settings.SelectedPath, mitem => {
+                    if (mitem != null)
+                    { 
+                        MediaList.Remove(mitem);
+                        _mediaListNotifier.OnMediaItemMoved(path);
+                    }
+                });
             }
         }
 

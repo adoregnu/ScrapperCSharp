@@ -67,6 +67,9 @@ namespace Scrapper.ViewModel
             MessengerInstance.Register<NotificationMessage<MediaItem>>(
                 this, OnAvEdit);
 
+            MessengerInstance.Register<NotificationMessageAction<IDialogService>>(
+                this, msg => msg.Execute(_dialogService));
+
             MediaElement.FFmpegMessageLogged += OnMediaFFmpegMessageLogged;
         }
 

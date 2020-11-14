@@ -312,11 +312,16 @@ namespace Scrapper.ViewModel
             var actors = names.Select(n => n.Actor).Distinct();
             foreach (var actor in actors)
             {
+                if (actor == null) continue;
                 if (isSelected)
+                {
                     Actors.Add(actor);
                     //Actors.InsertInPlace(actor, a => a.ToString());
+                }
                 else
+                {
                     Actors.Remove(actor);
+                }
             }
         }
 
@@ -347,7 +352,11 @@ namespace Scrapper.ViewModel
                 }
                 foreach (var name in actor.Names)
                 {
-                    tgtActor.Names.Add(name);
+                    if (!tgtActor.Names.Any(n => n.Name.Equals(name.Name,
+                        StringComparison.OrdinalIgnoreCase)))
+                    {
+                        tgtActor.Names.Add(name);
+                    }
                 }
                 App.DbContext.Actors.Remove(actor);
                 Actors.Remove(actor);

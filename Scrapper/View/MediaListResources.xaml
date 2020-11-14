@@ -84,6 +84,13 @@
                             Source={StaticResource VmContext}}"
                         CommandParameter="{Binding Data.SelectedItems,
                             Source={StaticResource CtrlContext}}"/>
+                    <MenuItem
+                        Header="MoveTo"
+                        Command="{Binding Data.CmdMoveItemTo,
+                            Source={StaticResource VmContext}}"
+                        CommandParameter="{Binding Data.SelectedItems,
+                            Source={StaticResource CtrlContext}}">
+                    </MenuItem>
                     <MenuItem Header="Delete" 
                         Command="{Binding Data.CmdDeleteItem,
                             Source={StaticResource VmContext}}"
